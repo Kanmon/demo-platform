@@ -11,11 +11,11 @@ import { KanmonConnectComponent } from '@kanmon/web-sdk'
 
 import path from 'path'
 import getInvoiceTotalCents from '../../utils/getInvoiceTotal'
-import { Invoice } from '../../types/DemoInvoicesTypes'
 import { extractApiKeyFromHeader } from '../../utils'
+import { PlatformInvoice } from '../../types/DemoInvoicesTypes'
 
 export interface CreateEmbeddedSessionPayload {
-  invoices: Invoice[]
+  invoices: PlatformInvoice[]
   platformBusinessId: string
   includeInvoiceFile: boolean
 }
