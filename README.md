@@ -71,7 +71,7 @@ Once the application is running, you can interact with it just like the embedded
 
 - [API Docs](https://kanmon.dev)
 - [Web SDK](https://www.npmjs.com/package/@kanmon/web-sdk)
-- [Backend SDK](https://github.com/Kanmon/sdk)
+- [Backend SDK (multiple languages)](https://github.com/Kanmon/sdk)
 
 ## Support
 
