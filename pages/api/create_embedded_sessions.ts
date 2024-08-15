@@ -1,0 +1,185 @@
+import {
+  CreateSessionTokenRequestBodyData,
+  KanmonPlatformApi,
+  SessionInvoice,
+  SessionInvoiceWithInvoiceFile,
+} from '@kanmon/sdk'
+import fs from 'fs'
+import _ from 'lodash'
+import { NextApiRequest, NextApiResponse } from 'next'
+import { KanmonConnectComponent } from '@kanmon/web-sdk'
+
+import path from 'path'
+import getInvoiceTotalCents from '../../utils/getInvoiceTotal'
+import { Invoice } from '../../types/DemoInvoicesTypes'
+import { extractApiKeyFromHeader } from '../../utils'
+
+export interface CreateEmbeddedSessionPayload {
+  invoices: Invoice[]
+  platformBusinessId: string
+  includeInvoiceFile: boolean
+}
+
+export interface ConnectSessionTokenData {
+  businessId?: string
+  platformBusinessId?: string
+  data: CreateSessionTokenRequestBodyData
+}
+
+export class PlatformApiCreateEmbeddedSessionResponse {
+  sessionToken!: string
+}
+
+const getSessionInvoiceConnectSessionTokenData = ({
+  platformBusinessId,
+  invoices,
+}: CreateEmbeddedSessionPayload): ConnectSessionTokenData => {
+  return {
+    platformBusinessId,
+    data: {
+      component: KanmonConnectComponent.SESSION_INVOICE_FLOW,
+      invoices: invoices.map((invoice) => {
+        const sessionInvoice: SessionInvoice = {
+          payorType: invoice.payorType,
+          platformInvoiceId: invoice.id,
+          platformInvoiceNumber: invoice.invoiceNumber,
+          invoiceAmountCents: getInvoiceTotalCents(invoice, true),
+          invoiceIssuedDate: invoice.createdAtIsoDate,
+          invoiceDueDate: invoice.dueDateIsoDate as string,
+          payorBusinessName: invoice.billFromBusinessName,
+          payorFirstName: invoice.customerFirstName,
+          payorLastName: invoice.customerLastName,
+          payorEmail: invoice.billFromBusinessEmail,
+          payorAddress: invoice.billFromPersonAddress,
+          description: invoice.items.map((item) => item.itemName).join(', '),
+        }
+
+        return sessionInvoice
+      }),
+    },
+  }
+}
+
+const getSessionInvoiceWithFileConnectSessionTokenData = async (
+  { platformBusinessId, invoices }: CreateEmbeddedSessionPayload,
+  sdkClient: KanmonPlatformApi,
+): Promise<ConnectSessionTokenData> => {
+  const blobInvoices: Blob[] = []
+
+  for (const _ of invoices) {
+    const data = fs
+      .readFileSync(
+        path.join(
+          process.cwd(),
+          process.env.CWD_PATH_TO_PUBLIC as string,
+          '/sample-invoice.pdf',
+        ),
+      )
+      .toString()
+
+    const blob = new Blob([data], { type: 'application/pdf' })
+
+    blobInvoices.push(blob)
+  }
+
+  const documentResponse = await sdkClient.documents.createBusinessDocument({
+    platformBusinessId,
+    invoices: blobInvoices,
+  })
+
+  return {
+    platformBusinessId,
+    data: {
+      component: KanmonConnectComponent.SESSION_INVOICE_FLOW_WITH_INVOICE_FILE,
+      invoices: invoices.map((invoice, i) => {
+        const totalCents = getInvoiceTotalCents(invoice, true)
+        const sessionInvoice: SessionInvoiceWithInvoiceFile = {
+          documentId: documentResponse.documents[i].id,
+          payorType: invoice.payorType,
+          platformInvoiceId: invoice.id,
+          platformInvoiceNumber: invoice.invoiceNumber,
+          invoiceAmountCents: totalCents > 0 ? totalCents : undefined,
+          invoiceIssuedDate: invoice.createdAtIsoDate,
+          invoiceDueDate: invoice.dueDateIsoDate,
+          payorBusinessName: invoice.billFromBusinessName,
+          payorFirstName: invoice.customerFirstName,
+          payorLastName: invoice.customerLastName,
+          payorEmail: invoice.billFromBusinessEmail,
+          payorAddress: invoice.billFromPersonAddress,
+          description:
+            invoice.items.map((item) => item.itemName).join(', ') ||
+            'an invoice',
+        }
+
+        return sessionInvoice
+      }),
+    },
+  }
+}
+
+const createEmbeddedSessions = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+) => {
+  const kanmonUserId = req.headers['authorization']?.split(' ')?.[1]
+
+  if (!kanmonUserId) {
+    res.status(400).send({
+      message: 'User ID is required',
+      errorCode: 'BadRequestException',
+    })
+  }
+
+  const requestBody: CreateEmbeddedSessionPayload = req.body
+
+  const apiKey = extractApiKeyFromHeader(req.headers.authorization)
+  if (!apiKey) {
+    res.status(403).send(null)
+    return
+  }
+
+  const NEXT_PUBLIC_DEPLOY_ENV = process.env.NEXT_PUBLIC_DEPLOY_ENV as
+    | 'production'
+    | 'sandbox'
+    | 'staging'
+    | 'development'
+
+  const sdkClient = new KanmonPlatformApi(apiKey, NEXT_PUBLIC_DEPLOY_ENV)
+
+  const createEmbeddedSessionForInvoiceFlowBody: ConnectSessionTokenData =
+    requestBody.includeInvoiceFile
+      ? await getSessionInvoiceWithFileConnectSessionTokenData(
+          req.body,
+          sdkClient,
+        )
+      : getSessionInvoiceConnectSessionTokenData(req.body)
+
+  if (requestBody.includeInvoiceFile) {
+    const createSessionTokenRequestBody = {
+      businessId: createEmbeddedSessionForInvoiceFlowBody.businessId,
+      platformBusinessId:
+        createEmbeddedSessionForInvoiceFlowBody.platformBusinessId,
+      data: createEmbeddedSessionForInvoiceFlowBody.data as unknown as CreateSessionTokenRequestBodyData,
+    }
+
+    const session = await sdkClient.embeddedSessions.createEmbeddedSession({
+      createSessionTokenRequestBody,
+    })
+
+    res.send(session)
+    return
+  }
+
+  const session = await sdkClient.embeddedSessions.createEmbeddedSession({
+    createSessionTokenRequestBody: {
+      businessId: createEmbeddedSessionForInvoiceFlowBody.businessId,
+      platformBusinessId:
+        createEmbeddedSessionForInvoiceFlowBody.platformBusinessId,
+      data: createEmbeddedSessionForInvoiceFlowBody.data as unknown as CreateSessionTokenRequestBodyData,
+    },
+  })
+  res.send(session)
+  return
+}
+
+export default createEmbeddedSessions
