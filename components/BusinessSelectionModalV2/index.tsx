@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Alert from '@mui/material/Alert'
 import Autocomplete from '@mui/material/Autocomplete'
 import Modal from '@mui/material/Modal'
@@ -254,15 +254,8 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
               <span>Successful Anonymous Prequal!</span>
             </div>
           )}
-          <div className="h-12 w-full bg-red-600 text-white flex items-center justify-center gap-8 font-semibold hover:bg-red-800 cursor-pointer" onClick={
-            () => {
-              dispatch(resetApiKey())
-            }
-          }>
-            <span>Remove Api Key</span>
-          </div>
-          <div className="p-12">
-            <div className="mt-4">
+          <div className="pt-12">
+            <div className="mt-4 px-12">
               <Formik
                 onSubmit={(values, helpers) => {
                   onStartWithNewBusinessClick({
@@ -423,6 +416,17 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                   )
                 }}
               </Formik>
+            </div>
+            <div className="flex items-center justify-end pt-8 pb-4 pr-4">
+              <Button
+                variant="contained"
+                color="error"
+                onClick={() => {
+                  dispatch(resetApiKey())
+                }}
+              >
+                Remove Api Key
+              </Button>
             </div>
           </div>
         </div>
