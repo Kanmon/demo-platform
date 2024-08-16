@@ -14,7 +14,6 @@ import { RootState } from '@/store/store'
 import KanmonConnectContextProvider from '../hooks/KanmonConnectContext'
 import { getApiKeyState } from '../store/apiKeySlice'
 import ApiKeyModal from './ApiKeyModal'
-import { validate as isValidUUID } from 'uuid'
 import { KanmonConnectParams, OnEventCallbackEventType } from '@kanmon/web-sdk'
 
 interface Props {
@@ -39,7 +38,7 @@ export const TempAuthWrapper: React.FC<Props> = ({ children }) => {
 
   if (!process.browser) return null
 
-  if (!apiKey || !isValidUUID(apiKey)) {
+  if (!apiKey) {
     return (
       <div>
         <ApiKeyModal open />
