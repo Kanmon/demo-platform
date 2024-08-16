@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import Button from '../shared/Button'
 import { saveApiKey } from '../../store/apiKeySlice'
 import { useEffect, useState } from 'react'
-import { TextField } from '@mui/material'
+import { Alert, TextField } from '@mui/material'
 import { validate as isValidUUID } from 'uuid'
 import { useRouter } from 'next/router'
 
@@ -17,23 +17,29 @@ const ApiKeyModal = ({ open }: any) => {
   const dispatch = useDispatch()
   const { query, pathname, replace } = useRouter()
   const [localApiKey, setLocalApiKey] = useState('')
+  const [error, setError] = useState<string | undefined>(undefined)
 
   const setApiKey = () => {
     if (!localApiKey) return
+    setError(undefined)
     saveNewApiKey(localApiKey)
   }
 
   const saveNewApiKey = (apiKey: string) => {
     let apiKeyToTest = apiKey
     // Older api keys were simply uuids, but newer are prefixed with the deploy env
-    if (apiKey.startsWith(NEXT_PUBLIC_DEPLOY_ENV)) {
-      // Also removes the dash after the deploy env
-      apiKeyToTest = apiKey.slice(NEXT_PUBLIC_DEPLOY_ENV.length + 1)
+    if (
+      apiKey.startsWith(NEXT_PUBLIC_DEPLOY_ENV) ||
+      apiKey.startsWith('local')
+    ) {
+      // Remove the deploy env prefix
+      apiKeyToTest = apiKey.split('-').slice(1).join('-')
     }
 
     if (!isValidUUID(apiKeyToTest)) {
-      console.log('Not a valid uuid!', apiKey)
+      console.log('Not a valid uuid!', apiKeyToTest)
       // throw a real error here that gets displayed
+      setError('Invalid API Key')
       return
     }
 
@@ -73,8 +79,6 @@ const ApiKeyModal = ({ open }: any) => {
     }
   }, [query?.kanmonApiKey])
 
-
-
   return (
     <Modal open={open}>
       <>
@@ -91,7 +95,10 @@ const ApiKeyModal = ({ open }: any) => {
                   value={localApiKey}
                   placeholder={'Set Api Key'}
                   fullWidth
-                  onChange={(e) => setLocalApiKey(e.target.value)}
+                  onChange={(e) => {
+                    setError(undefined)
+                    setLocalApiKey(e.target.value)
+                  }}
                 />
               </div>
 
@@ -104,6 +111,13 @@ const ApiKeyModal = ({ open }: any) => {
                 Start new demo
               </Button>
             </div>
+            {error && (
+              <div className="my-4 text-left">
+                <Alert severity="error">
+                  You entered an invalid Kanmon API Key. Please try again.
+                </Alert>
+              </div>
+            )}
           </div>
         </div>
       </>
