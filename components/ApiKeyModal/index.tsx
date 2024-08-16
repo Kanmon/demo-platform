@@ -7,6 +7,12 @@ import { TextField } from '@mui/material'
 import { validate as isValidUUID } from 'uuid'
 import { useRouter } from 'next/router'
 
+const NEXT_PUBLIC_DEPLOY_ENV = process.env.NEXT_PUBLIC_DEPLOY_ENV as
+  | 'production'
+  | 'sandbox'
+  | 'staging'
+  | 'development'
+
 const ApiKeyModal = ({ open }: any) => {
   const dispatch = useDispatch()
   const { query, pathname, replace } = useRouter()
@@ -14,16 +20,28 @@ const ApiKeyModal = ({ open }: any) => {
 
   const setApiKey = () => {
     if (!localApiKey) return
-    if (!isValidUUID(localApiKey)) {
-      console.log('Not a valid uuid!')
+    saveNewApiKey(localApiKey)
+  }
+
+  const saveNewApiKey = (apiKey: string) => {
+    let apiKeyToTest = apiKey
+    // Older api keys were simply uuids, but newer are prefixed with the deploy env
+    if (apiKey.startsWith(NEXT_PUBLIC_DEPLOY_ENV)) {
+      // Also removes the dash after the deploy env
+      apiKeyToTest = apiKey.slice(NEXT_PUBLIC_DEPLOY_ENV.length + 1)
+    }
+
+    if (!isValidUUID(apiKeyToTest)) {
+      console.log('Not a valid uuid!', apiKey)
+      // throw a real error here that gets displayed
       return
     }
 
-    localStorage.setItem('kanmonApiKey', localApiKey)
+    localStorage.setItem('kanmonApiKey', apiKey)
 
     dispatch(
       saveApiKey({
-        apiKey: localApiKey,
+        apiKey: apiKey,
       }),
     )
   }
@@ -33,11 +51,7 @@ const ApiKeyModal = ({ open }: any) => {
     const storedApiKey = localStorage.getItem('kanmonApiKey')
 
     if (storedApiKey) {
-      dispatch(
-        saveApiKey({
-          apiKey: storedApiKey,
-        }),
-      )
+      saveNewApiKey(storedApiKey)
     }
   }, [])
 
@@ -45,11 +59,7 @@ const ApiKeyModal = ({ open }: any) => {
     const queryApiKey = query?.kanmonApiKey as string | undefined
 
     if (queryApiKey) {
-      dispatch(
-        saveApiKey({
-          apiKey: queryApiKey,
-        }),
-      )
+      saveNewApiKey(queryApiKey)
 
       // Remove query params after saving them
       replace(
@@ -62,6 +72,8 @@ const ApiKeyModal = ({ open }: any) => {
       )
     }
   }, [query?.kanmonApiKey])
+
+
 
   return (
     <Modal open={open}>
