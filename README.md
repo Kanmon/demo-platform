@@ -54,7 +54,7 @@ yarn install
 
 1. **Run the Application**
 
-Start the development server:
+Start the development server :
 
 ```bash
 yarn dev
