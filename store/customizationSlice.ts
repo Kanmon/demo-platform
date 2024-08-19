@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { HYDRATE } from 'next-redux-wrapper'
 import { AppState } from './store'
 
-export interface CustomizationState {
+   export interface CustomizationState {
   editMode: boolean
   logoBase64: string | undefined
   logoWidth: number

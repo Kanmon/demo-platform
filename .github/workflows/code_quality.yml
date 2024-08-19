@@ -25,7 +25,6 @@ jobs:
             node_modules
             .cache
           key: node-modulesc-${{ hashFiles('yarn.lock') }}
-      -
       - name: Install dependencies
         if: steps.node-cache.outputs.cache-hit != 'true'
         run: yarn install
@@ -59,20 +58,20 @@ jobs:
       - name: Run Linter
         run: yarn lint
 
-  # prettier:
-  #   name: Prettier
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout this repo
-  #       uses: actions/checkout@v4
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 18.20.2
-  #         cache: 'yarn'
-  #     - name: Use npm 9.9.1. Reference these GH issues https://github.com/yarnpkg/yarn/issues/3728#issuecomment-1737249792, https://github.com/npm/cli/pull/6554#issuecomment-1780237375
-  #       shell: bash
-  #       run: npm install -g npm@9.9.1
-  #     - uses: creyD/prettier_action@v4.3
-  #       with:
-  #         prettier_version: 2.7.1
-  #         prettier_options: --check .
+  prettier:
+    name: Prettier
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18.20.2
+          cache: 'yarn'
+      - name: Use npm 9.9.1. Reference these GH issues https://github.com/yarnpkg/yarn/issues/3728#issuecomment-1737249792, https://github.com/npm/cli/pull/6554#issuecomment-1780237375
+        shell: bash
+        run: npm install -g npm@9.9.1
+      - uses: creyD/prettier_action@v4.3
+        with:
+          prettier_version: 2.7.1
+          prettier_options: --check .
