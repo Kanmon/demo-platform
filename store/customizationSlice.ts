@@ -24,6 +24,8 @@ const initialState: CustomizationState = {
   buttonBgColor: '#6366f1',
 }
 
+var a = ''
+
 export const customizationSlice = createSlice({
   name: 'customization',
   initialState,
