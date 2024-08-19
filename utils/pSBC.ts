@@ -82,8 +82,8 @@ export function pSBC(p: number, c0: string, c1?: any, l?: any) {
       ? //@ts-ignore
         window.pSBCr(c1)
       : P
-      ? { r: 0, g: 0, b: 0, a: -1 }
-      : { r: 255, g: 255, b: 255, a: -1 }
+        ? { r: 0, g: 0, b: 0, a: -1 }
+        : { r: 255, g: 255, b: 255, a: -1 }
   p = P ? p * -1 : p
   P = 1 - p
   if (!f || !t) return null
