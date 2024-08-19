@@ -86,7 +86,7 @@ const ApiKeyModal = ({ open }: any) => {
           <div className="p-12">
             <div className="mt-4">
               <h1 className="text-xl font-semibold mb-8">
-                Access the Demo Platform with your Api Key
+                Access the Demo Platform with your API Key
               </h1>
 
               <div className="mb-8">
