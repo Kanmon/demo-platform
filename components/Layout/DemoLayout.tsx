@@ -1,6 +1,3 @@
-import { useRouter } from 'next/router'
-import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
 import { Header } from '@/components/Layout/Header'
 import { Sidebar } from '@/components/Layout/Sidebar'
 import {
@@ -8,12 +5,14 @@ import {
   TempAuthWrapper,
   TempReduxWrapper,
 } from '@/components/wrappers'
-import { NextPageWithLayout } from '@/pages/_app'
 import { getCustomizationState } from '@/store/customizationSlice'
 import { wrapper } from '@/store/store'
 import { pSBC } from '@/utils/pSBC'
-import { ToastContainer } from 'react-toastify'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
+import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
+import { ToastContainer } from 'react-toastify'
 
 const DemoLayout = ({ children }: { children: React.ReactNode }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false)

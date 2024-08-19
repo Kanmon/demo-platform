@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import _ from 'lodash'
 import { useSelector } from 'react-redux'
 import { getCustomizationState } from '../../store/customizationSlice'
 import {

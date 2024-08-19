@@ -12,10 +12,6 @@ import Image from 'next/image'
 export const DemoDashboardCard1 = () => {
   const { buttonBgColor } = useSelector(getCustomizationState)
 
-  const backgroundColorHex = hexToRgbFormatted(
-    getTailwindConfig().theme.colors.blue[500],
-  )
-
   const chartData = {
     labels: [
       '12-01-2020',
