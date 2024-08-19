@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": " npx eslint .",
     "typecheck": "tsc --noEmit",
-    "prettier": "npx prettier . --check",
+    "prettier-check": "npx prettier . --check",
     "prettier-fix": "prettier --write ."
   },
   "dependencies": {

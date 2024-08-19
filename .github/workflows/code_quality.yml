@@ -71,7 +71,5 @@ jobs:
       - name: Use npm 9.9.1. Reference these GH issues https://github.com/yarnpkg/yarn/issues/3728#issuecomment-1737249792, https://github.com/npm/cli/pull/6554#issuecomment-1780237375
         shell: bash
         run: npm install -g npm@9.9.1
-      - uses: creyD/prettier_action@v4.3
-        with:
-          prettier_version: 2.7.1
-          prettier_options: --check .
+      - name: Run Prettier
+        run: yarn prettier-check
