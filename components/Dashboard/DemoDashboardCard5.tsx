@@ -1,9 +1,8 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
-import { useSelector } from 'react-redux'
 import { getCustomizationState } from '@/store/customizationSlice'
 import { getTailwindConfig, hexToRgbFormatted } from '@/utils'
-import Tooltip from '../shared/Tooltip'
+import { useSelector } from 'react-redux'
 import { RealtimeChart } from '../Charts/RealtimeChart'
 
 export const DemoDashboardCard5 = () => {
@@ -47,7 +46,7 @@ export const DemoDashboardCard5 = () => {
         },
       ],
     }
-  }, [])
+  }, [buttonBgColor])
 
   return (
     <div className="flex flex-col col-span-full sm:col-span-6 bg-white shadow-lg rounded-sm border border-slate-200">
