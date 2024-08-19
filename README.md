@@ -1,5 +1,4 @@
-
-# Demo Platform 
+# Demo Platform
 
 Welcome to the **Demo Platform** repository! This project is designed to give our customers a hands-on experience with our APIs, demonstrating both frontend and backend integrations. It's built using Next.js, React, and Redux to create a seamless demonstration environment.
 
@@ -55,7 +54,7 @@ yarn install
 
 1. **Run the Application**
 
-Start the development server:
+Start the development server :
 
 ```bash
 yarn dev
