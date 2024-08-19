@@ -29,7 +29,7 @@ const EditableDateField = ({
 
   useEffect(() => {
     setValue(formatUTCISODate(invoice[field] as string, 'MM/dd/yyyy'))
-  }, [invoice])
+  }, [invoice, field])
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value

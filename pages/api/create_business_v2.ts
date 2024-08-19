@@ -1,19 +1,18 @@
 import {
-  Business,
   AddressStateEnum,
+  Business,
   CreateUserRequestBodyRolesEnum,
 } from '@kanmon/sdk'
-import axios from 'axios'
 import { plainToClass } from 'class-transformer'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { v4 } from 'uuid'
 
-import { KanmonClient } from '../../utils/kanmonClient'
 import {
   CreateBusinessAndUserRequestBody,
   TestingPrequalType,
 } from '../../types/MoreTypes'
 import { extractApiKeyFromHeader } from '../../utils'
+import { KanmonClient } from '../../utils/kanmonClient'
 
 const create_business_v2 = async (
   req: NextApiRequest,

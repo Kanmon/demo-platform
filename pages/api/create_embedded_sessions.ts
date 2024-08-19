@@ -4,15 +4,14 @@ import {
   SessionInvoice,
   SessionInvoiceWithInvoiceFile,
 } from '@kanmon/sdk'
-import fs from 'fs'
-import _ from 'lodash'
-import { NextApiRequest, NextApiResponse } from 'next'
 import { KanmonConnectComponent } from '@kanmon/web-sdk'
+import fs from 'fs'
+import { NextApiRequest, NextApiResponse } from 'next'
 
 import path from 'path'
-import getInvoiceTotalCents from '../../utils/getInvoiceTotal'
-import { extractApiKeyFromHeader } from '../../utils'
 import { PlatformInvoice } from '../../types/DemoInvoicesTypes'
+import { extractApiKeyFromHeader } from '../../utils'
+import getInvoiceTotalCents from '../../utils/getInvoiceTotal'
 
 export interface CreateEmbeddedSessionPayload {
   invoices: PlatformInvoice[]

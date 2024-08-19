@@ -1,4 +1,3 @@
-
 # Demo Platform
 
 Welcome to the **Demo Platform** repository! This project is designed to give our customers a hands-on experience with our APIs, demonstrating both frontend and backend integrations. It's built using Next.js, React, and Redux to create a seamless demonstration environment.
