@@ -43,7 +43,7 @@ export type RootState = CombinedState<{
   apiKey: ApiKeyState
 }>
 
-export const resetStore = () => storage.removeItem('persist:kanmonDemo')
+const resetStore = () => storage.removeItem('persist:kanmonDemo')
 
 const combinedReducers = combineReducers<RootState, AnyAction>({
   [authSlice.name]: authSlice.reducer,

@@ -8,6 +8,7 @@ import {
 } from '@/store/customizationSlice'
 import UserAvatar from '@/public/images/user-avatar-32.png'
 import Transition from './Transition'
+import { resetCredentials } from '@/store/authSlice'
 
 export const UserMenu = ({ align }: { align: string }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -119,9 +120,7 @@ export const UserMenu = ({ align }: { align: string }) => {
                 <div
                   className="hover:cursor-pointer fifty-percent-darker-text-on-hover"
                   onClick={() => {
-                    dispatch({
-                      type: 'RESET_STORE',
-                    })
+                    dispatch(resetCredentials())
                   }}
                 >
                   Start Over

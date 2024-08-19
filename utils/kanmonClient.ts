@@ -10,6 +10,7 @@ import {
   ConnectToken,
   Address,
   GetUsersResponse,
+  GetUsersRequest,
 } from '@kanmon/sdk'
 import { ProductType, TestingPrequalType, UserRole } from '../types/MoreTypes'
 
@@ -149,10 +150,8 @@ export class KanmonClient {
     })
   }
 
-  getUsers = async (businessIds?: string): Promise<GetUsersResponse> => {
-    return this.sdkClient.users.getUsers({
-      businessIds,
-    })
+  getUsers = async (args?: GetUsersRequest): Promise<GetUsersResponse> => {
+    return this.sdkClient.users.getUsers(args)
   }
 
   createUserForBusiness = async (

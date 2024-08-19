@@ -1,71 +1,47 @@
-import Modal from '@mui/material/Modal'
-import { useDispatch } from 'react-redux'
-import Button from '../shared/Button'
-import { saveApiKey } from '../../store/apiKeySlice'
-import { useEffect, useState } from 'react'
+import { TestApiKeyErrorCode } from '@/pages/api/test_api_key'
+import { axiosWithApiKey } from '@/utils'
 import { Alert, TextField } from '@mui/material'
-import { validate as isValidUUID } from 'uuid'
+import Modal from '@mui/material/Modal'
+import { isAxiosError } from 'axios'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { useAsync, useAsyncFn } from 'react-use'
+import { saveApiKey } from '../../store/apiKeySlice'
+import Button from '../shared/Button'
 
-const NEXT_PUBLIC_DEPLOY_ENV = process.env.NEXT_PUBLIC_DEPLOY_ENV as
-  | 'production'
-  | 'sandbox'
-  | 'staging'
-  | 'development'
+const getSaveApiKeyErrorMessage = (error: any) => {
+  if (!error) return null
+
+  if (
+    isAxiosError(error) &&
+    error.response?.data.errorCode === TestApiKeyErrorCode.INVALID_API_KEY
+  ) {
+    return 'You entered an invalid Kanmon API Key. Please try again.'
+  }
+
+  return 'An unexpected error occurred. Please try again or reach out to Kanmon for help.'
+}
 
 const ApiKeyModal = ({ open }: any) => {
   const dispatch = useDispatch()
   const { query, pathname, replace } = useRouter()
   const [localApiKey, setLocalApiKey] = useState('')
-  const [error, setError] = useState<string | undefined>(undefined)
 
-  const setApiKey = () => {
-    if (!localApiKey) return
-    setError(undefined)
-    saveNewApiKey(localApiKey)
-  }
+  const [{ loading: saveApiKeyLoading, error: saveApiKeyError }, saveApiKeyFn] =
+    useAsyncFn(async (apiKey: string) => {
+      await axiosWithApiKey(apiKey).get('/api/test_api_key')
 
-  const saveNewApiKey = (apiKey: string) => {
-    let apiKeyToTest = apiKey
-    // Older api keys were simply uuids, but newer are prefixed with the deploy env
-    if (
-      apiKey.startsWith(NEXT_PUBLIC_DEPLOY_ENV) ||
-      apiKey.startsWith('local')
-    ) {
-      // Remove the deploy env prefix
-      apiKeyToTest = apiKey.split('-').slice(1).join('-')
-    }
+      dispatch(saveApiKey({ apiKey }))
+    })
 
-    if (!isValidUUID(apiKeyToTest)) {
-      console.log('Not a valid uuid!', apiKeyToTest)
-      // throw a real error here that gets displayed
-      setError('Invalid API Key')
-      return
-    }
+  const error = getSaveApiKeyErrorMessage(saveApiKeyError)
 
-    localStorage.setItem('kanmonApiKey', apiKey)
-
-    dispatch(
-      saveApiKey({
-        apiKey: apiKey,
-      }),
-    )
-  }
-
-  // Store the api key separately because when we logout - we delete the root store
-  useEffect(() => {
-    const storedApiKey = localStorage.getItem('kanmonApiKey')
-
-    if (storedApiKey) {
-      saveNewApiKey(storedApiKey)
-    }
-  }, [])
-
-  useEffect(() => {
+  useAsync(async () => {
     const queryApiKey = query?.kanmonApiKey as string | undefined
 
     if (queryApiKey) {
-      saveNewApiKey(queryApiKey)
+      await saveApiKeyFn(queryApiKey)
 
       // Remove query params after saving them
       replace(
@@ -88,28 +64,34 @@ const ApiKeyModal = ({ open }: any) => {
               <h1 className="text-xl font-semibold mb-8">
                 Access the Demo Platform with your API Key
               </h1>
-
-              <div className="mb-8">
-                <TextField
-                  variant="outlined"
-                  value={localApiKey}
-                  placeholder={'Set Api Key'}
-                  fullWidth
-                  onChange={(e) => {
-                    setError(undefined)
-                    setLocalApiKey(e.target.value)
-                  }}
-                />
-              </div>
-
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                onClick={() => setApiKey()}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  saveApiKeyFn(localApiKey)
+                }}
               >
-                Start new demo
-              </Button>
+                <div className="mb-8">
+                  <TextField
+                    variant="outlined"
+                    value={localApiKey}
+                    placeholder={'Set Api Key'}
+                    fullWidth
+                    onChange={(e) => {
+                      setLocalApiKey(e.target.value)
+                    }}
+                  />
+                </div>
+
+                <Button
+                  fullWidth
+                  variant="contained"
+                  disabled={!localApiKey || saveApiKeyLoading}
+                  color="primary"
+                  type="submit"
+                >
+                  Start new demo
+                </Button>
+              </form>
             </div>
             {error && (
               <div className="my-4 text-left">
