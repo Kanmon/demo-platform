@@ -25,7 +25,7 @@ const getSaveApiKeyErrorMessage = (error: any) => {
 
 const ApiKeyModal = ({ open }: any) => {
   const dispatch = useDispatch()
-  const { query, pathname, replace } = useRouter()
+  const { query, pathname, replace, isReady } = useRouter()
   const [localApiKey, setLocalApiKey] = useState('')
 
   const [{ loading: saveApiKeyLoading, error: saveApiKeyError }, saveApiKeyFn] =
@@ -37,23 +37,37 @@ const ApiKeyModal = ({ open }: any) => {
 
   const error = getSaveApiKeyErrorMessage(saveApiKeyError)
 
-  useAsync(async () => {
-    const queryApiKey = query?.kanmonApiKey as string | undefined
+  const { value: doneValidatedApiKeyFromQueryParam } = useAsync(
+    async function extractApiKeyFromQueryParamWhenEmbedded() {
+      if (!isReady) {
+        return null
+      }
 
-    if (queryApiKey) {
-      await saveApiKeyFn(queryApiKey)
+      const queryApiKey = query?.kanmonApiKey as string | undefined
 
-      // Remove query params after saving them
-      replace(
-        {
-          pathname: pathname, // Keep the current path
-          query: {}, // Empty query object removes all query parameters
-        },
-        undefined,
-        { shallow: true },
-      )
-    }
-  }, [query?.kanmonApiKey])
+      if (queryApiKey) {
+        try {
+          await saveApiKeyFn(queryApiKey)
+        } finally {
+          // Remove query params after saving them
+          replace(
+            {
+              pathname: pathname, // Keep the current path
+              query: {}, // Empty query object removes all query parameters
+            },
+            undefined,
+            { shallow: true },
+          )
+        }
+      }
+
+      return true
+    },
+    [query?.kanmonApiKey],
+  )
+
+  // If the router is not ready, then the query param will be null.
+  if (!doneValidatedApiKeyFromQueryParam) return null
 
   return (
     <Modal open={open}>
@@ -95,9 +109,7 @@ const ApiKeyModal = ({ open }: any) => {
             </div>
             {error && (
               <div className="my-4 text-left">
-                <Alert severity="error">
-                  You entered an invalid Kanmon API Key. Please try again.
-                </Alert>
+                <Alert severity="error">{error}</Alert>
               </div>
             )}
           </div>

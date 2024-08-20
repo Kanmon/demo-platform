@@ -24,7 +24,7 @@ const fetchIssuedProducts = async (
   const client = new KanmonClient(apiKey)
 
   try {
-    // This is an arbitrary request
+    // This is an arbitrary request to test the api key
     await client.getUsers({ limit: 1 })
     res.status(200).send('ok')
   } catch (ex: any) {

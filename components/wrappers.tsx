@@ -64,8 +64,6 @@ export const TempAuthWrapper: React.FC<Props> = ({ children }) => {
     )
   }
 
-  console.log('userId', userId)
-
   return <div>{userId ? children : <BusinessSelectionModalV2 open />}</div>
 }
 
