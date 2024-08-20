@@ -66,7 +66,7 @@ const ApiKeyModal = ({ open }: any) => {
     [query?.kanmonApiKey],
   )
 
-  // If the router is not ready, then the query param will be null.
+  // Prevent flickering when api key is passed through query param
   if (!doneValidatedApiKeyFromQueryParam) return null
 
   return (
