@@ -26,6 +26,7 @@ import {
 } from '../../types/MoreTypes'
 import { getApiKeyState, resetApiKey } from '../../store/apiKeySlice'
 import storage from 'redux-persist/lib/storage'
+import { resetStoreAction } from '@/store/store'
 
 interface AutocompleteOption {
   email?: string
@@ -428,7 +429,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                 variant="contained"
                 color="error"
                 onClick={() => {
-                  dispatch(resetApiKey())
+                  dispatch(resetStoreAction(true))
                 }}
               >
                 Remove Api Key

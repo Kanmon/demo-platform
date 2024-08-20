@@ -11,6 +11,7 @@ import {
   KanmonConnectComponent,
   KanmonConnectEnviroment,
 } from '@kanmon/web-sdk'
+import { resetStoreAction } from '@/store/store'
 
 interface ShowArgs {
   component?: KanmonConnectComponent
@@ -101,9 +102,7 @@ const KanmonConnectContextProvider = ({
     // If we fail to login, lets logout and try again
     if (error) {
       console.log('ERROR', error)
-      dispatch({
-        type: 'RESET_STORE',
-      })
+      dispatch(resetStoreAction(true))
     }
   }, [error])
 

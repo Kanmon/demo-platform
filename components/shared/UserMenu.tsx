@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 
-import Image from 'next/image'
-import { useDispatch, useSelector } from 'react-redux'
+import UserAvatar from '@/public/images/user-avatar-32.png'
 import {
   getCustomizationState,
   toggleEditMode,
 } from '@/store/customizationSlice'
-import UserAvatar from '@/public/images/user-avatar-32.png'
+import { resetStoreAction } from '@/store/store'
+import Image from 'next/image'
+import { useDispatch, useSelector } from 'react-redux'
 import Transition from './Transition'
-import { resetCredentials } from '@/store/authSlice'
 
 export const UserMenu = ({ align }: { align: string }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -120,7 +120,7 @@ export const UserMenu = ({ align }: { align: string }) => {
                 <div
                   className="hover:cursor-pointer fifty-percent-darker-text-on-hover"
                   onClick={() => {
-                    dispatch(resetCredentials())
+                    dispatch(resetStoreAction(false))
                   }}
                 >
                   Start Over

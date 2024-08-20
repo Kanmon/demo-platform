@@ -23,10 +23,6 @@ export const authSlice = createSlice({
       state.email = action.payload.email
       state.userId = action.payload.userId
     },
-    resetCredentials(state) {
-      state.email = undefined
-      state.userId = undefined
-    },
   },
 
   extraReducers: {
@@ -39,7 +35,7 @@ export const authSlice = createSlice({
   },
 })
 
-export const { saveCredentials, resetCredentials } = authSlice.actions
+export const { saveCredentials } = authSlice.actions
 
 export const getAuthState = (state: AppState) => state.auth
 

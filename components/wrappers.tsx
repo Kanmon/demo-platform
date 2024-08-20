@@ -8,7 +8,7 @@ import {
   updateOnHide,
   updateOnWorkflowChange,
 } from '@/store/kanmonConnectSlice'
-import { RootState } from '@/store/store'
+import { resetStoreAction, RootState } from '@/store/store'
 import { axiosWithApiKey } from '@/utils'
 import { KanmonConnectParams, OnEventCallbackEventType } from '@kanmon/web-sdk'
 import { useDispatch, useSelector, useStore } from 'react-redux'
@@ -47,9 +47,7 @@ export const TempAuthWrapper: React.FC<Props> = ({ children }) => {
 
       return true
     } catch {
-      dispatch({
-        type: 'RESET_STORE',
-      })
+      dispatch(resetStoreAction(true))
       return false
     }
   }, [apiKey])
