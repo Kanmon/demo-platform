@@ -1,5 +1,3 @@
-import { useDispatch, useSelector, useStore } from 'react-redux'
-import { PersistGate } from 'redux-persist/integration/react'
 import BusinessSelectionModalV2 from '@/components/BusinessSelectionModalV2'
 import {
   addKanmonIdToInvoice,
@@ -10,11 +8,15 @@ import {
   updateOnHide,
   updateOnWorkflowChange,
 } from '@/store/kanmonConnectSlice'
-import { RootState } from '@/store/store'
+import { resetStoreAction, RootState } from '@/store/store'
+import { axiosWithApiKey } from '@/utils'
+import { KanmonConnectParams, OnEventCallbackEventType } from '@kanmon/web-sdk'
+import { useDispatch, useSelector, useStore } from 'react-redux'
+import { useAsync } from 'react-use'
+import { PersistGate } from 'redux-persist/integration/react'
 import KanmonConnectContextProvider from '../hooks/KanmonConnectContext'
 import { getApiKeyState } from '../store/apiKeySlice'
 import ApiKeyModal from './ApiKeyModal'
-import { KanmonConnectParams, OnEventCallbackEventType } from '@kanmon/web-sdk'
 
 interface Props {
   children?: React.ReactNode
@@ -26,7 +28,7 @@ export const TempReduxWrapper: React.FC<Props> = ({ children }) => {
   const persistor = (store as any).__persistor
 
   return (
-    <PersistGate persistor={persistor} loading={<div>Loading</div>}>
+    <PersistGate persistor={persistor} loading={null}>
       {children}
     </PersistGate>
   )
@@ -35,8 +37,22 @@ export const TempReduxWrapper: React.FC<Props> = ({ children }) => {
 export const TempAuthWrapper: React.FC<Props> = ({ children }) => {
   const { userId } = useSelector(getAuthState)
   const { apiKey } = useSelector(getApiKeyState)
+  const { dispatch } = useStore()
 
-  if (!process.browser) return null
+  const { loading: validatingApiKey } = useAsync(async () => {
+    try {
+      if (apiKey) {
+        await axiosWithApiKey(apiKey).post('/api/test_api_key')
+      }
+
+      return true
+    } catch {
+      dispatch(resetStoreAction(true))
+      return false
+    }
+  }, [apiKey])
+
+  if (validatingApiKey) return null
 
   if (!apiKey) {
     return (
@@ -99,7 +115,7 @@ export const KanmonConnectWrapper = ({
   }
 
   if (!authState.userId) {
-    return <span>Loading...</span>
+    return null
   }
 
   return (

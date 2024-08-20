@@ -6,6 +6,7 @@ import {
   configureStore,
   createListenerMiddleware,
   Reducer,
+  ReducersMapObject,
   ThunkAction,
 } from '@reduxjs/toolkit'
 import { createWrapper } from 'next-redux-wrapper'
@@ -45,19 +46,53 @@ export type RootState = CombinedState<{
 
 export const resetStore = () => storage.removeItem('persist:kanmonDemo')
 
-const combinedReducers = combineReducers<RootState, AnyAction>({
-  [authSlice.name]: authSlice.reducer,
-  [customizationSlice.name]: customizationSlice.reducer,
-  [apiInvoicesSlice.name]: apiInvoicesSlice.reducer,
-  [kanmonConnectSlice.name]: kanmonConnectSlice.reducer,
-  [apiKeySlice.name]: apiKeySlice.reducer,
-})
+const allSlices = [
+  authSlice,
+  customizationSlice,
+  apiInvoicesSlice,
+  kanmonConnectSlice,
+  apiKeySlice,
+]
+
+const combinedReducers = combineReducers<RootState, AnyAction>(
+  allSlices.reduce((agg, nextSlice) => {
+    return {
+      ...agg,
+      [nextSlice.name]: nextSlice.reducer,
+    }
+  }, {} as ReducersMapObject<RootState>),
+)
+
+interface ResetStoreAction {
+  type: 'RESET_STORE'
+  resetApiKey: boolean
+}
+
+export const resetStoreAction = (resetApiKey: boolean): ResetStoreAction => {
+  return {
+    type: 'RESET_STORE',
+    resetApiKey,
+  }
+}
+
+const isResetStoreAction = (action: AnyAction): action is ResetStoreAction => {
+  return action.type === 'RESET_STORE'
+}
 
 const rootReducer: Reducer<RootState, AnyAction> = (state, action) => {
   // https://stackoverflow.com/questions/35622588/how-to-reset-the-state-of-a-redux-store/35641992#35641992
-  if (action.type === 'RESET_STORE') {
-    resetStore()
-    state = undefined
+  if (isResetStoreAction(action)) {
+    const resetState = allSlices.reduce((agg, nextSlice) => {
+      return {
+        ...agg,
+        [nextSlice.name]:
+          nextSlice.name === 'apiKey' && !action.resetApiKey
+            ? state?.apiKey
+            : nextSlice.getInitialState(),
+      }
+    }, {} as RootState)
+
+    return combinedReducers(resetState, action)
   }
 
   return combinedReducers(state, action)

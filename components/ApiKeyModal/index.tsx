@@ -1,83 +1,73 @@
-import Modal from '@mui/material/Modal'
-import { useDispatch } from 'react-redux'
-import Button from '../shared/Button'
-import { saveApiKey } from '../../store/apiKeySlice'
-import { useEffect, useState } from 'react'
+import { TestApiKeyErrorCode } from '@/pages/api/test_api_key'
+import { axiosWithApiKey } from '@/utils'
 import { Alert, TextField } from '@mui/material'
-import { validate as isValidUUID } from 'uuid'
+import Modal from '@mui/material/Modal'
+import { isAxiosError } from 'axios'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { useAsync, useAsyncFn } from 'react-use'
+import { saveApiKey } from '../../store/apiKeySlice'
+import Button from '../shared/Button'
 
-const NEXT_PUBLIC_DEPLOY_ENV = process.env.NEXT_PUBLIC_DEPLOY_ENV as
-  | 'production'
-  | 'sandbox'
-  | 'staging'
-  | 'development'
+const getSaveApiKeyErrorMessage = (error: any) => {
+  if (!error) return null
+
+  if (
+    isAxiosError(error) &&
+    error.response?.data.errorCode === TestApiKeyErrorCode.INVALID_API_KEY
+  ) {
+    return 'You entered an invalid Kanmon API Key. Please try again.'
+  }
+
+  return 'An unexpected error occurred. Please try again or reach out to Kanmon for help.'
+}
 
 const ApiKeyModal = ({ open }: any) => {
   const dispatch = useDispatch()
-  const { query, pathname, replace } = useRouter()
+  const { query, pathname, replace, isReady } = useRouter()
   const [localApiKey, setLocalApiKey] = useState('')
-  const [error, setError] = useState<string | undefined>(undefined)
 
-  const setApiKey = () => {
-    if (!localApiKey) return
-    setError(undefined)
-    saveNewApiKey(localApiKey)
-  }
+  const [{ loading: saveApiKeyLoading, error: saveApiKeyError }, saveApiKeyFn] =
+    useAsyncFn(async (apiKey: string) => {
+      await axiosWithApiKey(apiKey).get('/api/test_api_key')
 
-  const saveNewApiKey = (apiKey: string) => {
-    let apiKeyToTest = apiKey
-    // Older api keys were simply uuids, but newer are prefixed with the deploy env
-    if (
-      apiKey.startsWith(NEXT_PUBLIC_DEPLOY_ENV) ||
-      apiKey.startsWith('local')
-    ) {
-      // Remove the deploy env prefix
-      apiKeyToTest = apiKey.split('-').slice(1).join('-')
-    }
+      dispatch(saveApiKey({ apiKey }))
+    })
 
-    if (!isValidUUID(apiKeyToTest)) {
-      console.log('Not a valid uuid!', apiKeyToTest)
-      // throw a real error here that gets displayed
-      setError('Invalid API Key')
-      return
-    }
+  const error = getSaveApiKeyErrorMessage(saveApiKeyError)
 
-    localStorage.setItem('kanmonApiKey', apiKey)
+  const { value: doneValidatedApiKeyFromQueryParam } = useAsync(
+    async function extractApiKeyFromQueryParamWhenEmbedded() {
+      if (!isReady) {
+        return null
+      }
 
-    dispatch(
-      saveApiKey({
-        apiKey: apiKey,
-      }),
-    )
-  }
+      const queryApiKey = query?.kanmonApiKey as string | undefined
 
-  // Store the api key separately because when we logout - we delete the root store
-  useEffect(() => {
-    const storedApiKey = localStorage.getItem('kanmonApiKey')
+      if (queryApiKey) {
+        try {
+          await saveApiKeyFn(queryApiKey)
+        } finally {
+          // Remove query params after saving them
+          replace(
+            {
+              pathname: pathname, // Keep the current path
+              query: {}, // Empty query object removes all query parameters
+            },
+            undefined,
+            { shallow: true },
+          )
+        }
+      }
 
-    if (storedApiKey) {
-      saveNewApiKey(storedApiKey)
-    }
-  }, [])
+      return true
+    },
+    [query?.kanmonApiKey],
+  )
 
-  useEffect(() => {
-    const queryApiKey = query?.kanmonApiKey as string | undefined
-
-    if (queryApiKey) {
-      saveNewApiKey(queryApiKey)
-
-      // Remove query params after saving them
-      replace(
-        {
-          pathname: pathname, // Keep the current path
-          query: {}, // Empty query object removes all query parameters
-        },
-        undefined,
-        { shallow: true },
-      )
-    }
-  }, [query?.kanmonApiKey])
+  // Prevent flickering when api key is passed through query param
+  if (!doneValidatedApiKeyFromQueryParam) return null
 
   return (
     <Modal open={open}>
@@ -88,34 +78,38 @@ const ApiKeyModal = ({ open }: any) => {
               <h1 className="text-xl font-semibold mb-8">
                 Access the Demo Platform with your API Key
               </h1>
-
-              <div className="mb-8">
-                <TextField
-                  variant="outlined"
-                  value={localApiKey}
-                  placeholder={'Set Api Key'}
-                  fullWidth
-                  onChange={(e) => {
-                    setError(undefined)
-                    setLocalApiKey(e.target.value)
-                  }}
-                />
-              </div>
-
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                onClick={() => setApiKey()}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  saveApiKeyFn(localApiKey)
+                }}
               >
-                Start new demo
-              </Button>
+                <div className="mb-8">
+                  <TextField
+                    variant="outlined"
+                    value={localApiKey}
+                    placeholder={'Set Api Key'}
+                    fullWidth
+                    onChange={(e) => {
+                      setLocalApiKey(e.target.value)
+                    }}
+                  />
+                </div>
+
+                <Button
+                  fullWidth
+                  variant="contained"
+                  disabled={!localApiKey || saveApiKeyLoading}
+                  color="primary"
+                  type="submit"
+                >
+                  Start new demo
+                </Button>
+              </form>
             </div>
             {error && (
               <div className="my-4 text-left">
-                <Alert severity="error">
-                  You entered an invalid Kanmon API Key. Please try again.
-                </Alert>
+                <Alert severity="error">{error}</Alert>
               </div>
             )}
           </div>

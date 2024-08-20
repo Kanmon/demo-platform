@@ -18,7 +18,6 @@ export const apiKeySlice = createSlice({
       state.apiKey = action.payload.apiKey
     },
     resetApiKey(state) {
-      localStorage.removeItem('kanmonApiKey')
       state.apiKey = undefined
     },
   },

@@ -3,7 +3,7 @@ import Alert from '@mui/material/Alert'
 import Autocomplete from '@mui/material/Autocomplete'
 import Modal from '@mui/material/Modal'
 import TextField from '@mui/material/TextField'
-import { Formik } from 'formik'
+import { Form, Formik } from 'formik'
 import { useDispatch, useSelector } from 'react-redux'
 import { useAsync, useAsyncFn } from 'react-use'
 import { v4 } from 'uuid'
@@ -26,6 +26,7 @@ import {
 } from '../../types/MoreTypes'
 import { getApiKeyState, resetApiKey } from '../../store/apiKeySlice'
 import storage from 'redux-persist/lib/storage'
+import { resetStoreAction } from '@/store/store'
 
 interface AutocompleteOption {
   email?: string
@@ -95,39 +96,43 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
     [],
   )
 
-  const { value: existingBusinesses = [], error: existingBusinessesError } =
-    useAsync(async () => {
-      if (apiKey) {
-        const kanmonClient = new KanmonClient(apiKey)
+  const {
+    value: existingBusinesses = [],
+    error: existingBusinessesError,
+    loading: existingBusinessesLoading,
+  } = useAsync(async () => {
+    if (apiKey) {
+      const kanmonClient = new KanmonClient(apiKey)
 
-        const response = await kanmonClient.getBusinesses()
+      const response = await kanmonClient.getBusinesses()
 
-        const businesses = response.businesses
+      const businesses = response.businesses
 
-        const businessIds = businesses.map((b) => b.id).join(',')
+      const businessIds = businesses.map((b) => b.id).join(',')
 
-        const userResponse = await kanmonClient.getUsers(businessIds)
+      const userResponse = await kanmonClient.getUsers({ businessIds })
 
-        const matchingPrimaryUsers = userResponse.users.filter((u) =>
-          u.roles?.includes(UserRole.PRIMARY_OWNER),
-        )
+      const matchingPrimaryUsers = userResponse.users.filter((u) =>
+        u.roles?.includes(UserRole.PRIMARY_OWNER),
+      )
 
-        return matchingPrimaryUsers
-          .map((u) => {
-            return {
-              // Temporary
-              email: u.email as unknown as string,
-              platformUserId: u.platformUserId,
-              userId: u.id,
-            }
-          })
-          .filter((biz) => biz.email || biz.platformUserId)
-      }
+      return matchingPrimaryUsers
+        .map((u) => {
+          return {
+            // Temporary
+            email: u.email as unknown as string,
+            platformUserId: u.platformUserId,
+            userId: u.id,
+          }
+        })
+        .filter((biz) => biz.email || biz.platformUserId)
+    }
 
-      return []
-    }, [apiKey])
+    return []
+  }, [apiKey])
 
   const error = existingBusinessesError || (createBusinessError as any)
+  const loading = existingBusinessesLoading
 
   const onStartWithNewBusinessClick = async ({
     prequalifyForProduct,
@@ -245,6 +250,8 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
 
   const initialValues: FormValues = buildInitialValues()
 
+  if (loading) return null
+
   return (
     <Modal open={open}>
       <>
@@ -275,7 +282,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                 {({ isValid, values, handleSubmit }) => {
                   return (
                     <>
-                      <form>
+                      <Form>
                         {/* Anon user screen*/}
                         {existingBusinesses.length === 0 && (
                           <>
@@ -409,7 +416,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                             )}
                           </>
                         )}
-                      </form>
+                      </Form>
 
                       {renderErrorAlert({ email: values.email })}
                     </>
@@ -422,7 +429,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                 variant="contained"
                 color="error"
                 onClick={() => {
-                  dispatch(resetApiKey())
+                  dispatch(resetStoreAction(true))
                 }}
               >
                 Remove Api Key

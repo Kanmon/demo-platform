@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 
-import Image from 'next/image'
-import { useDispatch, useSelector } from 'react-redux'
+import UserAvatar from '@/public/images/user-avatar-32.png'
 import {
   getCustomizationState,
   toggleEditMode,
 } from '@/store/customizationSlice'
-import UserAvatar from '@/public/images/user-avatar-32.png'
+import { resetStoreAction } from '@/store/store'
+import Image from 'next/image'
+import { useDispatch, useSelector } from 'react-redux'
 import Transition from './Transition'
 
 export const UserMenu = ({ align }: { align: string }) => {
@@ -119,9 +120,7 @@ export const UserMenu = ({ align }: { align: string }) => {
                 <div
                   className="hover:cursor-pointer fifty-percent-darker-text-on-hover"
                   onClick={() => {
-                    dispatch({
-                      type: 'RESET_STORE',
-                    })
+                    dispatch(resetStoreAction(false))
                   }}
                 >
                   Start Over
