@@ -28,7 +28,8 @@ const fetchIssuedProducts = async (
     await client.getUsers({ limit: 1 })
     res.status(200).send('ok')
   } catch (ex: any) {
-    const response = await ex.response.json()
+    console.log('error testing API key', ex)
+    const response = await ex?.response?.json()
 
     const errorResponse: TestApiKeyErrorResponse = {
       errorCode:

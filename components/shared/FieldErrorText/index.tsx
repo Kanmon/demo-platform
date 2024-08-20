@@ -6,7 +6,7 @@ interface ErrorTextProps {
 }
 
 const FieldErrorText = ({ message, id }: ErrorTextProps) => (
-  <StyledBodySmall id={id} className="text-red-400 block w-full">
+  <StyledBodySmall id={id} className="text-red-400 block w-full text-left">
     {message}
   </StyledBodySmall>
 )

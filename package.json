@@ -47,6 +47,7 @@
     "react-transition-group": "4.4.5",
     "react-use": "^17.5.0",
     "redux-persist": "6",
+    "reflect-metadata": "^0.2.2",
     "uuid": "^10.0.0",
     "yup": "^1.4.0"
   },

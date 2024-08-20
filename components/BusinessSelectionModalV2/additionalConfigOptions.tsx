@@ -98,7 +98,7 @@ const AdditonalConfigOptions = ({
       <div className="mt-4">
         <Button
           fullWidth
-          disabled={!isValid}
+          // disabled={!isValid}
           variant="contained"
           color="primary"
           onClick={() => handleSubmit()}
