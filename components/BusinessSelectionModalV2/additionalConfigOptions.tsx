@@ -1,30 +1,34 @@
 import Button from '../shared/Button'
 import {
   ProductType,
+  productTypeToDisplayName,
   TestingPrequalType,
   UserRole,
-  productTypeToDisplayName,
-} from '../../types/MoreTypes'
+} from '@/types/MoreTypes'
 import FormikTextInput from '../shared/FormikTextField'
-import { basicCssClassUpdater } from '../../utils'
+import { basicCssClassUpdater } from '@/utils'
 import { FormValues } from './index'
 import FormikSelectInput from '../shared/FormikSelectField'
 
 export const notInvoiceFinancingProduct = (productType: ProductType) => {
   return (
     productType !== ProductType.INVOICE_FINANCING &&
-    productType !== ProductType.PURCHASE_ORDER
+    productType !== ProductType.PURCHASE_ORDER &&
+    productType !== ProductType.FAST_PAY &&
+    productType != ProductType.EXTEND_PAY_PURCHASE_ORDER
   )
 }
 interface Props {
   setShowAdditionalConfiguration: (show: boolean) => void
   handleSubmit: () => void
   isValid: boolean
+  platformEnabledProducts: ProductType[]
 }
 const AdditonalConfigOptions = ({
   setShowAdditionalConfiguration,
   handleSubmit,
   isValid,
+  platformEnabledProducts,
 }: Props) => {
   return (
     <>
@@ -67,8 +71,7 @@ const AdditonalConfigOptions = ({
             includeNone
             label={'Prequalify for a product'}
             fieldName="prequalifyForProduct"
-            options={Object.values(ProductType)
-              // TODO - support this later.
+            options={platformEnabledProducts
               .filter(notInvoiceFinancingProduct)
               .map((productType) => ({
                 label: productTypeToDisplayName[productType],

@@ -10,11 +10,7 @@ import { v4 } from 'uuid'
 import * as Yup from 'yup'
 import AdditonalConfigOptions from './additionalConfigOptions'
 import { saveCredentials } from '@/store/authSlice'
-import {
-  KanmonClient,
-  axiosWithApiKey,
-  basicCssClassUpdater,
-} from '../../utils'
+import { KanmonClient, axiosWithApiKey, basicCssClassUpdater } from '@/utils'
 import Button from '../shared/Button'
 import FormikTextInput from '../shared/FormikTextField'
 import {
@@ -23,8 +19,8 @@ import {
   ProductType,
   TestingPrequalType,
   UserRole,
-} from '../../types/MoreTypes'
-import { getApiKeyState, resetApiKey } from '../../store/apiKeySlice'
+} from '@/types/MoreTypes'
+import { getApiKeyState, resetApiKey } from '@/store/apiKeySlice'
 import storage from 'redux-persist/lib/storage'
 import { resetStoreAction } from '@/store/store'
 
@@ -97,6 +93,18 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
   )
 
   const {
+    value: platform,
+    error: getPlatformError,
+    loading: getPlatformLoading,
+  } = useAsync(async () => {
+    if (apiKey) {
+      return new KanmonClient(
+        apiKey,
+      ).TEST_ONLY_GetPlatformForAuthenticatedUser()
+    }
+  })
+
+  const {
     value: existingBusinesses = [],
     error: existingBusinessesError,
     loading: existingBusinessesLoading,
@@ -131,8 +139,9 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
     return []
   }, [apiKey])
 
-  const error = existingBusinessesError || (createBusinessError as any)
-  const loading = existingBusinessesLoading
+  const error =
+    existingBusinessesError || (createBusinessError as any) || getPlatformError
+  const loading = existingBusinessesLoading || getPlatformLoading
 
   const onStartWithNewBusinessClick = async ({
     prequalifyForProduct,
@@ -329,6 +338,10 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                                 }
                                 handleSubmit={handleSubmit}
                                 isValid={isValid}
+                                platformEnabledProducts={
+                                  platform?.enabledProducts ??
+                                  Object.values(ProductType)
+                                }
                               />
                             )}
                           </>
@@ -412,6 +425,10 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                                 }
                                 handleSubmit={handleSubmit}
                                 isValid={isValid}
+                                platformEnabledProducts={
+                                  platform?.enabledProducts ??
+                                  Object.values(ProductType)
+                                }
                               />
                             )}
                           </>

@@ -12,7 +12,13 @@ import {
   GetUsersResponse,
   GetUsersRequest,
 } from '@kanmon/sdk'
-import { ProductType, TestingPrequalType, UserRole } from '../types/MoreTypes'
+import {
+  ProductType,
+  TestingPrequalType,
+  UserRole,
+  IntegrationType,
+  PlatformChannel,
+} from '../types/MoreTypes'
 
 const NEXT_PUBLIC_KANMON_API_HOST = process.env.NEXT_PUBLIC_KANMON_API_HOST
 const NEXT_PUBLIC_DEPLOY_ENV = process.env.NEXT_PUBLIC_DEPLOY_ENV as
@@ -109,6 +115,16 @@ export class BusinessIdParams {
   businessId!: string
 }
 
+export interface PlatformDetails {
+  platformId: string
+  integrationType: IntegrationType
+  programName: string
+  prequalEnabled: boolean
+  channel: PlatformChannel | null
+  domainName: string
+  enabledProducts?: ProductType[]
+}
+
 export class KanmonClient {
   apiKey: string
   // Use the Kanmon Platform API sdk where possible
@@ -186,4 +202,18 @@ export class KanmonClient {
     )
     return response.data
   }
+
+  TEST_ONLY_GetPlatformForAuthenticatedUser =
+    async (): Promise<PlatformDetails | null> => {
+      const headers = this.getApiHeader()
+
+      const response = await axios.get(
+        `${NEXT_PUBLIC_KANMON_API_HOST}/v1/testing/platform`,
+        {
+          headers,
+        },
+      )
+
+      return response.data
+    }
 }
