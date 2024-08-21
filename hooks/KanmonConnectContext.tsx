@@ -72,7 +72,8 @@ const KanmonConnectContextProvider = ({
 
     const config: KanmonConnectParams = {
       connectToken,
-      environment: 'LOCAL' as KanmonConnectEnviroment,
+      environment: process.env
+        .NEXT_PUBLIC_DEPLOY_ENV as KanmonConnectEnviroment,
       ...(connectParamOverrides ? connectParamOverrides : {}),
       customInitializationName: query?.customInitializationName as
         | string
