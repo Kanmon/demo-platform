@@ -1,8 +1,7 @@
-import { TestApiKeyErrorCode } from '@/pages/api/test_api_key'
 import { axiosWithApiKey } from '@/utils'
+import { getErrorCodeFromAxiosError } from '@/utils/getErrorCodeFromAxiosError'
 import { Alert, TextField } from '@mui/material'
 import Modal from '@mui/material/Modal'
-import { isAxiosError } from 'axios'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
@@ -13,10 +12,7 @@ import Button from '../shared/Button'
 const getSaveApiKeyErrorMessage = (error: any) => {
   if (!error) return null
 
-  if (
-    isAxiosError(error) &&
-    error.response?.data.errorCode === TestApiKeyErrorCode.INVALID_API_KEY
-  ) {
+  if (getErrorCodeFromAxiosError(error) === 'ForbiddenException') {
     return 'You entered an invalid Kanmon API Key. Please try again.'
   }
 

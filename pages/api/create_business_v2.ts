@@ -3,12 +3,16 @@ import {
   Business,
   CreateUserRequestBodyRolesEnum,
 } from '@kanmon/sdk'
-import { plainToClass } from 'class-transformer'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { v4 } from 'uuid'
 
 import {
+  transformAndValidate,
+  ValidationError,
+} from '@/utils/transformAndValidate'
+import {
   CreateBusinessAndUserRequestBody,
+  ResponseWithErrorCode,
   TestingPrequalType,
 } from '../../types/MoreTypes'
 import { extractApiKeyFromHeader } from '../../utils'
@@ -29,7 +33,15 @@ const create_business_v2 = async (
     return
   }
 
-  const payload = plainToClass(CreateBusinessAndUserRequestBody, req.body)
+  let payload
+  try {
+    payload = transformAndValidate(CreateBusinessAndUserRequestBody, req.body)
+  } catch (ex) {
+    if (ex instanceof ValidationError) {
+      return res.status(400).send({ error: ex.errors })
+    }
+    return res.status(500).send('Unexpected error')
+  }
 
   const client = new KanmonClient(apiKey)
 
@@ -44,11 +56,17 @@ const create_business_v2 = async (
         payload.prequalType,
       )
       res.status(200).json({ message: 'Success!' })
-    } catch (ex) {
-      console.error(ex)
-      res.status(500).json({
-        message: 'Failed to create anon test prequalification',
-      })
+    } catch (ex: any) {
+      console.error('Failed to create anon test prequalification.', ex)
+
+      const response: ResponseWithErrorCode = {
+        errorCode: ex?.response?.data?.errorCode ?? 'UNEXPECTED_ERROR',
+        message:
+          ex?.response?.data?.errorCode ??
+          'Failed to create anon test prequalification.',
+      }
+
+      res.status(ex?.response?.status ?? 500).json(response)
     }
     return
   }
@@ -107,18 +125,22 @@ const create_business_v2 = async (
       roles: payload.userRoles as unknown as CreateUserRequestBodyRolesEnum[],
     })
 
-    if (payload.prequalifyForProduct) {
+    if (payload.prequalifyForProduct && payload.prequalType) {
       try {
         await client.TEST_ONLY_CreateTestingPrequalification(
           payload.platformBusinessId,
           payload.prequalifyForProduct,
           payload.prequalType,
         )
-      } catch (ex) {
-        console.error(ex)
-        res.status(500).json({
-          message: 'Failed to create standard test prequalification',
-        })
+      } catch (ex: any) {
+        const response: ResponseWithErrorCode = {
+          errorCode: ex?.response?.data?.errorCode ?? 'UNEXPECTED_ERROR',
+          message:
+            ex?.response?.data?.message ??
+            'Failed to create test prequalification.',
+        }
+
+        return res.status(ex?.response?.status ?? 500).json(response)
       }
     }
 
