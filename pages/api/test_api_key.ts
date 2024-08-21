@@ -1,15 +1,7 @@
 import { KanmonClient } from '@/utils/kanmonClient'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { extractApiKeyFromHeader } from '../../utils'
-
-export enum TestApiKeyErrorCode {
-  'INVALID_API_KEY' = 'INVALID_API_KEY',
-  'UNEXPECTED_ERROR' = 'UNEXPECTED_ERROR',
-}
-
-export interface TestApiKeyErrorResponse {
-  errorCode: TestApiKeyErrorCode
-}
+import { ResponseWithErrorCode } from '@/types/MoreTypes'
 
 const fetchIssuedProducts = async (
   req: NextApiRequest,
@@ -28,14 +20,10 @@ const fetchIssuedProducts = async (
     await client.getUsers({ limit: 1 })
     res.status(200).send('ok')
   } catch (ex: any) {
-    console.log('error testing API key', ex)
     const response = await ex?.response?.json()
 
-    const errorResponse: TestApiKeyErrorResponse = {
-      errorCode:
-        response.errorCode === 'ForbiddenException'
-          ? TestApiKeyErrorCode.INVALID_API_KEY
-          : TestApiKeyErrorCode.UNEXPECTED_ERROR,
+    const errorResponse: ResponseWithErrorCode = {
+      errorCode: response?.errorCode ?? 'UNEXPECTED_ERROR',
     }
 
     res.status(ex.response.status).send(errorResponse)

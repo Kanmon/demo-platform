@@ -1,5 +1,6 @@
 import { saveCredentials } from '@/store/authSlice'
 import { resetStoreAction } from '@/store/store'
+import { getErrorCodeFromAxiosError } from '@/utils/getErrorCodeFromAxiosError'
 import Alert from '@mui/material/Alert'
 import Autocomplete from '@mui/material/Autocomplete'
 import Modal from '@mui/material/Modal'
@@ -71,8 +72,8 @@ export interface FormValues {
   email: string
   userRoles: UserRole[]
   platformBusinessId: string
-  prequalifyForProduct?: ProductType | null
-  prequalType?: TestingPrequalType | null
+  prequalifyForProduct: ProductType | null
+  prequalType: TestingPrequalType | null
 }
 
 const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
@@ -153,7 +154,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
     return []
   }, [apiKey])
 
-  const error: any = existingBusinessesError || createBusinessError
+  const error = existingBusinessesError || createBusinessError
   const loading = existingBusinessesLoading
 
   const onStartWithNewBusinessClick = async ({
@@ -164,17 +165,17 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
     prequalType,
   }: {
     email: string
-    prequalifyForProduct?: ProductType
+    prequalifyForProduct: ProductType | null
     platformBusinessId: string
     userRoles: UserRole[]
-    prequalType?: TestingPrequalType
+    prequalType: TestingPrequalType | null
   }) => {
     createBusiness({
       email,
-      prequalifyForProduct,
+      prequalifyForProduct: prequalifyForProduct ?? undefined,
       platformBusinessId,
       userRoles,
-      prequalType,
+      prequalType: prequalType ?? undefined,
     })
   }
 
@@ -192,9 +193,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
   const renderErrorAlert = () => {
     if (!error) return null
 
-    console.log(error?.response?.data)
-
-    const maybeErrorCode = error?.response?.data?.errorCode
+    const maybeErrorCode = getErrorCodeFromAxiosError(error)
 
     if (
       maybeErrorCode === 'PrimaryBusinessOwnerAlreadyExistsForBusinessException'
@@ -317,7 +316,6 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                                   setShowAdditionalConfiguration
                                 }
                                 handleSubmit={handleSubmit}
-                                isValid={isValid}
                               />
                             )}
                           </>
@@ -400,7 +398,6 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                                   setShowAdditionalConfiguration
                                 }
                                 handleSubmit={handleSubmit}
-                                isValid={isValid}
                               />
                             )}
                           </>

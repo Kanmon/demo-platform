@@ -68,3 +68,8 @@ export enum PayorType {
   BUSINESS = 'BUSINESS',
   INDIVIDUAL = 'INDIVIDUAL',
 }
+
+export interface ResponseWithErrorCode {
+  errorCode: string
+  message?: string
+}

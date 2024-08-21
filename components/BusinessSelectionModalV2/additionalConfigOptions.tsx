@@ -19,12 +19,10 @@ export const notInvoiceFinancingProduct = (productType: ProductType) => {
 interface Props {
   setShowAdditionalConfiguration: (show: boolean) => void
   handleSubmit: () => void
-  isValid: boolean
 }
 const AdditonalConfigOptions = ({
   setShowAdditionalConfiguration,
   handleSubmit,
-  isValid,
 }: Props) => {
   return (
     <>
@@ -98,7 +96,6 @@ const AdditonalConfigOptions = ({
       <div className="mt-4">
         <Button
           fullWidth
-          // disabled={!isValid}
           variant="contained"
           color="primary"
           onClick={() => handleSubmit()}
