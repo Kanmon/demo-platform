@@ -27,9 +27,7 @@ export class CreateBusinessAndUserRequestBody {
   @IsEnum(ProductType)
   @ValidateIf(
     (o: CreateBusinessAndUserRequestBody) =>
-      (console.log('this is callled') as any) ||
-      !!o.prequalifyForProduct ||
-      !!o.prequalType,
+      !!o.prequalifyForProduct || !!o.prequalType,
   )
   prequalifyForProduct?: ProductType
 

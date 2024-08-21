@@ -24,8 +24,6 @@ export const transformAndValidate = <T, V>(
   // and eslint doesn't like the `object` type
   const validationResults = validateSync(converted as any)
 
-  console.log(converted, validationResults)
-
   const validationResultArray = validationResults.map((result) =>
     result.toString(),
   )
