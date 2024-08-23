@@ -1,9 +1,13 @@
-import { useState } from 'react'
+import { saveCredentials } from '@/store/authSlice'
+import { resetStoreAction } from '@/store/store'
+import { getErrorCodeFromAxiosError } from '@/utils/getErrorCodeFromAxiosError'
 import Alert from '@mui/material/Alert'
 import Autocomplete from '@mui/material/Autocomplete'
 import Modal from '@mui/material/Modal'
 import TextField from '@mui/material/TextField'
 import { Form, Formik } from 'formik'
+import { isNil } from 'lodash'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useAsync, useAsyncFn } from 'react-use'
 import { v4 } from 'uuid'
@@ -11,6 +15,19 @@ import * as Yup from 'yup'
 import AdditonalConfigOptions from './additionalConfigOptions'
 import { saveCredentials } from '@/store/authSlice'
 import { KanmonClient, axiosWithApiKey, basicCssClassUpdater } from '@/utils'
+import { getApiKeyState } from '../../store/apiKeySlice'
+import {
+  CreateBusinessAndUserRequestBody,
+  CreateUserResponsePayload,
+  ProductType,
+  TestingPrequalType,
+  UserRole,
+} from '../../types/MoreTypes'
+import {
+  KanmonClient,
+  axiosWithApiKey,
+  basicCssClassUpdater,
+} from '../../utils'
 import Button from '../shared/Button'
 import FormikTextInput from '../shared/FormikTextField'
 import {
@@ -23,6 +40,7 @@ import {
 import { getApiKeyState, resetApiKey } from '@/store/apiKeySlice'
 import storage from 'redux-persist/lib/storage'
 import { resetStoreAction } from '@/store/store'
+import AdditonalConfigOptions from './additionalConfigOptions'
 
 interface AutocompleteOption {
   email?: string
@@ -34,29 +52,41 @@ interface BusinessSelectionModalProps {
   open: boolean
 }
 
-const emailIsAlias = (email: string) => {
-  return email.includes('+')
-}
-
-const fakeAliasOnError = (email: string) => {
-  const splitEmail = email.split('@')
-
-  return splitEmail[0] + '+alias1@' + splitEmail[1]
-}
-
 const demoFlowStartingValidationSchema = Yup.object().shape({
   email: Yup.string()
     .email('Please enter a valid email')
     .trim()
     .required('Email is required'),
+  prequalifyForProduct: Yup.string()
+    .nullable()
+    .test(
+      'prequalify-for-product-required',
+      'Product is required',
+      (arg, context) => {
+        if (isNil(context.parent.prequalType)) return true
+
+        return !isNil(arg)
+      },
+    ),
+  prequalType: Yup.string()
+    .nullable()
+    .test(
+      'prequal-type-required',
+      'Prequal type is required',
+      (arg, context) => {
+        if (isNil(context.parent.prequalifyForProduct)) return true
+
+        return !isNil(arg)
+      },
+    ),
 })
 
 export interface FormValues {
   email: string
   userRoles: UserRole[]
   platformBusinessId: string
-  prequalifyForProduct?: ProductType
-  prequalType: TestingPrequalType
+  prequalifyForProduct: ProductType | null
+  prequalType: TestingPrequalType | null
 }
 
 const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
@@ -85,9 +115,19 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
         },
       })
 
-      const response = axiosResponse.data
+      const results = axiosResponse.data
 
-      return response
+      const { prequalType, email } = body
+
+      if (prequalType !== TestingPrequalType.ANON) {
+        dispatch(saveCredentials({ userId: results.id, email }))
+      } else {
+        setAnonSuccess(true)
+        // Close after 5 seconds
+        setTimeout(() => {
+          setAnonSuccess(false)
+        }, 5000)
+      }
     },
     [],
   )
@@ -139,9 +179,8 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
     return []
   }, [apiKey])
 
-  const error =
-    existingBusinessesError || (createBusinessError as any) || getPlatformError
-  const loading = existingBusinessesLoading || getPlatformLoading
+  const error = existingBusinessesError || createBusinessError
+  const loading = existingBusinessesLoading
 
   const onStartWithNewBusinessClick = async ({
     prequalifyForProduct,
@@ -151,27 +190,18 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
     prequalType,
   }: {
     email: string
-    prequalifyForProduct?: ProductType
+    prequalifyForProduct: ProductType | null
     platformBusinessId: string
     userRoles: UserRole[]
-    prequalType: TestingPrequalType
+    prequalType: TestingPrequalType | null
   }) => {
-    const results = await createBusiness({
+    createBusiness({
       email,
-      prequalifyForProduct,
+      prequalifyForProduct: prequalifyForProduct ?? undefined,
       platformBusinessId,
       userRoles,
-      prequalType,
+      prequalType: prequalType ?? undefined,
     })
-    if (prequalType !== TestingPrequalType.ANON) {
-      dispatch(saveCredentials({ userId: results.id, email }))
-    } else {
-      setAnonSuccess(true)
-      // Close after 5 seconds
-      setTimeout(() => {
-        setAnonSuccess(false)
-      }, 5000)
-    }
   }
 
   const onExistingBusinessSelect = () => {
@@ -185,53 +215,29 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
     )
   }
 
-  useAsync(async () => {
-    if (error) {
-      const errorResponse = await error.response.json()
-
-      if (errorResponse.errorCode === 'ForbiddenException') {
-        storage.removeItem('persist:kanmonDemo')
-        dispatch(resetApiKey())
-        return
-      }
-    }
-  }, [error])
-
-  const renderErrorAlert = ({ email }: { email: string }) => {
+  const renderErrorAlert = () => {
     if (!error) return null
 
-    if (
-      error.response.errorCode ===
-      'BusinessOwnerAlreadyExistsWithEmailException'
-    ) {
-      return (
-        <div className="text-left my-4">
-          <Alert severity="error" className="flex justify-center">
-            Looks like this email has been used before!
-            {emailIsAlias(email) ? (
-              <div>Please try a new alias!</div>
-            ) : (
-              <div>
-                We recommend using an alias, which can be done using a + symbol.
-                <br />
-                For example: <br />
-                {fakeAliasOnError(email)}
-              </div>
-            )}
-          </Alert>
-        </div>
-      )
-    }
+    const maybeErrorCode = getErrorCodeFromAxiosError(error)
 
     if (
-      error.response.errorCode ===
-      'PrimaryBusinessOwnerAlreadyExistsForBusinessException'
+      maybeErrorCode === 'PrimaryBusinessOwnerAlreadyExistsForBusinessException'
     ) {
       return (
         <div className="text-left my-4">
           <Alert severity="error" className="flex justify-center">
             Looks like this business already has a primary owner. If you want to
             create a new user for this business, try selecting another role.
+          </Alert>
+        </div>
+      )
+    }
+
+    if (maybeErrorCode === 'PrequalificationAlreadyExistsException') {
+      return (
+        <div className="text-left my-4">
+          <Alert severity="error" className="flex justify-center">
+            This business already has a prequalification for this product.{' '}
           </Alert>
         </div>
       )
@@ -252,8 +258,8 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
       email: `demo+${v4().slice(0, 18)}@kanmonhq.com`,
       userRoles: [UserRole.PRIMARY_OWNER],
       platformBusinessId: v4(),
-      prequalifyForProduct: undefined,
-      prequalType: TestingPrequalType.STANDARD,
+      prequalType: null,
+      prequalifyForProduct: null,
     }
   }
 
@@ -273,7 +279,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
           <div className="pt-12">
             <div className="mt-4 px-12">
               <Formik
-                onSubmit={(values, helpers) => {
+                onSubmit={(values) => {
                   onStartWithNewBusinessClick({
                     email: values.email,
                     userRoles: values.userRoles,
@@ -281,14 +287,12 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                     prequalifyForProduct: values.prequalifyForProduct,
                     prequalType: values.prequalType,
                   })
-                  // Reset the form after its succesful
-                  helpers.resetForm({ values: buildInitialValues() })
                 }}
                 initialValues={initialValues}
                 validationSchema={demoFlowStartingValidationSchema}
                 validateOnMount={true}
               >
-                {({ isValid, values, handleSubmit }) => {
+                {({ isValid, handleSubmit }) => {
                   return (
                     <>
                       <Form>
@@ -435,7 +439,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                         )}
                       </Form>
 
-                      {renderErrorAlert({ email: values.email })}
+                      {renderErrorAlert()}
                     </>
                   )
                 }}

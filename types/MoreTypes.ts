@@ -1,4 +1,5 @@
 import { Address } from '@kanmon/sdk'
+import { IsEnum, IsOptional, IsString, ValidateIf } from 'class-validator'
 
 export enum TestingPrequalType {
   STANDARD = 'STANDARD',
@@ -23,11 +24,25 @@ export enum ProductType {
 }
 
 export class CreateBusinessAndUserRequestBody {
+  @IsString()
   email!: string
+
+  @IsEnum(ProductType)
+  @ValidateIf(
+    (o: CreateBusinessAndUserRequestBody) =>
+      !!o.prequalifyForProduct || !!o.prequalType,
+  )
   prequalifyForProduct?: ProductType
+
+  @IsString()
   platformBusinessId!: string
+
+  @IsEnum(UserRole, { each: true })
   userRoles!: UserRole[]
-  prequalType!: TestingPrequalType
+
+  @IsEnum(TestingPrequalType)
+  @IsOptional()
+  prequalType?: TestingPrequalType
 }
 
 export type CreateUserResponsePayload = {
@@ -56,6 +71,11 @@ export const productTypeToDisplayName: Record<ProductType, string> = {
 export enum PayorType {
   BUSINESS = 'BUSINESS',
   INDIVIDUAL = 'INDIVIDUAL',
+}
+
+export interface ResponseWithErrorCode {
+  errorCode: string
+  message?: string
 }
 
 export enum IntegrationType {
