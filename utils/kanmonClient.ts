@@ -18,6 +18,7 @@ import {
   UserRole,
   IntegrationType,
   PlatformChannel,
+  ExternalProductType,
 } from '../types/MoreTypes'
 
 const NEXT_PUBLIC_KANMON_API_HOST = process.env.NEXT_PUBLIC_KANMON_API_HOST
@@ -122,7 +123,7 @@ export interface PlatformDetails {
   prequalEnabled: boolean
   channel: PlatformChannel | null
   domainName: string
-  enabledProducts?: ProductType[]
+  enabledProducts?: ExternalProductType[]
 }
 
 export class KanmonClient {

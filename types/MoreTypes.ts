@@ -23,6 +23,24 @@ export enum ProductType {
   LOC_TERM_LOAN = 'LOC_TERM_LOAN',
 }
 
+export enum ExternalProductType {
+  INVOICE_FINANCING = 'INVOICE_FINANCING',
+  TERM_LOAN = 'TERM_LOAN',
+  MCA = 'MCA',
+  LINE_OF_CREDIT = 'LINE_OF_CREDIT',
+  INTEGRATED_MCA = 'INTEGRATED_MCA',
+}
+export const externalProductTypeToInternalProductType: Record<
+  ExternalProductType,
+  ProductType
+> = {
+  [ExternalProductType.INVOICE_FINANCING]: ProductType.FAST_PAY,
+  [ExternalProductType.TERM_LOAN]: ProductType.TERM_LOAN,
+  [ExternalProductType.MCA]: ProductType.MCA,
+  [ExternalProductType.LINE_OF_CREDIT]: ProductType.LOC_TERM_LOAN,
+  [ExternalProductType.INTEGRATED_MCA]: ProductType.INTEGRATED_MCA,
+}
+
 export class CreateBusinessAndUserRequestBody {
   @IsString()
   email!: string
