@@ -209,7 +209,7 @@ export class KanmonClient {
       const headers = this.getApiHeader()
 
       const response = await axios.get(
-        `${NEXT_PUBLIC_KANMON_API_HOST}/v1/testing/platform`,
+        `${NEXT_PUBLIC_KANMON_API_HOST}/v1/testing/platforms`,
         {
           headers,
         },
