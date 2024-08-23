@@ -27,7 +27,6 @@ interface Props {
 const AdditonalConfigOptions = ({
   setShowAdditionalConfiguration,
   handleSubmit,
-  isValid,
   platformEnabledProducts,
 }: Props) => {
   return (
