@@ -115,9 +115,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
     [],
   )
 
-  const {
-    value: platform,
-  } = useAsync(async () => {
+  const { value: platform } = useAsync(async () => {
     if (apiKey) {
       return new KanmonClient(
         apiKey,
