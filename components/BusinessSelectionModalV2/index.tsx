@@ -13,7 +13,6 @@ import { useAsync, useAsyncFn } from 'react-use'
 import { v4 } from 'uuid'
 import * as Yup from 'yup'
 import AdditonalConfigOptions from './additionalConfigOptions'
-import { saveCredentials } from '@/store/authSlice'
 import { KanmonClient, axiosWithApiKey, basicCssClassUpdater } from '@/utils'
 import { getApiKeyState } from '../../store/apiKeySlice'
 import {
@@ -23,24 +22,8 @@ import {
   TestingPrequalType,
   UserRole,
 } from '../../types/MoreTypes'
-import {
-  KanmonClient,
-  axiosWithApiKey,
-  basicCssClassUpdater,
-} from '../../utils'
 import Button from '../shared/Button'
 import FormikTextInput from '../shared/FormikTextField'
-import {
-  CreateBusinessAndUserRequestBody,
-  CreateUserResponsePayload,
-  ProductType,
-  TestingPrequalType,
-  UserRole,
-} from '@/types/MoreTypes'
-import { getApiKeyState, resetApiKey } from '@/store/apiKeySlice'
-import storage from 'redux-persist/lib/storage'
-import { resetStoreAction } from '@/store/store'
-import AdditonalConfigOptions from './additionalConfigOptions'
 
 interface AutocompleteOption {
   email?: string
@@ -134,8 +117,6 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
 
   const {
     value: platform,
-    error: getPlatformError,
-    loading: getPlatformLoading,
   } = useAsync(async () => {
     if (apiKey) {
       return new KanmonClient(
