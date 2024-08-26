@@ -47,6 +47,7 @@ import {
 import { getApiKeyState } from '../../store/apiKeySlice'
 import { getAuthState } from '../../store/authSlice'
 import { KanmonConnectComponent } from '@kanmon/web-sdk'
+import { genericErrorMessage } from '@/utils/constants'
 
 function ApiInvoices() {
   const { showKanmonConnect } = useKanmonConnectContext()
@@ -242,24 +243,29 @@ function ApiInvoices() {
       includeInvoiceFile,
     }
 
-    const resp = await axiosWithApiKey(
-      apiKey,
-    ).post<PlatformApiCreateEmbeddedSessionResponse>(
-      '/api/create_embedded_sessions',
-      data,
-    )
+    try {
+      const resp = await axiosWithApiKey(
+        apiKey,
+      ).post<PlatformApiCreateEmbeddedSessionResponse>(
+        '/api/create_embedded_sessions',
+        data,
+      )
 
-    showKanmonConnect({
-      component: includeInvoiceFile
-        ? KanmonConnectComponent.SESSION_INVOICE_FLOW_WITH_INVOICE_FILE
-        : KanmonConnectComponent.SESSION_INVOICE_FLOW,
-      sessionToken: resp.data.sessionToken,
-    })
-    dispatch(
-      updateOnHide({
-        isOpen: true,
-      }),
-    )
+      showKanmonConnect({
+        component: includeInvoiceFile
+          ? KanmonConnectComponent.SESSION_INVOICE_FLOW_WITH_INVOICE_FILE
+          : KanmonConnectComponent.SESSION_INVOICE_FLOW,
+        sessionToken: resp.data.sessionToken,
+      })
+      dispatch(
+        updateOnHide({
+          isOpen: true,
+        }),
+      )
+    } catch (ex) {
+      console.error('Failed to create enbedded session', ex)
+      toast.error(genericErrorMessage)
+    }
   }
 
   const onFinanceSelectedInvoicesClick = async (
