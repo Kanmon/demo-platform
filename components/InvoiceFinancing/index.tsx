@@ -263,7 +263,7 @@ function ApiInvoices() {
         }),
       )
     } catch (ex) {
-      console.error('Failed to create enbedded session', ex)
+      console.error('Failed to create embedded session', ex)
       toast.error(genericErrorMessage)
     }
   }
