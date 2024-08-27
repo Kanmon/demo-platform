@@ -18,7 +18,6 @@ import { getApiKeyState } from '../../store/apiKeySlice'
 import {
   CreateBusinessAndUserRequestBody,
   CreateUserResponsePayload,
-  ExternalProductType,
   ProductType,
   TestingPrequalType,
   UserRole,
@@ -324,7 +323,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                                 isValid={isValid}
                                 platformEnabledProducts={
                                   platform?.enabledProducts ??
-                                  Object.values(ExternalProductType)
+                                  Object.values(ProductType)
                                 }
                               />
                             )}
@@ -411,7 +410,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                                 isValid={isValid}
                                 platformEnabledProducts={
                                   platform?.enabledProducts ??
-                                  Object.values(ExternalProductType)
+                                  Object.values(ProductType)
                                 }
                               />
                             )}

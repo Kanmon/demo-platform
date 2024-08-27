@@ -13,7 +13,6 @@ import {
   GetUsersRequest,
 } from '@kanmon/sdk'
 import {
-  ExternalProductType,
   ProductType,
   TestingPrequalType,
   UserRole,
@@ -116,7 +115,7 @@ export class BusinessIdParams {
 
 export interface PlatformDetails {
   id: string
-  enabledProducts?: ExternalProductType[]
+  enabledProducts?: ProductType[]
 }
 
 export class KanmonClient {

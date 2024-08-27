@@ -1,6 +1,6 @@
 import Button from '../shared/Button'
 import {
-  ExternalProductType,
+  ProductType,
   productTypeToDisplayName,
   TestingPrequalType,
   UserRole,
@@ -11,15 +11,16 @@ import { FormValues } from './index'
 import FormikSelectInput from '../shared/FormikSelectField'
 
 export const notInvoiceFinancingProduct = (
-  productType: ExternalProductType,
+  productType: ProductType,
 ) => {
-  return productType !== ExternalProductType.INVOICE_FINANCING
+  productType !== ProductType.INVOICE_FINANCING &&
+  productType !== ProductType.PURCHASE_ORDER
 }
 interface Props {
   setShowAdditionalConfiguration: (show: boolean) => void
   handleSubmit: () => void
   isValid: boolean
-  platformEnabledProducts: ExternalProductType[]
+  platformEnabledProducts: ProductType[]
 }
 const AdditonalConfigOptions = ({
   setShowAdditionalConfiguration,
