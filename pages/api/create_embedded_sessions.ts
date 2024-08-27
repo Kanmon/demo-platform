@@ -66,15 +66,13 @@ const getSessionInvoiceWithFileConnectSessionTokenData = async (
   const blobInvoices: Blob[] = []
 
   for (const _ of invoices) {
-    const data = fs
-      .readFileSync(
-        path.join(
-          process.cwd(),
-          process.env.CWD_PATH_TO_PUBLIC as string,
-          '/sample-invoice.pdf',
-        ),
-      )
-      .toString()
+    const data = fs.readFileSync(
+      path.join(
+        process.cwd(),
+        process.env.CWD_PATH_TO_PUBLIC as string,
+        '/sample-invoice.pdf',
+      ),
+    )
 
     const blob = new Blob([data], { type: 'application/pdf' })
 
