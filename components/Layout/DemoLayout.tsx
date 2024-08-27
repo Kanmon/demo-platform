@@ -25,6 +25,7 @@ const DemoLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <Head>
+        <link rel="icon" href="/images/favicon.ico"></link>
         <title>Kanmon Demo Platform</title>
       </Head>
       <TempReduxWrapper>
