@@ -1,17 +1,17 @@
-import { createContext, useContext, useEffect, useState } from 'react'
-import axios from 'axios'
-import { useAsyncFn } from 'react-use'
-import { useRouter } from 'next/router'
-import { useDispatch, useSelector } from 'react-redux'
-import { getApiKeyState } from '../store/apiKeySlice'
+import { resetStoreAction } from '@/store/store'
 import {
   KANMON_CONNECT,
-  KanmonConnectParams,
-  SentToKanmonConnectMessage,
   KanmonConnectComponent,
   KanmonConnectEnviroment,
+  KanmonConnectParams,
+  SentToKanmonConnectMessage,
 } from '@kanmon/web-sdk'
-import { resetStoreAction } from '@/store/store'
+import axios from 'axios'
+import { useRouter } from 'next/router'
+import { createContext, useContext, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useAsync } from 'react-use'
+import { getApiKeyState } from '../store/apiKeySlice'
 
 interface ShowArgs {
   component?: KanmonConnectComponent
@@ -54,10 +54,10 @@ const KanmonConnectContextProvider = ({
 
   const { query } = useRouter()
 
-  const [{ error }, startKanmon] = useAsyncFn(async function startKanmon() {
+  const { error } = useAsync(async function startKanmon() {
     // Note - typically platforms will not be sending their emails
     // to the connect endpoint. This is an implementation detail
-    // specific to the fake platform.
+    // specific to the demo platform.
     const params = new URLSearchParams()
     params.append('userId', userId)
     const connectUrl = `${connectUrlPath}?${params.toString()}`
@@ -85,10 +85,6 @@ const KanmonConnectContextProvider = ({
     KANMON_CONNECT.start(config)
 
     setReady(true)
-  })
-
-  useEffect(() => {
-    startKanmon()
   }, [])
 
   const sendMessageToIframe = (message: SentToKanmonConnectMessage) => {
