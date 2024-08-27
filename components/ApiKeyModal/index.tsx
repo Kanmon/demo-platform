@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux'
 import { useAsync, useAsyncFn } from 'react-use'
 import { saveApiKey } from '../../store/apiKeySlice'
 import Button from '../shared/Button'
+import { genericErrorMessage } from '@/utils/constants'
 
 const getSaveApiKeyErrorMessage = (error: any) => {
   if (!error) return null
@@ -16,7 +17,7 @@ const getSaveApiKeyErrorMessage = (error: any) => {
     return 'You entered an invalid Kanmon API Key. Please try again.'
   }
 
-  return 'An unexpected error occurred. Please try again or reach out to Kanmon for help.'
+  return genericErrorMessage
 }
 
 const ApiKeyModal = ({ open }: any) => {
