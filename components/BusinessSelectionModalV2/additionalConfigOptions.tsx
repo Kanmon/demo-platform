@@ -11,8 +11,10 @@ import { FormValues } from './index'
 import FormikSelectInput from '../shared/FormikSelectField'
 
 export const notInvoiceFinancingProduct = (productType: ProductType) => {
-  productType !== ProductType.INVOICE_FINANCING &&
+  return (
+    productType !== ProductType.INVOICE_FINANCING &&
     productType !== ProductType.PURCHASE_ORDER
+  )
 }
 interface Props {
   setShowAdditionalConfiguration: (show: boolean) => void
