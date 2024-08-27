@@ -20,6 +20,14 @@ export enum ProductType {
   TERM_LOAN = 'TERM_LOAN',
 }
 
+export enum ExternalProductType {
+  INVOICE_FINANCING = 'INVOICE_FINANCING',
+  TERM_LOAN = 'TERM_LOAN',
+  MCA = 'MCA',
+  LINE_OF_CREDIT = 'LINE_OF_CREDIT',
+  INTEGRATED_MCA = 'INTEGRATED_MCA',
+}
+
 export class CreateBusinessAndUserRequestBody {
   @IsString()
   email!: string

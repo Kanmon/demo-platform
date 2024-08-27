@@ -18,6 +18,7 @@ import { getApiKeyState } from '../../store/apiKeySlice'
 import {
   CreateBusinessAndUserRequestBody,
   CreateUserResponsePayload,
+  ExternalProductType,
   ProductType,
   TestingPrequalType,
   UserRole,
@@ -322,7 +323,8 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                                 handleSubmit={handleSubmit}
                                 isValid={isValid}
                                 platformEnabledProducts={
-                                  platform?.enabledProducts ?? Object.values(ProductType)
+                                  platform?.enabledProducts ??
+                                  Object.values(ExternalProductType)
                                 }
                               />
                             )}
@@ -408,7 +410,8 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                                 handleSubmit={handleSubmit}
                                 isValid={isValid}
                                 platformEnabledProducts={
-                                  platform?.enabledProducts ?? Object.values(ProductType)
+                                  platform?.enabledProducts ??
+                                  Object.values(ExternalProductType)
                                 }
                               />
                             )}
