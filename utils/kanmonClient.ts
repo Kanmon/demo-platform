@@ -12,11 +12,7 @@ import {
   GetUsersResponse,
   GetUsersRequest,
 } from '@kanmon/sdk'
-import {
-  ProductType,
-  TestingPrequalType,
-  UserRole,
-} from '../types/MoreTypes'
+import { ProductType, TestingPrequalType, UserRole } from '../types/MoreTypes'
 
 const NEXT_PUBLIC_KANMON_API_HOST = process.env.NEXT_PUBLIC_KANMON_API_HOST
 const NEXT_PUBLIC_DEPLOY_ENV = process.env.NEXT_PUBLIC_DEPLOY_ENV as
