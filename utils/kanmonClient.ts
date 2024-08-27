@@ -16,8 +16,6 @@ import {
   ProductType,
   TestingPrequalType,
   UserRole,
-  IntegrationType,
-  PlatformChannel,
 } from '../types/MoreTypes'
 
 const NEXT_PUBLIC_KANMON_API_HOST = process.env.NEXT_PUBLIC_KANMON_API_HOST
@@ -116,12 +114,7 @@ export class BusinessIdParams {
 }
 
 export interface PlatformDetails {
-  platformId: string
-  integrationType: IntegrationType
-  programName: string
-  prequalEnabled: boolean
-  channel: PlatformChannel | null
-  domainName: string
+  id: string
   enabledProducts?: ProductType[]
 }
 

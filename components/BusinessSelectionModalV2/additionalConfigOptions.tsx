@@ -19,7 +19,6 @@ export const notInvoiceFinancingProduct = (productType: ProductType) => {
 interface Props {
   setShowAdditionalConfiguration: (show: boolean) => void
   handleSubmit: () => void
-  isValid: boolean
   platformEnabledProducts: ProductType[]
 }
 const AdditonalConfigOptions = ({

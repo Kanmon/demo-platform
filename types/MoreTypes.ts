@@ -71,13 +71,3 @@ export interface ResponseWithErrorCode {
   errorCode: string
   message?: string
 }
-
-export enum IntegrationType {
-  CONNECT = 'CONNECT',
-  DIRECT = 'DIRECT',
-  DISCOVER = 'DISCOVER',
-}
-
-export enum PlatformChannel {
-  FIS = 'FIS',
-}
