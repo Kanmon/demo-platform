@@ -12,6 +12,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useAsync, useAsyncFn } from 'react-use'
 import { v4 } from 'uuid'
 import * as Yup from 'yup'
+import AdditonalConfigOptions from './additionalConfigOptions'
+import { KanmonClient, axiosWithApiKey, basicCssClassUpdater } from '@/utils'
 import { getApiKeyState } from '../../store/apiKeySlice'
 import {
   CreateBusinessAndUserRequestBody,
@@ -20,14 +22,8 @@ import {
   TestingPrequalType,
   UserRole,
 } from '../../types/MoreTypes'
-import {
-  KanmonClient,
-  axiosWithApiKey,
-  basicCssClassUpdater,
-} from '../../utils'
 import Button from '../shared/Button'
 import FormikTextInput from '../shared/FormikTextField'
-import AdditonalConfigOptions from './additionalConfigOptions'
 
 interface AutocompleteOption {
   email?: string
@@ -118,6 +114,14 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
     },
     [],
   )
+
+  const { value: platform } = useAsync(async () => {
+    if (apiKey) {
+      return new KanmonClient(
+        apiKey,
+      ).TEST_ONLY_GetPlatformForAuthenticatedUser()
+    }
+  })
 
   const {
     value: existingBusinesses = [],
@@ -316,6 +320,11 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                                   setShowAdditionalConfiguration
                                 }
                                 handleSubmit={handleSubmit}
+                                isValid={isValid}
+                                platformEnabledProducts={
+                                  platform?.enabledProducts ??
+                                  Object.values(ProductType)
+                                }
                               />
                             )}
                           </>
@@ -398,6 +407,11 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                                   setShowAdditionalConfiguration
                                 }
                                 handleSubmit={handleSubmit}
+                                isValid={isValid}
+                                platformEnabledProducts={
+                                  platform?.enabledProducts ??
+                                  Object.values(ProductType)
+                                }
                               />
                             )}
                           </>
