@@ -13,9 +13,7 @@ import FormikSelectInput from '../shared/FormikSelectField'
 export const notInvoiceFinancingProduct = (productType: ProductType) => {
   return (
     productType !== ProductType.INVOICE_FINANCING &&
-    productType !== ProductType.PURCHASE_ORDER &&
-    productType !== ProductType.FAST_PAY &&
-    productType != ProductType.EXTEND_PAY_PURCHASE_ORDER
+    productType !== ProductType.PURCHASE_ORDER
   )
 }
 interface Props {

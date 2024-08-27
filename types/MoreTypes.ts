@@ -18,9 +18,6 @@ export enum ProductType {
   MCA = 'MCA',
   INTEGRATED_MCA = 'INTEGRATED_MCA',
   TERM_LOAN = 'TERM_LOAN',
-  EXTEND_PAY_PURCHASE_ORDER = 'EXTEND_PAY_PURCHASE_ORDER',
-  FAST_PAY = 'FAST_PAY',
-  LOC_TERM_LOAN = 'LOC_TERM_LOAN',
 }
 
 export enum ExternalProductType {
@@ -34,10 +31,10 @@ export const externalProductTypeToInternalProductType: Record<
   ExternalProductType,
   ProductType
 > = {
-  [ExternalProductType.INVOICE_FINANCING]: ProductType.FAST_PAY,
+  [ExternalProductType.INVOICE_FINANCING]: ProductType.INVOICE_FINANCING,
   [ExternalProductType.TERM_LOAN]: ProductType.TERM_LOAN,
   [ExternalProductType.MCA]: ProductType.MCA,
-  [ExternalProductType.LINE_OF_CREDIT]: ProductType.LOC_TERM_LOAN,
+  [ExternalProductType.LINE_OF_CREDIT]: ProductType.LINE_OF_CREDIT,
   [ExternalProductType.INTEGRATED_MCA]: ProductType.INTEGRATED_MCA,
 }
 
@@ -81,9 +78,6 @@ export const productTypeToDisplayName: Record<ProductType, string> = {
   [ProductType.TERM_LOAN]: 'Term Loan',
   [ProductType.MCA]: 'Merchant Cash Advances',
   [ProductType.INTEGRATED_MCA]: 'Integrated Merchant Cash Advances',
-  [ProductType.FAST_PAY]: 'Invoice Financing',
-  [ProductType.EXTEND_PAY_PURCHASE_ORDER]: 'Purchase Order Financing',
-  [ProductType.LOC_TERM_LOAN]: 'Line of Credit',
 }
 
 export enum PayorType {
