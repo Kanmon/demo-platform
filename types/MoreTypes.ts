@@ -58,8 +58,8 @@ export const productTypeToDisplayName: Record<ProductType, string> = {
   [ProductType.PURCHASE_ORDER]: 'Purchase Order Financing',
   [ProductType.LINE_OF_CREDIT]: 'Line of Credit',
   [ProductType.TERM_LOAN]: 'Term Loan',
-  [ProductType.MCA]: 'Merchant Cash Advances',
-  [ProductType.INTEGRATED_MCA]: 'Integrated Merchant Cash Advances',
+  [ProductType.MCA]: 'Merchant Cash Advance',
+  [ProductType.INTEGRATED_MCA]: 'Integrated Merchant Cash Advance',
 }
 
 export enum PayorType {
