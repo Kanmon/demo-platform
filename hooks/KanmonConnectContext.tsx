@@ -4,7 +4,6 @@ import {
   KanmonConnectComponent,
   KanmonConnectEnviroment,
   KanmonConnectParams,
-  SentToKanmonConnectMessage,
 } from '@kanmon/web-sdk'
 import axios from 'axios'
 import { useRouter } from 'next/router'
@@ -21,7 +20,6 @@ interface ShowArgs {
 interface KanmonConnectContext {
   ready: boolean
   error: Error | undefined
-  sendMessageToIframe: (message: SentToKanmonConnectMessage) => void
   showKanmonConnect: (showArgs?: ShowArgs) => void
 }
 
@@ -87,10 +85,6 @@ const KanmonConnectContextProvider = ({
     setReady(true)
   }, [])
 
-  const sendMessageToIframe = (message: SentToKanmonConnectMessage) => {
-    KANMON_CONNECT.sendMessageToIframe(message)
-  }
-
   const showKanmonConnect = (showArgs?: ShowArgs) => {
     KANMON_CONNECT.show(showArgs)
   }
@@ -104,9 +98,7 @@ const KanmonConnectContextProvider = ({
   }, [error])
 
   return (
-    <KanmonConnectContext.Provider
-      value={{ ready, error, sendMessageToIframe, showKanmonConnect }}
-    >
+    <KanmonConnectContext.Provider value={{ ready, error, showKanmonConnect }}>
       {children}
     </KanmonConnectContext.Provider>
   )
