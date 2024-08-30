@@ -4,7 +4,6 @@ import {
   KanmonConnectComponent,
   KanmonConnectEnviroment,
   KanmonConnectParams,
-  SentToKanmonConnectMessage,
 } from '@kanmon/web-sdk'
 import axios from 'axios'
 import { useRouter } from 'next/router'
@@ -99,9 +98,7 @@ const KanmonConnectContextProvider = ({
   }, [error])
 
   return (
-    <KanmonConnectContext.Provider
-      value={{ ready, error, showKanmonConnect }}
-    >
+    <KanmonConnectContext.Provider value={{ ready, error, showKanmonConnect }}>
       {children}
     </KanmonConnectContext.Provider>
   )
