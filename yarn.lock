@@ -343,10 +343,10 @@
     node-fetch "^2.6.0"
     url-parse "^1.4.3"
 
-"@kanmon/web-sdk@^2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@kanmon/web-sdk/-/web-sdk-2.2.1.tgz#d01c7052284e1ba803eaf576608348e5f9436e2c"
-  integrity sha512-4+GccNfQouBf7bPp2wU82FXGReley/y2+KT8NoWGf/6pACNiVaDU7BZWqHjveKNQbvCKi7pF4ztz264fxlcdNA==
+"@kanmon/web-sdk@^2.2.2":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@kanmon/web-sdk/-/web-sdk-2.2.2.tgz#2cc8cd99f267db0f4168c42a9c9dbdc40d66041d"
+  integrity sha512-1Uv3ecqkearwHTOoNi9+mJDKtzlSjnFTfX1xbwhkzIG14ZNZv5bXipF2S8wUWKwpfz6VXCrEaCRopnC12r/6xA==
   dependencies:
     tslib "^2.3.0"
 
@@ -2607,9 +2607,9 @@ merge2@^1.3.0, merge2@^1.4.1:
   integrity sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==
 
 micromatch@^4.0.4, micromatch@^4.0.5:
-  version "4.0.7"
-  resolved "https://registry.yarnpkg.com/micromatch/-/micromatch-4.0.7.tgz#33e8190d9fe474a9895525f5618eee136d46c2e5"
-  integrity sha512-LPP/3KorzCwBxfeUuZmaR6bG2kdeHSbe0P2tY3FLRU4vYrjYz5hI4QZwV0njUx3jeuKe67YukQ1LSPZBKDqO/Q==
+  version "4.0.8"
+  resolved "https://registry.yarnpkg.com/micromatch/-/micromatch-4.0.8.tgz#d66fa18f3a47076789320b9b1af32bd86d9fa202"
+  integrity sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==
   dependencies:
     braces "^3.0.3"
     picomatch "^2.3.1"
