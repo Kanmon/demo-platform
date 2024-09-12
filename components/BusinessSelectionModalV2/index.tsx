@@ -24,6 +24,7 @@ import {
 } from '../../types/MoreTypes'
 import Button from '../shared/Button'
 import FormikTextInput from '../shared/FormikTextField'
+import _ from 'lodash'
 
 interface AutocompleteOption {
   email?: string
@@ -142,9 +143,15 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
 
       const businesses = response.businesses
 
+      if (_.isEmpty(businesses)) {
+        return []
+      }
+
       const businessIds = businesses.map((b) => b.id).join(',')
 
-      const userResponse = await kanmonClient.getUsers({ businessIds })
+      const userResponse = await kanmonClient.getUsers({
+        businessIds,
+      })
 
       const matchingPrimaryUsers = userResponse.users.filter((u) =>
         u.roles?.includes(UserRole.PRIMARY_OWNER),
