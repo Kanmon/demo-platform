@@ -20,12 +20,6 @@ export const UserMenu = ({ align }: { align: string }) => {
   const authState = useSelector(getAuthState)
   const kanmonConnectState = useSelector(getKanmonConnectSlice)
 
-  const shouldDisplayDevToolIds =
-    process.env.NEXT_PUBLIC_DEPLOY_ENV &&
-    ['development', 'sandbox', 'staging'].includes(
-      process.env.NEXT_PUBLIC_DEPLOY_ENV,
-    )
-
   const trigger = useRef<HTMLButtonElement>(null)
   const dropdown = useRef<HTMLDivElement>(null)
 
@@ -97,7 +91,7 @@ export const UserMenu = ({ align }: { align: string }) => {
       </button>
 
       <Transition
-        className={`origin-top-right z-10 absolute top-full min-w-44 bg-white border border-slate-200 py-1.5 rounded shadow-lg overflow-hidden mt-1 ${
+        className={`origin-top-right z-10 absolute top-full min-w-52 bg-white border border-slate-200 py-1.5 rounded shadow-lg overflow-hidden mt-1 ${
           align === 'right' ? 'right-0' : 'left-0'
         }`}
         show={dropdownOpen}
@@ -138,25 +132,33 @@ export const UserMenu = ({ align }: { align: string }) => {
               </div>
             </li>
             <li>
-              {shouldDisplayDevToolIds && authState?.userId && (
-                <div className="font-medium text-sm flex items-center py-1 px-3">
+              {authState?.userId && (
+                <div className="font-medium text-sm flex items-center py-1 px-3 truncate max-w-40">
                   <CopyTextWithToolTip textToBeCopied={authState?.userId}>
-                    userId
+                    {`User ID: ${authState?.userId}`}
                   </CopyTextWithToolTip>
                 </div>
               )}
             </li>
             <li>
-              {shouldDisplayDevToolIds &&
-                kanmonConnectState.issuedProduct?.id && (
-                  <div className="font-medium text-sm flex items-center py-1 px-3">
-                    <CopyTextWithToolTip
-                      textToBeCopied={kanmonConnectState.issuedProduct?.id}
-                    >
-                      issuedProductId
-                    </CopyTextWithToolTip>
-                  </div>
-                )}
+              {authState?.businessId && (
+                <div className="font-medium text-sm flex items-center py-1 px-3 truncate max-w-40">
+                  <CopyTextWithToolTip textToBeCopied={authState?.businessId}>
+                    {`Business ID: ${authState?.businessId}`}
+                  </CopyTextWithToolTip>
+                </div>
+              )}
+            </li>
+            <li>
+              {kanmonConnectState.issuedProduct?.id && (
+                <div className="font-medium text-sm flex items-center py-1 px-3">
+                  <CopyTextWithToolTip
+                    textToBeCopied={kanmonConnectState.issuedProduct?.id}
+                  >
+                    {`Issued Product ID: ${kanmonConnectState.issuedProduct?.id}`}
+                  </CopyTextWithToolTip>
+                </div>
+              )}
             </li>
           </ul>
         </div>

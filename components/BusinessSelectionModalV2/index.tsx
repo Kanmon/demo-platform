@@ -29,6 +29,7 @@ interface AutocompleteOption {
   email?: string
   userId: string
   platformUserId?: string
+  businessId: string
 }
 
 interface BusinessSelectionModalProps {
@@ -103,7 +104,13 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
       const { prequalType, email } = body
 
       if (prequalType !== TestingPrequalType.ANON) {
-        dispatch(saveCredentials({ userId: results.id, email }))
+        dispatch(
+          saveCredentials({
+            userId: results.id,
+            email,
+            businessId: results.businessId,
+          }),
+        )
       } else {
         setAnonSuccess(true)
         // Close after 5 seconds
@@ -150,6 +157,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
             email: u.email as unknown as string,
             platformUserId: u.platformUserId,
             userId: u.id,
+            businessId: u.businessId,
           }
         })
         .filter((biz) => biz.email || biz.platformUserId)
@@ -190,6 +198,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
       saveCredentials({
         userId: selectedUser.userId,
         email: selectedUser.email,
+        businessId: selectedUser.businessId,
       }),
     )
   }
@@ -347,7 +356,10 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                                     setSelectedUser(value)
                                   }}
                                   getOptionLabel={(o: AutocompleteOption) =>
-                                    o.email || o.platformUserId || o.userId
+                                    o.email ||
+                                    o.platformUserId ||
+                                    o.userId ||
+                                    o.businessId
                                   }
                                   renderInput={(params) => (
                                     <TextField
