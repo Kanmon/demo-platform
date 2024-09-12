@@ -9,12 +9,36 @@ import { resetStoreAction } from '@/store/store'
 import Image from 'next/image'
 import { useDispatch, useSelector } from 'react-redux'
 import Transition from './Transition'
+import { getAuthState } from '@/store/authSlice'
+import { CopyTextWithToolTip } from '@/components/CopyTextWithToolTip'
+import { getKanmonConnectSlice } from '@/store/kanmonConnectSlice'
+import { faCopy } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+const IdentifierMenuItem = ({
+  textToBeCopied,
+  content,
+}: {
+  textToBeCopied: string
+  content: React.ReactNode
+}) => {
+  return (
+    <CopyTextWithToolTip textToBeCopied={textToBeCopied}>
+      <div className="font-medium text-sm py-1 pr-3 w-[200px] text-ellipsis whitespace-nowrap overflow-hidden">
+        <FontAwesomeIcon className="inline w-3 mr-2" icon={faCopy} />
+        {content}
+      </div>
+    </CopyTextWithToolTip>
+  )
+}
 
 export const UserMenu = ({ align }: { align: string }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dispatch = useDispatch()
   const [clickCounter, setClickCounter] = useState(0)
   const { buttonBgColor } = useSelector(getCustomizationState)
+  const authState = useSelector(getAuthState)
+  const kanmonConnectState = useSelector(getKanmonConnectSlice)
 
   const trigger = useRef<HTMLButtonElement>(null)
   const dropdown = useRef<HTMLDivElement>(null)
@@ -87,7 +111,7 @@ export const UserMenu = ({ align }: { align: string }) => {
       </button>
 
       <Transition
-        className={`origin-top-right z-10 absolute top-full min-w-44 bg-white border border-slate-200 py-1.5 rounded shadow-lg overflow-hidden mt-1 ${
+        className={`origin-top-right z-10 absolute top-full min-w-52 bg-white border border-slate-200 py-1.5 rounded shadow-lg overflow-hidden mt-1 ${
           align === 'right' ? 'right-0' : 'left-0'
         }`}
         show={dropdownOpen}
@@ -110,6 +134,24 @@ export const UserMenu = ({ align }: { align: string }) => {
           >
             <div className="font-medium text-slate-800">Tycho LLC</div>
             <div className="text-xs text-slate-500 italic">Administrator</div>
+            {authState?.userId && (
+              <IdentifierMenuItem
+                textToBeCopied={authState?.userId}
+                content={`User ID: ${authState.userId}`}
+              />
+            )}
+            {authState?.businessId && (
+              <IdentifierMenuItem
+                textToBeCopied={authState?.businessId}
+                content={`Business ID: ${authState.businessId}`}
+              />
+            )}
+            {kanmonConnectState.issuedProduct?.id && (
+              <IdentifierMenuItem
+                textToBeCopied={kanmonConnectState.issuedProduct.id}
+                content={`Issued Product ID: ${kanmonConnectState.issuedProduct?.id}`}
+              />
+            )}
           </div>
           <ul>
             <li>

@@ -113,7 +113,6 @@ export interface PlatformDetails {
   id: string
   enabledProducts?: ProductType[]
 }
-
 export class KanmonClient {
   apiKey: string
   // Use the Kanmon Platform API sdk where possible

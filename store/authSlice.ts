@@ -5,11 +5,13 @@ import { AppState } from './store'
 export interface AuthState {
   userId: string | undefined
   email: string | undefined
+  businessId: string | undefined
 }
 
 const initialState: AuthState = {
   userId: undefined,
   email: undefined,
+  businessId: undefined,
 }
 
 export const authSlice = createSlice({
@@ -18,10 +20,13 @@ export const authSlice = createSlice({
   reducers: {
     saveCredentials(
       state,
-      action: { payload: { email?: string; userId: string } },
+      action: {
+        payload: { email?: string; userId: string; businessId: string }
+      },
     ) {
       state.email = action.payload.email
       state.userId = action.payload.userId
+      state.businessId = action.payload.businessId
     },
   },
 
