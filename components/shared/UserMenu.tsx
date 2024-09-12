@@ -12,11 +12,6 @@ import Transition from './Transition'
 import { getAuthState } from '@/store/authSlice'
 import { CopyTextWithToolTip } from '@/components/CopyTextWithToolTip'
 import { getKanmonConnectSlice } from '@/store/kanmonConnectSlice'
-import { getApiKeyState } from '@/store/apiKeySlice'
-import { useAsync } from 'react-use'
-import { KanmonClient } from '@/utils'
-import Alert from '@mui/material/Alert'
-
 export const UserMenu = ({ align }: { align: string }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dispatch = useDispatch()
@@ -24,7 +19,6 @@ export const UserMenu = ({ align }: { align: string }) => {
   const { buttonBgColor } = useSelector(getCustomizationState)
   const authState = useSelector(getAuthState)
   const kanmonConnectState = useSelector(getKanmonConnectSlice)
-  const apiKeyState = useSelector(getApiKeyState)
 
   const shouldDisplayDevToolIds =
     process.env.NEXT_PUBLIC_DEPLOY_ENV &&
@@ -61,20 +55,6 @@ export const UserMenu = ({ align }: { align: string }) => {
     return () => document.removeEventListener('keydown', keyHandler)
   })
 
-  const {
-    value: offer,
-    error: getOfferError,
-    loading: getOfferLoading,
-  } = useAsync(async () => {
-    if (apiKeyState.apiKey && kanmonConnectState.issuedProduct?.offerId) {
-      const kanmonClient = new KanmonClient(apiKeyState.apiKey)
-
-      return kanmonClient.TEST_ONLY_GetOffer(
-        kanmonConnectState.issuedProduct.offerId,
-      )
-    }
-  }, [apiKeyState.apiKey])
-
   const hiddenEditModeClick = () => {
     const newClickCounter = clickCounter + 1
 
@@ -85,17 +65,6 @@ export const UserMenu = ({ align }: { align: string }) => {
       dispatch(toggleEditMode({}))
       setClickCounter(0)
     }
-  }
-
-  if (getOfferError) {
-    return (
-      <div className="text-left my-4">
-        <Alert severity="error" className="flex justify-center">
-          Looks like this business already has a primary owner. If you want to
-          create a new user for this business, try selecting another role.
-        </Alert>
-      </div>
-    )
   }
 
   return (
@@ -185,19 +154,6 @@ export const UserMenu = ({ align }: { align: string }) => {
                       textToBeCopied={kanmonConnectState.issuedProduct?.id}
                     >
                       issuedProductId
-                    </CopyTextWithToolTip>
-                  </div>
-                )}
-            </li>
-            <li>
-              {shouldDisplayDevToolIds &&
-                !getOfferLoading &&
-                offer?.loanApplicationId && (
-                  <div className="font-medium text-sm flex items-center py-1 px-3">
-                    <CopyTextWithToolTip
-                      textToBeCopied={offer.loanApplicationId}
-                    >
-                      loanApplicationId
                     </CopyTextWithToolTip>
                   </div>
                 )}

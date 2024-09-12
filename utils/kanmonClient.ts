@@ -113,12 +113,6 @@ export interface PlatformDetails {
   id: string
   enabledProducts?: ProductType[]
 }
-
-export interface OfferDetails {
-  id: string
-  loanApplicationId: string
-}
-
 export class KanmonClient {
   apiKey: string
   // Use the Kanmon Platform API sdk where possible
@@ -210,17 +204,4 @@ export class KanmonClient {
 
       return response.data
     }
-
-  TEST_ONLY_GetOffer = async (offerId: string): Promise<OfferDetails> => {
-    const headers = this.getApiHeader()
-
-    const response = await axios.get(
-      `${NEXT_PUBLIC_KANMON_API_HOST}/v1/testing/offers/${offerId}`,
-      {
-        headers,
-      },
-    )
-
-    return response.data
-  }
 }
