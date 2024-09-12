@@ -12,6 +12,26 @@ import Transition from './Transition'
 import { getAuthState } from '@/store/authSlice'
 import { CopyTextWithToolTip } from '@/components/CopyTextWithToolTip'
 import { getKanmonConnectSlice } from '@/store/kanmonConnectSlice'
+import { faCopy } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+const IdentifierMenuItem = ({
+  textToBeCopied,
+  content,
+}: {
+  textToBeCopied: string
+  content: React.ReactNode
+}) => {
+  return (
+    <CopyTextWithToolTip textToBeCopied={textToBeCopied}>
+      <div className="font-medium text-sm py-1 pr-3 w-[200px] text-ellipsis whitespace-nowrap overflow-hidden">
+        <FontAwesomeIcon className="inline w-3 mr-2" icon={faCopy} />
+        {content}
+      </div>
+    </CopyTextWithToolTip>
+  )
+}
+
 export const UserMenu = ({ align }: { align: string }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dispatch = useDispatch()
@@ -114,6 +134,24 @@ export const UserMenu = ({ align }: { align: string }) => {
           >
             <div className="font-medium text-slate-800">Tycho LLC</div>
             <div className="text-xs text-slate-500 italic">Administrator</div>
+            {authState?.userId && (
+              <IdentifierMenuItem
+                textToBeCopied={authState?.userId}
+                content={`User ID: ${authState.userId}`}
+              />
+            )}
+            {authState?.businessId && (
+              <IdentifierMenuItem
+                textToBeCopied={authState?.businessId}
+                content={`Business ID: ${authState.businessId}`}
+              />
+            )}
+            {kanmonConnectState.issuedProduct?.id && (
+              <IdentifierMenuItem
+                textToBeCopied={kanmonConnectState.issuedProduct.id}
+                content={`Issued Product ID: ${kanmonConnectState.issuedProduct?.id}`}
+              />
+            )}
           </div>
           <ul>
             <li>
@@ -130,35 +168,6 @@ export const UserMenu = ({ align }: { align: string }) => {
                   Start Over
                 </div>
               </div>
-            </li>
-            <li>
-              {authState?.userId && (
-                <div className="font-medium text-sm flex items-center py-1 px-3 truncate max-w-40">
-                  <CopyTextWithToolTip textToBeCopied={authState?.userId}>
-                    {`User ID: ${authState?.userId}`}
-                  </CopyTextWithToolTip>
-                </div>
-              )}
-            </li>
-            <li>
-              {authState?.businessId && (
-                <div className="font-medium text-sm flex items-center py-1 px-3 truncate max-w-40">
-                  <CopyTextWithToolTip textToBeCopied={authState?.businessId}>
-                    {`Business ID: ${authState?.businessId}`}
-                  </CopyTextWithToolTip>
-                </div>
-              )}
-            </li>
-            <li>
-              {kanmonConnectState.issuedProduct?.id && (
-                <div className="font-medium text-sm flex items-center py-1 px-3">
-                  <CopyTextWithToolTip
-                    textToBeCopied={kanmonConnectState.issuedProduct?.id}
-                  >
-                    {`Issued Product ID: ${kanmonConnectState.issuedProduct?.id}`}
-                  </CopyTextWithToolTip>
-                </div>
-              )}
             </li>
           </ul>
         </div>
