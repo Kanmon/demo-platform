@@ -113,7 +113,7 @@ function InvoiceTableItem({
               <div className={`font-medium ${totalColor(invoice.status)}`}>
                 <span className="relative">
                   {hasSomeAmount ? (
-                    <>
+                    <div className="flex">
                       <span>{renderCentsValueAsDollarsWithCents(total)}</span>
                       {hovering && hasSomeAmount && (
                         <FontAwesomeIcon
@@ -129,9 +129,10 @@ function InvoiceTableItem({
                             )
                           }}
                           icon={faTrash}
+                          style={{ width: '16px', height: '16px' }}
                         />
                       )}
-                    </>
+                    </div>
                   ) : (
                     '—'
                   )}
