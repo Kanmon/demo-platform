@@ -4,6 +4,7 @@ import {
   KanmonConnectComponent,
   KanmonConnectEnviroment,
   KanmonConnectParams,
+  ExternalProductType,
 } from '@kanmon/web-sdk'
 import axios from 'axios'
 import { useRouter } from 'next/router'
@@ -68,6 +69,9 @@ const KanmonConnectContextProvider = ({
 
     const { connectToken } = connectTokenResponse.data
 
+    const productSubsetDuringOnboarding =
+      query?.productSubsetDuringOnboarding as string
+
     const config: KanmonConnectParams = {
       connectToken,
       environment: process.env
@@ -76,6 +80,9 @@ const KanmonConnectContextProvider = ({
       customInitializationName: query?.customInitializationName as
         | string
         | undefined,
+      productSubsetDuringOnboarding: productSubsetDuringOnboarding?.split(
+        ',',
+      ) as ExternalProductType[] | undefined,
     }
 
     // Initialize kanmon connect. There is no need to call `show`, since
