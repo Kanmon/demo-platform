@@ -32,6 +32,7 @@ const EditableDateField = ({
   }, [invoice, field])
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('e.target.value', e.target.value)
     const value = e.target.value
 
     setValue(value)
@@ -66,6 +67,8 @@ const EditableDateField = ({
 
     setFocused(false)
   }
+
+  console.log('value', field, value)
 
   return focused ? (
     <InputMaskFixed

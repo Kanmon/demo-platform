@@ -12,6 +12,7 @@ import path from 'path'
 import { PlatformInvoice } from '../../types/DemoInvoicesTypes'
 import { extractApiKeyFromHeader } from '../../utils'
 import getInvoiceTotalCents from '../../utils/getInvoiceTotal'
+import _ from 'lodash'
 
 export interface CreateEmbeddedSessionPayload {
   invoices: PlatformInvoice[]
@@ -114,6 +115,59 @@ const getSessionInvoiceWithFileConnectSessionTokenData = async (
   }
 }
 
+const getSessionInvoiceRelaxedConnectSessionTokenData = ({
+  platformBusinessId,
+  invoices,
+}: CreateEmbeddedSessionPayload): ConnectSessionTokenData => {
+  return {
+    platformBusinessId,
+    data: {
+      component: 'SESSION_INVOICE_FLOW_RELAXED',
+      invoices: invoices.map((invoice) => {
+        const sessionInvoice: SessionInvoice = {
+          payorType: invoice.payorType,
+          platformInvoiceId: invoice.id,
+          platformInvoiceNumber: invoice.invoiceNumber,
+          invoiceAmountCents: getInvoiceTotalCents(invoice, true),
+          invoiceIssuedDate: invoice.createdAtIsoDate,
+          invoiceDueDate: invoice.dueDateIsoDate as string,
+          payorBusinessName: invoice.billFromBusinessName,
+          payorFirstName: invoice.customerFirstName,
+          payorLastName: invoice.customerLastName,
+          payorEmail: invoice.billFromBusinessEmail,
+          payorAddress: invoice.billFromPersonAddress,
+          description: invoice.items.map((item) => item.itemName).join(', '),
+        }
+
+        return sessionInvoice
+      }),
+    } as any,
+  }
+}
+
+const getConnectSessionTokenData = async (
+  requestBody: CreateEmbeddedSessionPayload,
+  sdkClient: KanmonPlatformApi,
+): Promise<ConnectSessionTokenData> => {
+  if (requestBody.includeInvoiceFile) {
+    return getSessionInvoiceWithFileConnectSessionTokenData(
+      requestBody,
+      sdkClient,
+    )
+  }
+
+  if (
+    requestBody.invoices.some(
+      (invoice) =>
+        _.isNil(invoice.dueDateIsoDate) || _.isNil(invoice.createdAtIsoDate),
+    )
+  ) {
+    return getSessionInvoiceRelaxedConnectSessionTokenData(requestBody)
+  }
+
+  return getSessionInvoiceConnectSessionTokenData(requestBody)
+}
+
 const createEmbeddedSessions = async (
   req: NextApiRequest,
   res: NextApiResponse,
@@ -144,19 +198,14 @@ const createEmbeddedSessions = async (
   const sdkClient = new KanmonPlatformApi(apiKey, NEXT_PUBLIC_DEPLOY_ENV)
 
   const createEmbeddedSessionForInvoiceFlowBody: ConnectSessionTokenData =
-    requestBody.includeInvoiceFile
-      ? await getSessionInvoiceWithFileConnectSessionTokenData(
-          req.body,
-          sdkClient,
-        )
-      : getSessionInvoiceConnectSessionTokenData(req.body)
+    await getConnectSessionTokenData(requestBody, sdkClient)
 
   if (requestBody.includeInvoiceFile) {
     const createSessionTokenRequestBody = {
       businessId: createEmbeddedSessionForInvoiceFlowBody.businessId,
       platformBusinessId:
         createEmbeddedSessionForInvoiceFlowBody.platformBusinessId,
-      data: createEmbeddedSessionForInvoiceFlowBody.data as unknown as CreateSessionTokenRequestBodyData,
+      data: createEmbeddedSessionForInvoiceFlowBody.data as CreateSessionTokenRequestBodyData,
     }
 
     const session = await sdkClient.embeddedSessions.createEmbeddedSession({
@@ -172,7 +221,7 @@ const createEmbeddedSessions = async (
       businessId: createEmbeddedSessionForInvoiceFlowBody.businessId,
       platformBusinessId:
         createEmbeddedSessionForInvoiceFlowBody.platformBusinessId,
-      data: createEmbeddedSessionForInvoiceFlowBody.data as unknown as CreateSessionTokenRequestBodyData,
+      data: createEmbeddedSessionForInvoiceFlowBody.data as CreateSessionTokenRequestBodyData,
     },
   })
   res.send(session)
