@@ -122,7 +122,7 @@ const create_business_v2 = async (
         zipcode: '46217',
         country: 'USA',
       },
-      roles: payload.userRoles as unknown as CreateUserRequestBodyRolesEnum[],
+      roles: payload.userRoles,
     })
 
     if (payload.prequalifyForProduct && payload.prequalType) {

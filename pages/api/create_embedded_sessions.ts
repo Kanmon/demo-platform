@@ -10,9 +10,9 @@ import { NextApiRequest, NextApiResponse } from 'next'
 
 import path from 'path'
 import { PlatformInvoice } from '../../types/DemoInvoicesTypes'
-import { extractApiKeyFromHeader } from '../../utils'
+import { extractApiKeyFromHeader, KanmonClient } from '../../utils'
 import getInvoiceTotalCents from '../../utils/getInvoiceTotal'
-import _ from 'lodash'
+import _, { create } from 'lodash'
 
 export interface CreateEmbeddedSessionPayload {
   invoices: PlatformInvoice[]
@@ -189,6 +189,8 @@ const createEmbeddedSessions = async (
     return
   }
 
+  const client = new KanmonClient(apiKey)
+
   const NEXT_PUBLIC_DEPLOY_ENV = process.env.NEXT_PUBLIC_DEPLOY_ENV as
     | 'production'
     | 'sandbox'
@@ -200,18 +202,13 @@ const createEmbeddedSessions = async (
   const createEmbeddedSessionForInvoiceFlowBody: ConnectSessionTokenData =
     await getConnectSessionTokenData(requestBody, sdkClient)
 
-  if (requestBody.includeInvoiceFile) {
-    const createSessionTokenRequestBody = {
-      businessId: createEmbeddedSessionForInvoiceFlowBody.businessId,
-      platformBusinessId:
-        createEmbeddedSessionForInvoiceFlowBody.platformBusinessId,
-      data: createEmbeddedSessionForInvoiceFlowBody.data as CreateSessionTokenRequestBodyData,
-    }
-
-    const session = await sdkClient.embeddedSessions.createEmbeddedSession({
-      createSessionTokenRequestBody,
-    })
-
+  if (
+    (createEmbeddedSessionForInvoiceFlowBody.data.component as any) ===
+    'SESSION_INVOICE_FLOW_RELAXED'
+  ) {
+    const session = await client.TEST_ONLY_CreateEmbeddedSession(
+      createEmbeddedSessionForInvoiceFlowBody,
+    )
     res.send(session)
     return
   }
@@ -221,7 +218,7 @@ const createEmbeddedSessions = async (
       businessId: createEmbeddedSessionForInvoiceFlowBody.businessId,
       platformBusinessId:
         createEmbeddedSessionForInvoiceFlowBody.platformBusinessId,
-      data: createEmbeddedSessionForInvoiceFlowBody.data as CreateSessionTokenRequestBodyData,
+      data: createEmbeddedSessionForInvoiceFlowBody.data,
     },
   })
   res.send(session)

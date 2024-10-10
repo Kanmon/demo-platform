@@ -2,11 +2,11 @@ import { PatternFormat } from 'react-number-format'
 
 import { TextField } from '@mui/material'
 import { DateTime } from 'luxon'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { updateInvoice } from '../../store/apiInvoicesSlice'
-import { formatUTCISODate, renderValueAsDate } from '../../utils'
 import { PlatformInvoice } from '../../types/DemoInvoicesTypes'
+import { formatUTCISODate, renderValueAsDate } from '../../utils'
 
 const CustomInput = (inputProps: any) => (
   <TextField
