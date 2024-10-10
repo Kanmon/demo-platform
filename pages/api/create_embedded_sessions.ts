@@ -124,13 +124,13 @@ const getSessionInvoiceRelaxedConnectSessionTokenData = ({
     data: {
       component: 'SESSION_INVOICE_FLOW_RELAXED',
       invoices: invoices.map((invoice) => {
-        const sessionInvoice: SessionInvoice = {
+        const sessionInvoice = {
           payorType: invoice.payorType,
           platformInvoiceId: invoice.id,
           platformInvoiceNumber: invoice.invoiceNumber,
           invoiceAmountCents: getInvoiceTotalCents(invoice, true),
           invoiceIssuedDate: invoice.createdAtIsoDate,
-          invoiceDueDate: invoice.dueDateIsoDate as string,
+          invoiceDueDate: invoice.dueDateIsoDate,
           payorBusinessName: invoice.billFromBusinessName,
           payorFirstName: invoice.customerFirstName,
           payorLastName: invoice.customerLastName,
