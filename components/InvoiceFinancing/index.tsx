@@ -218,24 +218,23 @@ function ApiInvoices() {
     invoices: PlatformInvoice[],
     includeInvoiceFile: boolean,
   ) => {
-    // // If the invoice file is included, then all other data
-    // // fields are optional. Else, they are required.
-    // if (
-    //   !includeInvoiceFile &&
-    //   invoices.some((invoice) => {
-    //     return (
-    //       // _.isNil(invoice.dueDateIsoDate) ||
-    //       _.isNil(invoice.payorType) ||
-    //       _.isNil(invoice.createdAtIsoDate) ||
-    //       _.isEmpty(invoice.items)
-    //     )
-    //   })
-    // ) {
-    //   toast.error(
-    //     'Cannot submit these invoices because some fields are missing. You may want to try submitting with the invoice file instead.',
-    //   )
-    //   return
-    // }
+    // If the invoice file is included, then all other data
+    // fields are optional. Else, they are required.
+    if (
+      !includeInvoiceFile &&
+      invoices.some((invoice) => {
+        return (
+          _.isNil(invoice.payorType) ||
+          _.isNil(invoice.createdAtIsoDate) ||
+          _.isEmpty(invoice.items)
+        )
+      })
+    ) {
+      toast.error(
+        'Cannot submit these invoices because some fields are missing. You may want to try submitting with the invoice file instead.',
+      )
+      return
+    }
 
     const data: CreateEmbeddedSessionPayload = {
       invoices,
