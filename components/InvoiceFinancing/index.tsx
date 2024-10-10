@@ -224,7 +224,6 @@ function ApiInvoices() {
       !includeInvoiceFile &&
       invoices.some((invoice) => {
         return (
-          // _.isNil(invoice.dueDateIsoDate) ||
           _.isNil(invoice.payorType) ||
           _.isNil(invoice.createdAtIsoDate) ||
           _.isEmpty(invoice.items)
