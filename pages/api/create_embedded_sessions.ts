@@ -8,11 +8,11 @@ import { KanmonConnectComponent } from '@kanmon/web-sdk'
 import fs from 'fs'
 import { NextApiRequest, NextApiResponse } from 'next'
 
+import _ from 'lodash'
 import path from 'path'
 import { PlatformInvoice } from '../../types/DemoInvoicesTypes'
 import { extractApiKeyFromHeader, KanmonClient } from '../../utils'
 import getInvoiceTotalCents from '../../utils/getInvoiceTotal'
-import _, { create } from 'lodash'
 
 export interface CreateEmbeddedSessionPayload {
   invoices: PlatformInvoice[]
