@@ -1,10 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 import UserAvatar from '@/public/images/user-avatar-32.png'
-import {
-  getCustomizationState,
-  toggleEditMode,
-} from '@/store/customizationSlice'
+import { getCustomizationState } from '@/store/customizationSlice'
 import { resetStoreAction } from '@/store/store'
 import Image from 'next/image'
 import { useDispatch, useSelector } from 'react-redux'
@@ -35,7 +32,6 @@ const IdentifierMenuItem = ({
 export const UserMenu = ({ align }: { align: string }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dispatch = useDispatch()
-  const [clickCounter, setClickCounter] = useState(0)
   const { buttonBgColor } = useSelector(getCustomizationState)
   const authState = useSelector(getAuthState)
   const kanmonConnectState = useSelector(getKanmonConnectSlice)
@@ -68,18 +64,6 @@ export const UserMenu = ({ align }: { align: string }) => {
     document.addEventListener('keydown', keyHandler)
     return () => document.removeEventListener('keydown', keyHandler)
   })
-
-  const hiddenEditModeClick = () => {
-    const newClickCounter = clickCounter + 1
-
-    setClickCounter(newClickCounter)
-
-    // 5 Clicks to toggle
-    if (newClickCounter >= 5) {
-      dispatch(toggleEditMode({}))
-      setClickCounter(0)
-    }
-  }
 
   return (
     <div className="relative inline-flex">
@@ -128,10 +112,7 @@ export const UserMenu = ({ align }: { align: string }) => {
           onFocus={() => setDropdownOpen(true)}
           onBlur={() => setDropdownOpen(false)}
         >
-          <div
-            className="pt-0.5 pb-2 px-3 mb-1 border-b border-slate-200 select-none"
-            onClick={hiddenEditModeClick}
-          >
+          <div className="pt-0.5 pb-2 px-3 mb-1 border-b border-slate-200 select-none">
             <div className="font-medium text-slate-800">Tycho LLC</div>
             <div className="text-xs text-slate-500 italic">Administrator</div>
             {authState?.userId && (

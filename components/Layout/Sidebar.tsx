@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react'
-
 import SidebarLinkGroup from './SidebarLinkGroup'
 import { SidebarLinkItem } from './SidebarLinkItem'
 import { Logo } from '@/components/shared/Logo'
@@ -8,7 +7,6 @@ import { getCustomizationState } from '@/store/customizationSlice'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faList,
-  faCog,
   faCube,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
@@ -21,7 +19,6 @@ interface SidebarProps {
 enum SidebarGroup {
   Dashboard = 'Dashboard',
   Orders = 'Orders',
-  EditMode = 'Edit Mode',
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -179,28 +176,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   )
                 }}
               </SidebarLinkGroup>
-              {customizationState.editMode && (
-                <SidebarLinkGroup
-                  title={SidebarGroup.EditMode}
-                  icon={wrappedIcon(faCog)}
-                  active={activeSidebarGroup === SidebarGroup.EditMode}
-                >
-                  {(open, setOpen) => {
-                    return (
-                      <React.Fragment>
-                        <SidebarLinkItem
-                          title="Customization"
-                          linkHref="/customization"
-                          setOpen={setOpen}
-                          setActive={() =>
-                            setActiveSidebarGroup(SidebarGroup.EditMode)
-                          }
-                        />
-                      </React.Fragment>
-                    )
-                  }}
-                </SidebarLinkGroup>
-              )}
             </ul>
           </div>
         </div>
