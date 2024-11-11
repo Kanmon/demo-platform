@@ -10,7 +10,7 @@ import {
   ConnectToken,
   Address,
   GetUsersResponse,
-  GetUsersRequest,
+  GetAllUsersRequest,
 } from '@kanmon/sdk'
 import { ProductType, TestingPrequalType, UserRole } from '../types/MoreTypes'
 
@@ -133,7 +133,7 @@ export class KanmonClient {
   connect = async (
     params: CreateConnectTokenRequestBody,
   ): Promise<ConnectToken> => {
-    return this.sdkClient.connectTokens.connectToken({
+    return this.sdkClient.connectTokens.createConnectToken({
       createConnectTokenRequestBody: params,
     })
   }
@@ -141,7 +141,7 @@ export class KanmonClient {
   getBusinesses = async (
     platformBusinessId?: string,
   ): Promise<GetBusinessesResponse> => {
-    return this.sdkClient.businesses.getBusinesses({
+    return this.sdkClient.businesses.getAllBusinesses({
       platformBusinessIds: platformBusinessId,
     })
   }
@@ -154,8 +154,8 @@ export class KanmonClient {
     })
   }
 
-  getUsers = async (args?: GetUsersRequest): Promise<GetUsersResponse> => {
-    return this.sdkClient.users.getUsers(args)
+  getUsers = async (args?: GetAllUsersRequest): Promise<GetUsersResponse> => {
+    return this.sdkClient.users.getAllUsers(args)
   }
 
   createUserForBusiness = async (

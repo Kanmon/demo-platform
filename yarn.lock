@@ -331,10 +331,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@kanmon/sdk@^2.0.3":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@kanmon/sdk/-/sdk-2.0.3.tgz#de3e965076dae92bee91836ada004cdce66d08a8"
-  integrity sha512-cMkD8trrjhFBBiiYr3FXAPtLNtSo7VuWfHeoCcTi8GTA78sUQzCBnW3TSRslqIQ8HzLUy1cbBVsZnoW1hhu2Jg==
+"@kanmon/sdk@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@kanmon/sdk/-/sdk-2.2.1.tgz#95894932d76aaa8bf72bce6683f37a2569d92b28"
+  integrity sha512-sH/Z4nNNvidKk6KvZu6yjPWPLzEIFg325gPe2AGWYTaZxuKK1Ad+3yJ7UHnAzB2MOyDRZBMXUppnUKWP2XhZ+A==
   dependencies:
     "@types/node" "*"
     "@types/node-fetch" "^2.5.7"
@@ -343,10 +343,10 @@
     node-fetch "^2.6.0"
     url-parse "^1.4.3"
 
-"@kanmon/web-sdk@^2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@kanmon/web-sdk/-/web-sdk-2.2.1.tgz#d01c7052284e1ba803eaf576608348e5f9436e2c"
-  integrity sha512-4+GccNfQouBf7bPp2wU82FXGReley/y2+KT8NoWGf/6pACNiVaDU7BZWqHjveKNQbvCKi7pF4ztz264fxlcdNA==
+"@kanmon/web-sdk@^2.2.2":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@kanmon/web-sdk/-/web-sdk-2.2.2.tgz#2cc8cd99f267db0f4168c42a9c9dbdc40d66041d"
+  integrity sha512-1Uv3ecqkearwHTOoNi9+mJDKtzlSjnFTfX1xbwhkzIG14ZNZv5bXipF2S8wUWKwpfz6VXCrEaCRopnC12r/6xA==
   dependencies:
     tslib "^2.3.0"
 
