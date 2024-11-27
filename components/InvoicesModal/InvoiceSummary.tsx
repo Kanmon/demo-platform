@@ -1,6 +1,5 @@
 import { IssuedProduct } from '@kanmon/sdk'
 import { useSelector } from 'react-redux'
-import { getIssuedProductSelector } from '../../store/apiInvoicesSlice'
 import { ResponsiveImage } from '../shared/ResponsiveImage'
 import { DefaultLogoSVG } from '../shared/Logo'
 import formatInvoiceFinancingProductName from '../../utils/formatInvoiceFinancingProductName'
@@ -17,7 +16,6 @@ interface TopSectionProps {
   invoice: PlatformInvoice
   logo: string
   issuedProduct: IssuedProduct
-  productType: 'INVOICE_FINANCING' | 'ACCOUNTS_PAYABLE_FINANCING'
 }
 
 const TopSection = ({
@@ -25,7 +23,6 @@ const TopSection = ({
   invoice,
   logo,
   issuedProduct,
-  productType,
 }: TopSectionProps) => {
   return (
     <section className="bg-gray-100 py-8 px-12 grid grid-cols-12 gap-x-12">
@@ -136,13 +133,7 @@ const BillToFromSection = ({ invoice }: { invoice: PlatformInvoice }) => {
   )
 }
 
-const AmountsSection = ({
-  invoice,
-  productType,
-}: {
-  invoice: PlatformInvoice
-  productType: 'INVOICE_FINANCING' | 'ACCOUNTS_PAYABLE_FINANCING'
-}) => {
+const AmountsSection = ({ invoice }: { invoice: PlatformInvoice }) => {
   const invoiceTotal = getInvoiceTotalCents(invoice)
   return (
     <section>
@@ -228,16 +219,6 @@ const InvoiceSummary = ({
   issuedProduct,
 }: InvoiceSummaryProps) => {
   const { logoBase64 } = useSelector(getCustomizationState)
-  // Using productTypeForPage here in the edge case where
-  // we demo INVOICE_FINANCING and accidentally go to the ACCOUNTS_PAYABLE_FINANCING page.
-  // In this case the user would be in servicing, but have the wrong
-  // product. Using productTypeForPage at least makes it so that the
-  // display of invoice vs Accounts Payable is consistent.
-  const { productTypeForPage } = useSelector(getIssuedProductSelector)
-
-  const castedProductType = productTypeForPage as
-    | 'INVOICE_FINANCING'
-    | 'ACCOUNTS_PAYABLE_FINANCING'
 
   return (
     <>
@@ -246,11 +227,10 @@ const InvoiceSummary = ({
         invoice={invoice}
         onFastPayClick={onFastPayClick}
         issuedProduct={issuedProduct}
-        productType={castedProductType}
       />
       <div className="flex-grow">
         <BillToFromSection invoice={invoice} />
-        <AmountsSection productType={castedProductType} invoice={invoice} />
+        <AmountsSection invoice={invoice} />
       </div>
       <div className="flex-none">
         <FooterSection />
