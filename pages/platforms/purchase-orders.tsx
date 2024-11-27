@@ -9,7 +9,7 @@ function PurchaseOrdersPage() {
   useEffectOnce(() => {
     dispatch(
       setProductTypeForPage({
-        productType: ProductType.PURCHASE_ORDER,
+        productType: ProductType.ACCOUNTS_PAYABLE_FINANCING,
       }),
     )
   })

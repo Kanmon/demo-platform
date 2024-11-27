@@ -1,7 +1,7 @@
 import { ProductType } from '../types/MoreTypes'
 
 const formatInvoiceFinancingProductName = (
-  productType?: 'INVOICE_FINANCING' | 'PURCHASE_ORDER' | null,
+  productType?: 'INVOICE_FINANCING' | 'ACCOUNTS_PAYABLE_FINANCING' | null,
   plural = false,
 ) => {
   if (!productType) {
@@ -9,7 +9,9 @@ const formatInvoiceFinancingProductName = (
   }
 
   const words =
-    productType === ProductType.INVOICE_FINANCING ? 'Invoice' : 'Purchase Order'
+    productType === ProductType.INVOICE_FINANCING
+      ? 'Invoice'
+      : 'Accounts Payable'
   return plural ? words + 's' : words
 }
 

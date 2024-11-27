@@ -17,7 +17,7 @@ interface TopSectionProps {
   invoice: PlatformInvoice
   logo: string
   issuedProduct: IssuedProduct
-  productType: 'INVOICE_FINANCING' | 'PURCHASE_ORDER'
+  productType: 'INVOICE_FINANCING' | 'ACCOUNTS_PAYABLE_FINANCING'
 }
 
 const TopSection = ({
@@ -141,7 +141,7 @@ const AmountsSection = ({
   productType,
 }: {
   invoice: PlatformInvoice
-  productType: 'INVOICE_FINANCING' | 'PURCHASE_ORDER'
+  productType: 'INVOICE_FINANCING' | 'ACCOUNTS_PAYABLE_FINANCING'
 }) => {
   const invoiceTotal = getInvoiceTotalCents(invoice)
   return (
@@ -229,7 +229,7 @@ const InvoiceSummary = ({
 }: InvoiceSummaryProps) => {
   const { logoBase64 } = useSelector(getCustomizationState)
   // Using productTypeForPage here in the edge case where
-  // we demo INVOICE_FINANCING and accidentally go to the PURCHASE_ORDER page.
+  // we demo INVOICE_FINANCING and accidentally go to the ACCOUNTS_PAYABLE_FINANCING page.
   // In this case the user would be in servicing, but have the wrong
   // product. Using productTypeForPage at least makes it so that the
   // display of invoice vs purchase order is consistent.
@@ -237,7 +237,7 @@ const InvoiceSummary = ({
 
   const castedProductType = productTypeForPage as
     | 'INVOICE_FINANCING'
-    | 'PURCHASE_ORDER'
+    | 'ACCOUNTS_PAYABLE_FINANCING'
 
   return (
     <>
