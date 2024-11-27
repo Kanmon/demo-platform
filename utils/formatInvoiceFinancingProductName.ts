@@ -1,11 +1,4 @@
-const formatInvoiceFinancingProductName = (
-  productType?: 'INVOICE_FINANCING' | 'ACCOUNTS_PAYABLE_FINANCING' | null,
-  plural = false,
-) => {
-  if (!productType) {
-    return ''
-  }
-
+const formatInvoiceFinancingProductName = (plural = false) => {
   const words = 'Invoice'
   return plural ? words + 's' : words
 }

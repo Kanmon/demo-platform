@@ -39,12 +39,12 @@ const TopSection = ({
       <div className="col-span-4">
         <div className="mb-6">
           <span className="text-2xl font-medium">
-            {formatInvoiceFinancingProductName(productType)}
+            {formatInvoiceFinancingProductName()}
           </span>
         </div>
         <div className="mb-6">
           <span className="font-medium">
-            {formatInvoiceFinancingProductName(productType)} Number:
+            {formatInvoiceFinancingProductName()} Number:
           </span>
           <br />
           <span>{invoice.invoiceNumber}</span>
@@ -64,7 +64,7 @@ const TopSection = ({
               className="btn bg-green-600 hover:bg-green-700 text-white"
               onClick={onFastPayClick}
             >
-              Finance {formatInvoiceFinancingProductName(productType)}
+              Finance {formatInvoiceFinancingProductName()}
             </button>
           )}
         </div>
@@ -186,7 +186,7 @@ const AmountsSection = ({
         </div>
 
         <div className="mb-2 font-medium col-start-7 col-span-3">
-          {formatInvoiceFinancingProductName(productType)} Total
+          {formatInvoiceFinancingProductName()} Total
         </div>
         <div className="font-medium col-start-10 col-span-2 text-right">
           {renderCentsValueAsDollarsWithCents(
