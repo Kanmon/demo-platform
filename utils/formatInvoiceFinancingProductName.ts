@@ -1,5 +1,3 @@
-import { ProductType } from '../types/MoreTypes'
-
 const formatInvoiceFinancingProductName = (
   productType?: 'INVOICE_FINANCING' | 'ACCOUNTS_PAYABLE_FINANCING' | null,
   plural = false,
@@ -8,10 +6,7 @@ const formatInvoiceFinancingProductName = (
     return ''
   }
 
-  const words =
-    productType === ProductType.INVOICE_FINANCING
-      ? 'Invoice'
-      : 'Accounts Payable'
+  const words = 'Invoice'
   return plural ? words + 's' : words
 }
 

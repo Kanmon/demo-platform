@@ -232,7 +232,7 @@ const InvoiceSummary = ({
   // we demo INVOICE_FINANCING and accidentally go to the ACCOUNTS_PAYABLE_FINANCING page.
   // In this case the user would be in servicing, but have the wrong
   // product. Using productTypeForPage at least makes it so that the
-  // display of invoice vs purchase order is consistent.
+  // display of invoice vs Accounts Payable is consistent.
   const { productTypeForPage } = useSelector(getIssuedProductSelector)
 
   const castedProductType = productTypeForPage as
