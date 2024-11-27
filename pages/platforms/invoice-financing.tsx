@@ -4,7 +4,7 @@ import { setProductTypeForPage } from '../../store/apiInvoicesSlice'
 import { ProductType } from '../../types/MoreTypes'
 import InvoiceFinancing from '../../components/InvoiceFinancing'
 
-function ApiInvoices() {
+function InvoiceFinancingPage() {
   const dispatch = useDispatch()
   useEffectOnce(() => {
     dispatch(
@@ -16,4 +16,4 @@ function ApiInvoices() {
   return <InvoiceFinancing />
 }
 
-export default ApiInvoices
+export default InvoiceFinancingPage
