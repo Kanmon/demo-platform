@@ -84,7 +84,7 @@ const create_business_v2 = async (
         address: {
           addressLineOne: '120 Sigma Dr',
           city: 'Garner',
-          state: AddressStateEnum.Nc,
+          state: AddressStateEnum.NC,
           zipcode: '27529',
           country: 'USA',
         },
@@ -114,7 +114,7 @@ const create_business_v2 = async (
       address: {
         addressLineOne: '531 Silver Fox CT',
         city: 'Indianapolis',
-        state: AddressStateEnum.In,
+        state: AddressStateEnum.IN,
         zipcode: '46217',
         country: 'USA',
       },

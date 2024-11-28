@@ -34,7 +34,7 @@ const fetchIssuedProducts = async (
   })
 
   const issuedProductsResponse =
-    await sdkClient.issuedProducts.getIssuedProducts({
+    await sdkClient.issuedProducts.getAllIssuedProducts({
       businessIds: businessId,
     })
 
