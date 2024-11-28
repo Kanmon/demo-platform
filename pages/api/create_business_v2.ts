@@ -1,8 +1,4 @@
-import {
-  AddressStateEnum,
-  Business,
-  CreateUserRequestBodyRolesEnum,
-} from '@kanmon/sdk'
+import { AddressStateEnum, Business } from '@kanmon/sdk'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { v4 } from 'uuid'
 
@@ -122,7 +118,7 @@ const create_business_v2 = async (
         zipcode: '46217',
         country: 'USA',
       },
-      roles: payload.userRoles as unknown as CreateUserRequestBodyRolesEnum[],
+      roles: payload.userRoles,
     })
 
     if (payload.prequalifyForProduct && payload.prequalType) {

@@ -4,16 +4,16 @@ import { setProductTypeForPage } from '../../store/apiInvoicesSlice'
 import { ProductType } from '../../types/MoreTypes'
 import InvoiceFinancing from '../../components/InvoiceFinancing'
 
-function PurchaseOrdersPage() {
+function AccountPayableFinancingPage() {
   const dispatch = useDispatch()
   useEffectOnce(() => {
     dispatch(
       setProductTypeForPage({
-        productType: ProductType.PURCHASE_ORDER,
+        productType: ProductType.ACCOUNTS_PAYABLE_FINANCING,
       }),
     )
   })
   return <InvoiceFinancing />
 }
 
-export default PurchaseOrdersPage
+export default AccountPayableFinancingPage

@@ -150,8 +150,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   return (
                     <React.Fragment>
                       <SidebarLinkItem
-                        title="Purchase Orders"
-                        linkHref="/platforms/purchase-orders"
+                        title="AP Financing"
+                        linkHref="/platforms/accounts-payable-financing"
                         setOpen={setOpen}
                         setActive={() =>
                           setActiveSidebarGroup(SidebarGroup.Orders)
@@ -159,8 +159,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       />
 
                       <SidebarLinkItem
-                        title="Invoices"
-                        linkHref="/platforms/invoices"
+                        title="Invoice Financing"
+                        linkHref="/platforms/invoice-financing"
                         setOpen={setOpen}
                         setActive={() =>
                           setActiveSidebarGroup(SidebarGroup.Orders)

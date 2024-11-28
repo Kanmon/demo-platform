@@ -13,7 +13,7 @@ export enum UserRole {
 
 export enum ProductType {
   INVOICE_FINANCING = 'INVOICE_FINANCING',
-  PURCHASE_ORDER = 'PURCHASE_ORDER',
+  ACCOUNTS_PAYABLE_FINANCING = 'ACCOUNTS_PAYABLE_FINANCING',
   LINE_OF_CREDIT = 'LINE_OF_CREDIT',
   MCA = 'MCA',
   INTEGRATED_MCA = 'INTEGRATED_MCA',
@@ -55,7 +55,7 @@ export type CreateUserResponsePayload = {
 
 export const productTypeToDisplayName: Record<ProductType, string> = {
   [ProductType.INVOICE_FINANCING]: 'Invoice Financing',
-  [ProductType.PURCHASE_ORDER]: 'Purchase Order Financing',
+  [ProductType.ACCOUNTS_PAYABLE_FINANCING]: 'Accounts Payable Financing',
   [ProductType.LINE_OF_CREDIT]: 'Line of Credit',
   [ProductType.TERM_LOAN]: 'Term Loan',
   [ProductType.MCA]: 'Merchant Cash Advance',

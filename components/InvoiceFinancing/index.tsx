@@ -52,7 +52,7 @@ import { genericErrorMessage } from '@/utils/constants'
 function ApiInvoices() {
   const { showKanmonConnect } = useKanmonConnectContext()
 
-  const { issuedProduct, productTypeForPage, availableLimit } = useSelector(
+  const { issuedProduct, availableLimit } = useSelector(
     getIssuedProductSelector,
   )
   const { apiKey } = useSelector(getApiKeyState)
@@ -224,7 +224,6 @@ function ApiInvoices() {
       !includeInvoiceFile &&
       invoices.some((invoice) => {
         return (
-          // _.isNil(invoice.dueDateIsoDate) ||
           _.isNil(invoice.payorType) ||
           _.isNil(invoice.createdAtIsoDate) ||
           _.isEmpty(invoice.items)
@@ -298,7 +297,7 @@ function ApiInvoices() {
         <div className="sm:flex sm:justify-between sm:items-center mb-5">
           <div className="mb-4 sm:mb-0">
             <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">
-              {formatInvoiceFinancingProductName(productTypeForPage, true)} ✨
+              {formatInvoiceFinancingProductName(true)} ✨
             </h1>
             {!_.isNil(availableLimit) && (
               <h2 className="text-xl font-semibold mt-4">
@@ -329,7 +328,6 @@ function ApiInvoices() {
                       <span>
                         Finance ({selectedInvoiceIds.size}){' '}
                         {formatInvoiceFinancingProductName(
-                          productTypeForPage,
                           selectedInvoiceIds.size > 1,
                         )}
                       </span>
@@ -341,7 +339,6 @@ function ApiInvoices() {
                       <span>
                         Finance ({selectedInvoiceIds.size}){' '}
                         {formatInvoiceFinancingProductName(
-                          productTypeForPage,
                           selectedInvoiceIds.size > 1,
                         )}{' '}
                         (pdf)
@@ -364,7 +361,7 @@ function ApiInvoices() {
                   <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
                 </svg>
                 <span className="hidden xs:block ml-2">
-                  Create {formatInvoiceFinancingProductName(productTypeForPage)}
+                  Create {formatInvoiceFinancingProductName()}
                 </span>
               </button>
             )}

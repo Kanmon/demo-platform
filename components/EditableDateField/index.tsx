@@ -1,18 +1,30 @@
-import InputMask, { Props } from 'react-input-mask'
+import { PatternFormat } from 'react-number-format'
 
 import { TextField } from '@mui/material'
 import { DateTime } from 'luxon'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { updateInvoice } from '../../store/apiInvoicesSlice'
-import { formatUTCISODate, renderValueAsDate } from '../../utils'
 import { PlatformInvoice } from '../../types/DemoInvoicesTypes'
+import { formatUTCISODate, renderValueAsDate } from '../../utils'
 
-interface InputProps extends Omit<Props, 'children'> {
-  children?: (inputProps: any) => JSX.Element
-}
-
-const InputMaskFixed = InputMask as unknown as React.FC<InputProps>
+const CustomInput = (inputProps: any) => (
+  <TextField
+    {...inputProps}
+    inputProps={{
+      style: {
+        padding: '10px',
+      },
+    }}
+    InputProps={{
+      style: {
+        letterSpacing: '0.8px',
+      },
+    }}
+    className="bg-white w-[110px]"
+    variant="outlined"
+  />
+)
 
 const EditableDateField = ({
   invoice,
@@ -68,40 +80,24 @@ const EditableDateField = ({
   }
 
   return focused ? (
-    <InputMaskFixed
-      mask={'99/99/9999'}
-      autoFocus
+    <PatternFormat
       value={value}
-      onChange={onChange}
       onBlur={onBlur}
-    >
-      {(inputProps: any) => (
-        <TextField
-          {...inputProps}
-          inputProps={{
-            style: {
-              padding: '10px',
-            },
-          }}
-          InputProps={{
-            style: {
-              letterSpacing: '0.8px',
-            },
-          }}
-          className="bg-white w-[110px]"
-          variant="outlined"
-          placeholder={'__/__/____'}
-        />
-      )}
-    </InputMaskFixed>
+      onChange={onChange}
+      allowEmptyFormatting
+      format="##/##/####"
+      mask="_"
+      autoFocus
+      customInput={CustomInput}
+    />
   ) : (
     <div
-      className="w-[110px]"
+      className="w-[110px] tracking-wider"
       onClick={() => {
         setFocused(true)
       }}
     >
-      {renderValueAsDate(invoice[field])}
+      {renderValueAsDate(invoice[field], 'MM/dd/yyyy')}
     </div>
   )
 }

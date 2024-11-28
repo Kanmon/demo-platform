@@ -328,7 +328,7 @@ export const apiInvoicesSlice = createSlice({
       state,
       action: {
         payload: {
-          productType: 'INVOICE_FINANCING' | 'PURCHASE_ORDER'
+          productType: 'INVOICE_FINANCING' | 'ACCOUNTS_PAYABLE_FINANCING'
         }
       },
     ) {

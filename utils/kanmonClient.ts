@@ -10,6 +10,8 @@ import {
   ConnectToken,
   Address,
   GetUsersResponse,
+  EmbeddedSession,
+  CreateSessionTokenRequestBody,
   GetAllUsersRequest,
 } from '@kanmon/sdk'
 import { ProductType, TestingPrequalType, UserRole } from '../types/MoreTypes'
@@ -204,4 +206,20 @@ export class KanmonClient {
 
       return response.data
     }
+
+  TEST_ONLY_CreateEmbeddedSession = async (
+    payload: CreateSessionTokenRequestBody,
+  ): Promise<EmbeddedSession> => {
+    const headers = this.getApiHeader()
+
+    const response = await axios.post(
+      `${NEXT_PUBLIC_KANMON_API_HOST}/platform/v2/embedded-session`,
+      payload,
+      {
+        headers,
+      },
+    )
+
+    return response.data
+  }
 }

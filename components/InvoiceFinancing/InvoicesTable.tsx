@@ -1,6 +1,4 @@
 import { IssuedProduct } from '@kanmon/sdk'
-import { useSelector } from 'react-redux'
-import { getIssuedProductSelector } from '../../store/apiInvoicesSlice'
 import formatInvoiceFinancingProductName from '../../utils/formatInvoiceFinancingProductName'
 import InvoiceTableItem from './InvoicesTableItem'
 import { PlatformInvoice } from '../../types/DemoInvoicesTypes'
@@ -26,15 +24,13 @@ function InvoicesTable({
   onGetPaidNowClick,
   issuedProduct,
 }: InvoicesTableProps) {
-  const { productTypeForPage } = useSelector(getIssuedProductSelector)
-
   const showFinanceColumn = !!issuedProduct
 
   return (
     <div className="bg-white shadow-lg rounded-sm border border-slate-200 relative">
       <header className="px-5 py-4">
         <h2 className="font-semibold text-slate-800">
-          {formatInvoiceFinancingProductName(productTypeForPage, true)}
+          {formatInvoiceFinancingProductName(true)}
         </h2>
       </header>
       <div>
@@ -57,7 +53,7 @@ function InvoicesTable({
                 </th>
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                   <div className="font-semibold text-left">
-                    {formatInvoiceFinancingProductName(productTypeForPage)}
+                    {formatInvoiceFinancingProductName()}
                   </div>
                 </th>
                 <th className="px-2 first:pl-5 last:pr-5 min-w-[115px] py-3 whitespace-nowrap">
