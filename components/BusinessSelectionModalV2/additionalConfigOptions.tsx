@@ -23,6 +23,7 @@ const AdditonalConfigOptions = ({
   setShowAdditionalConfiguration,
   handleSubmit,
   platformEnabledProducts,
+  isValid,
 }: Props) => {
   return (
     <>
@@ -97,6 +98,7 @@ const AdditonalConfigOptions = ({
           fullWidth
           variant="contained"
           color="primary"
+          disabled={isValid}
           onClick={() => handleSubmit()}
         >
           Start new demo

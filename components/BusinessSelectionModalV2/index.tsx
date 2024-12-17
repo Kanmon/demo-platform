@@ -189,7 +189,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
     userRoles: UserRole[]
     prequalType: TestingPrequalType | null
   }) => {
-    createBusiness({
+    await createBusiness({
       email,
       prequalifyForProduct: prequalifyForProduct ?? undefined,
       platformBusinessId,
@@ -274,8 +274,8 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
           <div className="pt-12">
             <div className="mt-4 px-12">
               <Formik
-                onSubmit={(values) => {
-                  onStartWithNewBusinessClick({
+                onSubmit={async (values) => {
+                  await onStartWithNewBusinessClick({
                     email: values.email,
                     userRoles: values.userRoles,
                     platformBusinessId: values.platformBusinessId,
@@ -287,7 +287,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                 validationSchema={demoFlowStartingValidationSchema}
                 validateOnMount={true}
               >
-                {({ isValid, handleSubmit }) => {
+                {({ isValid, handleSubmit, isSubmitting }) => {
                   return (
                     <>
                       <Form>
@@ -312,7 +312,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
 
                                 <Button
                                   fullWidth
-                                  disabled={!isValid}
+                                  disabled={!isValid || isSubmitting}
                                   variant="contained"
                                   color="primary"
                                   onClick={() => handleSubmit()}
@@ -402,7 +402,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
 
                                 <Button
                                   fullWidth
-                                  disabled={!isValid}
+                                  disabled={!isValid || isSubmitting}
                                   variant="contained"
                                   color="primary"
                                   onClick={() => handleSubmit()}
@@ -426,7 +426,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                                   setShowAdditionalConfiguration
                                 }
                                 handleSubmit={handleSubmit}
-                                isValid={isValid}
+                                isValid={isValid || isSubmitting}
                                 platformEnabledProducts={
                                   platform?.enabledProducts ??
                                   Object.values(ProductType)
