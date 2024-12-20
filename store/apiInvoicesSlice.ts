@@ -250,7 +250,6 @@ const makeInitialState = (): ApiInvoicesState => {
     invoices: buildInitialInvoices(),
     invoiceStatusFilter: 'ALL',
     kanmonInvoices: [],
-    productTypeForPage: null,
   }
 }
 
@@ -295,7 +294,9 @@ export const apiInvoicesSlice = createSlice({
     ) {
       if (
         action.payload.issuedProduct.servicingData.productType ===
-        'INVOICE_FINANCING'
+          'INVOICE_FINANCING' ||
+        action.payload.issuedProduct.servicingData.productType ===
+          'ACCOUNTS_PAYABLE_FINANCING'
       ) {
         state.availableLimitCents =
           action.payload.issuedProduct.servicingData.availableLimitCents
@@ -324,16 +325,6 @@ export const apiInvoicesSlice = createSlice({
 
       state.invoices[index] = invoice
     },
-    setProductTypeForPage(
-      state,
-      action: {
-        payload: {
-          productType: 'INVOICE_FINANCING' | 'ACCOUNTS_PAYABLE_FINANCING'
-        }
-      },
-    ) {
-      state.productTypeForPage = action.payload.productType
-    },
   },
 
   extraReducers: {
@@ -353,7 +344,6 @@ export const {
   filterInvoices,
   updateInvoiceIssuedProduct,
   updateKanmonInvoices,
-  setProductTypeForPage,
   addKanmonIdToInvoice,
   updateAvailableLimit,
 } = apiInvoicesSlice.actions
@@ -384,7 +374,6 @@ export const getInvoicesSelector = createSelector(
 export const getIssuedProductSelector = (state: AppState) => ({
   issuedProduct: state.apiInvoices.invoiceFinancingIssuedProduct,
   kanmonInvoices: state.apiInvoices.kanmonInvoices,
-  productTypeForPage: state.apiInvoices.productTypeForPage,
   availableLimit: state.apiInvoices.availableLimitCents,
 })
 

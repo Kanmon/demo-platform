@@ -55,6 +55,7 @@ function ApiInvoices() {
   const { issuedProduct, availableLimit } = useSelector(
     getIssuedProductSelector,
   )
+
   const { apiKey } = useSelector(getApiKeyState)
   const { userId } = useSelector(getAuthState)
 
@@ -240,6 +241,7 @@ function ApiInvoices() {
       invoices,
       platformBusinessId: issuedProduct?.platformBusinessId as string,
       includeInvoiceFile,
+      productType: issuedProduct?.servicingData.productType,
     }
 
     try {

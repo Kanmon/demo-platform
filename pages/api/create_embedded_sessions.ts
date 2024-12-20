@@ -16,8 +16,8 @@ import { extractApiKeyFromHeader, KanmonClient } from '../../utils'
 import getInvoiceTotalCents from '../../utils/getInvoiceTotal'
 
 export interface CreateEmbeddedSessionPayload {
-  // TODO: make requiredENG-2117
-  productType?: 'INVOICE_FINANCING' | 'ACCOUNTS_PAYABLE_FINANCING'
+  // TODO: make required ENG-2117
+  productType?: ProductType
   invoices: PlatformInvoice[]
   platformBusinessId: string
   includeInvoiceFile: boolean

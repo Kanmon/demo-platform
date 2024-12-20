@@ -39,5 +39,4 @@ export interface ApiInvoicesState {
   invoiceStatusFilter: PlatformInvoiceStatusFilter
   invoiceFinancingIssuedProduct?: IssuedProduct | null
   kanmonInvoices: KanmonInvoice[]
-  productTypeForPage?: 'INVOICE_FINANCING' | 'ACCOUNTS_PAYABLE_FINANCING' | null
 }

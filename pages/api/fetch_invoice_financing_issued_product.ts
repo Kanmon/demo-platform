@@ -40,7 +40,9 @@ const fetchIssuedProduct = async (
 
   const invoiceFinancingIssuedProducts =
     issuedProductsResponse.issuedProducts.filter(
-      (ip) => ip.servicingData.productType === 'INVOICE_FINANCING',
+      (ip) =>
+        ip.servicingData.productType === 'INVOICE_FINANCING' ||
+        ip.servicingData.productType === 'ACCOUNTS_PAYABLE_FINANCING',
     )
 
   res.json(invoiceFinancingIssuedProducts[0])
