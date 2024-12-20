@@ -1,6 +1,7 @@
 import {
   CreateSessionTokenRequestBodyData,
   KanmonPlatformApi,
+  ProductType,
   SessionInvoice,
   SessionInvoiceWithInvoiceFile,
 } from '@kanmon/sdk'
@@ -15,6 +16,8 @@ import { extractApiKeyFromHeader, KanmonClient } from '../../utils'
 import getInvoiceTotalCents from '../../utils/getInvoiceTotal'
 
 export interface CreateEmbeddedSessionPayload {
+  // TODO: make required ENG-2117
+  productType?: ProductType
   invoices: PlatformInvoice[]
   platformBusinessId: string
   includeInvoiceFile: boolean
@@ -145,27 +148,132 @@ const getSessionInvoiceRelaxedConnectSessionTokenData = ({
   }
 }
 
+const getAccountsPayableInvoiceFlowConnectSessionTokenData = ({
+  platformBusinessId,
+  invoices,
+}: CreateEmbeddedSessionPayload): ConnectSessionTokenData => {
+  return {
+    platformBusinessId,
+    data: {
+      // TODO: make this real enum ENG-2117
+      component: 'SESSION_ACCOUNTS_PAYABLE_INVOICE_FLOW',
+      invoices: invoices.map((invoice) => {
+        const sessionInvoice = {
+          payeeType: invoice.payorType,
+          platformInvoiceId: invoice.id,
+          platformInvoiceNumber: invoice.invoiceNumber,
+          invoiceAmountCents: getInvoiceTotalCents(invoice, true),
+          invoiceIssuedDate: invoice.createdAtIsoDate,
+          invoiceDueDate: invoice.dueDateIsoDate,
+          payeeBusinessName: invoice.billFromBusinessName,
+          payeeFirstName: invoice.customerFirstName,
+          payeeLastName: invoice.customerLastName,
+          payeeEmail: invoice.billFromBusinessEmail,
+          payeeAddress: invoice.billFromPersonAddress,
+          description: invoice.items.map((item) => item.itemName).join(', '),
+        }
+
+        return sessionInvoice
+      }),
+    } as any,
+  }
+}
+
+const getAccountsPayableInvoiceFlowWithInvoiceFileConnectSessionTokenData =
+  async (
+    { platformBusinessId, invoices }: CreateEmbeddedSessionPayload,
+    sdkClient: KanmonPlatformApi,
+  ): Promise<ConnectSessionTokenData> => {
+    const blobInvoices: Blob[] = []
+
+    for (const _ of invoices) {
+      const data = fs.readFileSync(
+        path.join(
+          process.cwd(),
+          process.env.CWD_PATH_TO_PUBLIC as string,
+          '/sample-invoice.pdf',
+        ),
+      )
+
+      const blob = new Blob([data], { type: 'application/pdf' })
+
+      blobInvoices.push(blob)
+    }
+
+    const documentResponse = await sdkClient.documents.createBusinessDocument({
+      platformBusinessId,
+      invoices: blobInvoices,
+    })
+
+    return {
+      platformBusinessId,
+      data: {
+        // TODO: make this real enum ENG-2117
+        component: 'SESSION_ACCOUNTS_PAYABLE_INVOICE_FLOW_WITH_INVOICE_FILE',
+        invoices: invoices.map((invoice, i) => {
+          const totalCents = getInvoiceTotalCents(invoice, true)
+          const sessionInvoice = {
+            documentId: documentResponse.documents[i].id,
+            payeeType: invoice.payorType,
+            platformInvoiceId: invoice.id,
+            platformInvoiceNumber: invoice.invoiceNumber,
+            invoiceAmountCents: totalCents > 0 ? totalCents : undefined,
+            invoiceIssuedDate: invoice.createdAtIsoDate,
+            invoiceDueDate: invoice.dueDateIsoDate,
+            payeeBusinessName: invoice.billFromBusinessName,
+            payeeFirstName: invoice.customerFirstName,
+            payeeLastName: invoice.customerLastName,
+            payeeEmail: invoice.billFromBusinessEmail,
+            payeeAddress: invoice.billFromPersonAddress,
+            description:
+              invoice.items.map((item) => item.itemName).join(', ') ||
+              'an invoice',
+          }
+
+          return sessionInvoice
+        }),
+      } as any,
+    }
+  }
+
 const getConnectSessionTokenData = async (
   requestBody: CreateEmbeddedSessionPayload,
   sdkClient: KanmonPlatformApi,
 ): Promise<ConnectSessionTokenData> => {
-  if (requestBody.includeInvoiceFile) {
-    return getSessionInvoiceWithFileConnectSessionTokenData(
-      requestBody,
-      sdkClient,
-    )
+  // TODO: clean up optional ENG-2117
+  const productType = requestBody.productType ?? ProductType.INVOICE_FINANCING
+
+  if (productType === ProductType.ACCOUNTS_PAYABLE_FINANCING) {
+    if (requestBody.includeInvoiceFile) {
+      return getAccountsPayableInvoiceFlowWithInvoiceFileConnectSessionTokenData(
+        requestBody,
+        sdkClient,
+      )
+    }
+
+    return getAccountsPayableInvoiceFlowConnectSessionTokenData(requestBody)
   }
 
-  if (
-    requestBody.invoices.some(
-      (invoice) =>
-        _.isNil(invoice.dueDateIsoDate) || _.isNil(invoice.createdAtIsoDate),
-    )
-  ) {
-    return getSessionInvoiceRelaxedConnectSessionTokenData(requestBody)
-  }
+  if (productType === ProductType.INVOICE_FINANCING) {
+    if (requestBody.includeInvoiceFile) {
+      return getSessionInvoiceWithFileConnectSessionTokenData(
+        requestBody,
+        sdkClient,
+      )
+    }
 
-  return getSessionInvoiceConnectSessionTokenData(requestBody)
+    if (
+      requestBody.invoices.some(
+        (invoice) =>
+          _.isNil(invoice.dueDateIsoDate) || _.isNil(invoice.createdAtIsoDate),
+      )
+    ) {
+      return getSessionInvoiceRelaxedConnectSessionTokenData(requestBody)
+    }
+
+    return getSessionInvoiceConnectSessionTokenData(requestBody)
+  }
+  throw new Error(`Unsupported product type ${productType}`)
 }
 
 const createEmbeddedSessions = async (
