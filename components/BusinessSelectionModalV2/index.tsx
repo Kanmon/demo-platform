@@ -426,7 +426,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                                   setShowAdditionalConfiguration
                                 }
                                 handleSubmit={handleSubmit}
-                                isDisabled={isValid && !isSubmitting}
+                                isDisabled={!isValid || isSubmitting}
                                 platformEnabledProducts={
                                   platform?.enabledProducts ??
                                   Object.values(ProductType)

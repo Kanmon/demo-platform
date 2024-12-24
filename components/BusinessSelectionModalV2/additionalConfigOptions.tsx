@@ -98,7 +98,7 @@ const AdditonalConfigOptions = ({
           fullWidth
           variant="contained"
           color="primary"
-          disabled={!isDisabled}
+          disabled={isDisabled}
           onClick={() => handleSubmit()}
         >
           Start new demo
