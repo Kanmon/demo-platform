@@ -19,7 +19,7 @@ import {
   updateOnHide,
 } from '../../store/kanmonConnectSlice'
 import { getCustomizationState } from '../../store/customizationSlice'
-import { IssuedProduct } from '@kanmon/sdk'
+import { IssuedProduct, ProductType } from '@kanmon/sdk'
 import {
   axiosWithApiKey,
   formatDollarsWithCents,
@@ -226,7 +226,11 @@ function ApiInvoices() {
       invoices.some((invoice) => {
         return (
           _.isNil(invoice.payorType) ||
-          _.isNil(invoice.createdAtIsoDate) ||
+          // the issued date is only required for Invoice Financing
+          (issuedProduct?.servicingData.productType ===
+            ProductType.INVOICE_FINANCING &&
+            _.isNil(invoice.createdAtIsoDate)) ||
+          _.isNil(invoice.dueDateIsoDate) ||
           _.isEmpty(invoice.items)
         )
       })
@@ -252,10 +256,28 @@ function ApiInvoices() {
         data,
       )
 
+      const getKanmonConnectComponent = (
+        includeInvoiceFile: boolean,
+        productType: ProductType,
+      ): KanmonConnectComponent => {
+        if (productType === ProductType.INVOICE_FINANCING) {
+          return includeInvoiceFile
+            ? KanmonConnectComponent.SESSION_INVOICE_FLOW_WITH_INVOICE_FILE
+            : KanmonConnectComponent.SESSION_INVOICE_FLOW
+        } else if (productType === ProductType.ACCOUNTS_PAYABLE_FINANCING) {
+          return includeInvoiceFile
+            ? KanmonConnectComponent.SESSION_ACCOUNTS_PAYABLE_INVOICE_FLOW_WITH_INVOICE_FILE
+            : KanmonConnectComponent.SESSION_ACCOUNTS_PAYABLE_INVOICE_FLOW
+        }
+
+        throw new Error('Invalid product type')
+      }
+
       showKanmonConnect({
-        component: includeInvoiceFile
-          ? KanmonConnectComponent.SESSION_INVOICE_FLOW_WITH_INVOICE_FILE
-          : KanmonConnectComponent.SESSION_INVOICE_FLOW,
+        component: getKanmonConnectComponent(
+          includeInvoiceFile,
+          issuedProduct!.servicingData.productType,
+        ),
         sessionToken: resp.data.sessionToken,
       })
       dispatch(
