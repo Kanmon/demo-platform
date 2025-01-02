@@ -16,8 +16,7 @@ import { extractApiKeyFromHeader, KanmonClient } from '../../utils'
 import getInvoiceTotalCents from '../../utils/getInvoiceTotal'
 
 export interface CreateEmbeddedSessionPayload {
-  // TODO: make required ENG-2117
-  productType?: ProductType
+  productType: ProductType
   invoices: PlatformInvoice[]
   platformBusinessId: string
   includeInvoiceFile: boolean
@@ -155,7 +154,6 @@ const getAccountsPayableInvoiceFlowConnectSessionTokenData = ({
   return {
     platformBusinessId,
     data: {
-      // TODO: make this real enum ENG-2117
       component: 'SESSION_ACCOUNTS_PAYABLE_INVOICE_FLOW',
       invoices: invoices.map((invoice) => {
         const sessionInvoice = {
@@ -164,7 +162,7 @@ const getAccountsPayableInvoiceFlowConnectSessionTokenData = ({
           platformInvoiceNumber: invoice.invoiceNumber,
           invoiceAmountCents: getInvoiceTotalCents(invoice, true),
           invoiceIssuedDate: invoice.createdAtIsoDate,
-          invoiceDueDate: invoice.dueDateIsoDate,
+          invoiceDueDate: invoice.dueDateIsoDate as string,
           payeeBusinessName: invoice.billFromBusinessName,
           payeeFirstName: invoice.customerFirstName,
           payeeLastName: invoice.customerLastName,
@@ -175,7 +173,7 @@ const getAccountsPayableInvoiceFlowConnectSessionTokenData = ({
 
         return sessionInvoice
       }),
-    } as any,
+    },
   }
 }
 
@@ -208,7 +206,6 @@ const getAccountsPayableInvoiceFlowWithInvoiceFileConnectSessionTokenData =
     return {
       platformBusinessId,
       data: {
-        // TODO: make this real enum ENG-2117
         component: 'SESSION_ACCOUNTS_PAYABLE_INVOICE_FLOW_WITH_INVOICE_FILE',
         invoices: invoices.map((invoice, i) => {
           const totalCents = getInvoiceTotalCents(invoice, true)
@@ -232,7 +229,7 @@ const getAccountsPayableInvoiceFlowWithInvoiceFileConnectSessionTokenData =
 
           return sessionInvoice
         }),
-      } as any,
+      },
     }
   }
 
@@ -240,8 +237,7 @@ const getConnectSessionTokenData = async (
   requestBody: CreateEmbeddedSessionPayload,
   sdkClient: KanmonPlatformApi,
 ): Promise<ConnectSessionTokenData> => {
-  // TODO: clean up optional ENG-2117
-  const productType = requestBody.productType ?? ProductType.INVOICE_FINANCING
+  const productType = requestBody.productType
 
   if (productType === ProductType.ACCOUNTS_PAYABLE_FINANCING) {
     if (requestBody.includeInvoiceFile) {

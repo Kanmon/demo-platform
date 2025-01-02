@@ -241,11 +241,16 @@ function ApiInvoices() {
       return
     }
 
+    if (!issuedProduct) {
+      toast.error('No issued product found')
+      return
+    }
+
     const data: CreateEmbeddedSessionPayload = {
       invoices,
-      platformBusinessId: issuedProduct?.platformBusinessId as string,
+      platformBusinessId: issuedProduct.platformBusinessId as string,
       includeInvoiceFile,
-      productType: issuedProduct?.servicingData.productType,
+      productType: issuedProduct.servicingData.productType,
     }
 
     try {
