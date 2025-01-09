@@ -331,10 +331,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@kanmon/sdk@2.3.1-next-0d1a959545b53f5d19e55975560d9ca82af5b484.0":
-  version "2.3.1-next-0d1a959545b53f5d19e55975560d9ca82af5b484.0"
-  resolved "https://registry.yarnpkg.com/@kanmon/sdk/-/sdk-2.3.1-next-0d1a959545b53f5d19e55975560d9ca82af5b484.0.tgz#0ad25ce29c16839a4a6da2b5a8f4e1e05e0910f7"
-  integrity sha512-plp3XxeDKcXUnaK5OgjIytBM92CP8BxuZV+qpcpFmyON3on6VqKdou1DkX7HJC4RoIXpv95yRZ3O6LhAWAEt6w==
+"@kanmon/sdk@2.4.2-next-1ff30c2d0a41c2501527fbac81905bb343e735d6.0":
+  version "2.4.2-next-1ff30c2d0a41c2501527fbac81905bb343e735d6.0"
+  resolved "https://registry.yarnpkg.com/@kanmon/sdk/-/sdk-2.4.2-next-1ff30c2d0a41c2501527fbac81905bb343e735d6.0.tgz#841c667d6180d59b650abce366727dd68a6c3b67"
+  integrity sha512-jM7aHpk0aYG1l3OaFh/fodWyGp5D3ExVM4OjCCCw6slygECINgmOo05lmvA4mxtZaiLIue26KOAHrKG26JGHOg==
   dependencies:
     "@types/node" "*"
     "@types/node-fetch" "^2.5.7"
