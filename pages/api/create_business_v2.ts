@@ -111,6 +111,7 @@ const create_business_v2 = async (
       email: payload.email,
       firstName: 'Billy',
       lastName: 'Ballard',
+      phoneNumber: '14152223333',
       address: {
         addressLineOne: '531 Silver Fox CT',
         city: 'Indianapolis',
