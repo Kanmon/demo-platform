@@ -19,8 +19,8 @@ interface SidebarProps {
 }
 
 enum SidebarGroup {
-  Dashboard = 'Dashboard',
-  Orders = 'Orders',
+  Dashboard = 'Business Dashboard',
+  Orders = 'Order Management',
   EditMode = 'Edit Mode',
 }
 
@@ -107,9 +107,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
               >
                 •••
               </span>
-              <span className="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                Pages
-              </span>
             </h3>
             <ul className="mt-3">
               <SidebarLinkGroup
@@ -121,7 +118,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   return (
                     <React.Fragment>
                       <SidebarLinkItem
-                        title="Main"
+                        title="Dashboard"
                         linkHref="/"
                         setOpen={setOpen}
                         setActive={() =>
@@ -130,7 +127,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       />
 
                       <SidebarLinkItem
-                        title="Financing"
+                        title="Example Program Page"
                         linkHref="/financing"
                         setOpen={setOpen}
                         setActive={() =>
@@ -150,7 +147,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   return (
                     <React.Fragment>
                       <SidebarLinkItem
-                        title="AP Financing"
+                        title="Accounts Payable"
                         linkHref="/platforms/accounts-payable-financing"
                         setOpen={setOpen}
                         setActive={() =>
@@ -159,7 +156,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       />
 
                       <SidebarLinkItem
-                        title="Invoice Financing"
+                        title="Accounts Receivable"
                         linkHref="/platforms/invoice-financing"
                         setOpen={setOpen}
                         setActive={() =>
@@ -168,7 +165,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       />
 
                       <SidebarLinkItem
-                        title="Examples"
+                        title="Example CTAs"
                         linkHref="/examples"
                         setOpen={setOpen}
                         setActive={() =>
