@@ -3,17 +3,11 @@ import _ from 'lodash'
 import { Address, AddressStateEnum } from '@kanmon/sdk'
 import {
   PlatformInvoiceStatus,
-  PlatformInvoiceType,
 } from '../types/DemoInvoicesTypes'
 
 export const getNewInvoiceNumber = () => `#${_.random(1000000, 9999999)}`
 
 export const getRandomInvoiceAmountCents = () => _.random(100, 10000) * 100
-
-export const getRandomInvoiceType = () =>
-  _.random(1) % 2 === 0
-    ? PlatformInvoiceType.ONE_TIME
-    : PlatformInvoiceType.SUBSCRIPTION
 
 export const getRandomInvoiceStatus = () => {
   const statuses = Object.values(PlatformInvoiceStatus)

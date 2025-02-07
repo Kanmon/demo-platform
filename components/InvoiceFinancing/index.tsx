@@ -25,7 +25,6 @@ import {
   formatDollarsWithCents,
   getFakeAddress,
   getRandomInvoiceStatus,
-  getRandomInvoiceType,
 } from '../../utils'
 import InvoicesModal from '../InvoicesModal'
 import { SplitButton } from '../SplitButton'
@@ -191,7 +190,6 @@ function ApiInvoices() {
           dueDateIsoDate: DateTime.now()
             .plus({ days: _.random(30, 60) })
             .toISODate(),
-          type: getRandomInvoiceType(),
           phoneNumber: faker.helpers.fromRegExp(/\(4\d\d\) \d{3}-\d{4}/),
           billToPersonAddress: getFakeAddress(),
           billFromPersonAddress: getFakeAddress(),
