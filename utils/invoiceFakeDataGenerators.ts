@@ -1,9 +1,7 @@
 import { faker } from '@faker-js/faker'
 import _ from 'lodash'
 import { Address, AddressStateEnum } from '@kanmon/sdk'
-import {
-  PlatformInvoiceStatus,
-} from '../types/DemoInvoicesTypes'
+import { PlatformInvoiceStatus } from '../types/DemoInvoicesTypes'
 
 export const getNewInvoiceNumber = () => `#${_.random(1000000, 9999999)}`
 

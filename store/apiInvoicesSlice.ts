@@ -5,9 +5,7 @@ import { DateTime } from 'luxon'
 import { HYDRATE } from 'next-redux-wrapper'
 import { v4 } from 'uuid'
 
-import {
-  getFakeAddress,
-} from '@/utils/invoiceFakeDataGenerators'
+import { getFakeAddress } from '@/utils/invoiceFakeDataGenerators'
 import { AppState } from './store'
 import { IssuedProduct, Invoice as KanmonInvoice } from '@kanmon/sdk'
 import {
@@ -52,7 +50,7 @@ const buildInitialInvoices = (): PlatformInvoice[] => {
       customerFirstName: faker.person.firstName(),
       customerLastName: faker.person.lastName(),
       createdAtIsoDate: DateTime.now().minus({ days: 16 }).toISO(),
-      dueDateIsoDate: DateTime.now().plus({ days: 46 }).toISODate(),      
+      dueDateIsoDate: DateTime.now().plus({ days: 46 }).toISODate(),
       phoneNumber: getFakePhoneNumber(),
       billToPersonFullName: faker.person.fullName(),
       billToPersonAddress: getFakeAddress(),
@@ -93,7 +91,7 @@ const buildInitialInvoices = (): PlatformInvoice[] => {
       customerLastName: faker.person.lastName(),
       createdAtIsoDate: DateTime.now().minus({ days: 22 }).toISO(),
       paidOnIsoDate: null,
-      dueDateIsoDate: DateTime.now().plus({ days: 44 }).toISODate(),      
+      dueDateIsoDate: DateTime.now().plus({ days: 44 }).toISODate(),
       phoneNumber: getFakePhoneNumber(),
       billToPersonFullName: faker.person.fullName(),
       billToPersonAddress: getFakeAddress(),
@@ -134,7 +132,7 @@ const buildInitialInvoices = (): PlatformInvoice[] => {
       customerFirstName: faker.person.firstName(),
       customerLastName: faker.person.lastName(),
       createdAtIsoDate: DateTime.now().minus({ days: 27 }).toISO(),
-      dueDateIsoDate: DateTime.now().plus({ days: 54 }).toISODate(),      
+      dueDateIsoDate: DateTime.now().plus({ days: 54 }).toISODate(),
       phoneNumber: getFakePhoneNumber(),
       billToPersonFullName: faker.person.fullName(),
       billToPersonAddress: getFakeAddress(),
@@ -154,7 +152,7 @@ const buildInitialInvoices = (): PlatformInvoice[] => {
       status: PlatformInvoiceStatus.PAID,
       createdAtIsoDate: DateTime.now().minus({ days: 29 }).toISO(),
       dueDateIsoDate: DateTime.now().plus({ days: 99 }).toISODate(),
-      paidOnIsoDate: DateTime.now().minus({ days: 18 }).toISO(),      
+      paidOnIsoDate: DateTime.now().minus({ days: 18 }).toISO(),
       phoneNumber: getFakePhoneNumber(),
       billToPersonFullName: faker.person.fullName(),
       billToPersonAddress: getFakeAddress(),
@@ -175,7 +173,7 @@ const buildInitialInvoices = (): PlatformInvoice[] => {
       customerLastName: faker.person.lastName(),
       createdAtIsoDate: DateTime.now().minus({ days: 31 }).toISO(),
       dueDateIsoDate: DateTime.now().plus({ days: 58 }).toISODate(),
-      paidOnIsoDate: null,      
+      paidOnIsoDate: null,
       phoneNumber: getFakePhoneNumber(),
       billToPersonFullName: faker.person.fullName(),
       billToPersonAddress: getFakeAddress(),
