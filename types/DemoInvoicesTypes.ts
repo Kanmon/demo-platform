@@ -5,10 +5,6 @@ export enum PlatformInvoiceStatus {
   PAID = 'PAID',
   DUE = 'DUE',
 }
-export enum PlatformInvoiceType {
-  SUBSCRIPTION = 'SUBSCRIPTION',
-  ONE_TIME = 'ONE_TIME',
-}
 
 export interface PlatformInvoice {
   id: string
@@ -22,7 +18,6 @@ export interface PlatformInvoice {
   customerFirstName?: string
   customerLastName?: string
   billFromBusinessName?: string
-  type: PlatformInvoiceType
   phoneNumber: string
   billToPersonFullName?: string
   billToPersonAddress: Address

@@ -71,9 +71,6 @@ function InvoicesTable({
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                   <div className="font-semibold text-left">Paid on</div>
                 </th>
-                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-left">Type</div>
-                </th>
                 {showFinanceColumn && (
                   <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                     <div className="font-semibold text-left">Financing</div>
