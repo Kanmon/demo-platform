@@ -2,20 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { HYDRATE } from 'next-redux-wrapper'
 import { AppState } from './store'
 import { IssuedProduct } from '@kanmon/sdk'
-
-export type UserState =
-  | 'START_FLOW'
-  | 'IN_MANUAL_REVIEW'
-  | 'OTHER_USER_INPUT_REQUIRED'
-  | 'USER_INPUT_REQUIRED'
-  | 'WAITING_FOR_OFFERS'
-  | 'NO_OFFERS_EXTENDED'
-  | 'OFFERS_EXPIRED'
-  | 'VIEW_OFFERS'
-  | 'OFFER_ACCEPTED'
-  | 'SERVICING'
-  | 'WAITING_FOR_KANMON_DISCOVER_REPORT'
-  | 'ERROR'
+import { UserState } from '@kanmon/web-sdk'
 
 export interface KanmonConnectState {
   ctaText: string | null
