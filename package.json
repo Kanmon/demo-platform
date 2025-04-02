@@ -30,6 +30,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "classnames": "^2.5.1",
+    "fetch-blob": "^4.0.0",
     "formik": "^2.4.6",
     "lodash": "^4.17.21",
     "luxon": "^3.4.4",
