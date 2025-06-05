@@ -1,19 +1,18 @@
 import { saveCredentials } from '@/store/authSlice'
 import { resetStoreAction } from '@/store/store'
+import { KanmonClient, axiosWithApiKey } from '@/utils'
 import { getErrorCodeFromAxiosError } from '@/utils/getErrorCodeFromAxiosError'
 import Alert from '@mui/material/Alert'
 import Autocomplete from '@mui/material/Autocomplete'
 import Modal from '@mui/material/Modal'
 import TextField from '@mui/material/TextField'
 import { Form, Formik } from 'formik'
-import { isNil } from 'lodash'
+import _, { isNil } from 'lodash'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useAsync, useAsyncFn } from 'react-use'
 import { v4 } from 'uuid'
 import * as Yup from 'yup'
-import AdditonalConfigOptions from './additionalConfigOptions'
-import { KanmonClient, axiosWithApiKey, basicCssClassUpdater } from '@/utils'
 import { getApiKeyState } from '../../store/apiKeySlice'
 import {
   CreateBusinessAndUserRequestBody,
@@ -23,8 +22,7 @@ import {
   UserRole,
 } from '../../types/MoreTypes'
 import Button from '../shared/Button'
-import FormikTextInput from '../shared/FormikTextField'
-import _ from 'lodash'
+import AdditonalConfigOptions from './additionalConfigOptions'
 
 interface AutocompleteOption {
   email?: string

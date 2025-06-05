@@ -1,10 +1,9 @@
 import { resetStoreAction } from '@/store/store'
 import {
+  ExternalProductType,
   KANMON_CONNECT,
-  KanmonConnectComponent,
   KanmonConnectEnviroment,
   KanmonConnectParams,
-  ExternalProductType,
   ShowKanmonConnectMessage,
 } from '@kanmon/web-sdk'
 import axios from 'axios'
