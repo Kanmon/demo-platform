@@ -314,6 +314,16 @@ function ApiInvoices() {
     setFocusedInvoiceId(null)
   }
 
+  const onPayInvoiceClick = async () => {
+    const invoice = allPersistedInvoices.find(
+      (persistedInvoice) => persistedInvoice.id === focusedInvoiceId,
+    ) as PlatformInvoice
+    await showKanmonConnect({
+      component: KanmonConnectComponent.PAY_NOW,
+      platformInvoiceId: invoice.id,
+    })
+  }
+
   const showLaunchKanmonConnectCTA = !(
     currentWorkflowState === 'NO_OFFERS_EXTENDED'
   )
@@ -491,6 +501,7 @@ function ApiInvoices() {
             }
             issuedProduct={issuedProduct as IssuedProduct}
             onFinanceInvoice={onFinanceInvoiceClick}
+            onPayInvoice={onPayInvoiceClick}
           />
         )}
       </div>
