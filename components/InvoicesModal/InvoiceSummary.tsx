@@ -13,6 +13,7 @@ import { PlatformInvoice } from '../../types/DemoInvoicesTypes'
 
 interface TopSectionProps {
   onFastPayClick: () => void
+  onPayInvoiceClick: () => void
   invoice: PlatformInvoice
   logo: string
   issuedProduct: IssuedProduct
@@ -23,6 +24,7 @@ const TopSection = ({
   invoice,
   logo,
   issuedProduct,
+  onPayInvoiceClick,
 }: TopSectionProps) => {
   return (
     <section className="bg-gray-100 py-8 px-12 grid grid-cols-12 gap-x-12">
@@ -62,6 +64,14 @@ const TopSection = ({
               onClick={onFastPayClick}
             >
               Finance {formatInvoiceFinancingProductName()}
+            </button>
+          )}
+          {invoice.kanmonInvoiceId && (
+            <button
+              className="btn bg-green-600 hover:bg-green-700 text-white"
+              onClick={onPayInvoiceClick}
+            >
+              Pay Now
             </button>
           )}
         </div>
@@ -209,6 +219,7 @@ const FooterSection = () => {
 
 interface InvoiceSummaryProps {
   onFastPayClick: () => void
+  onPayInvoiceClick: () => void
   invoice: PlatformInvoice
   issuedProduct: IssuedProduct
 }
@@ -217,6 +228,7 @@ const InvoiceSummary = ({
   onFastPayClick,
   invoice,
   issuedProduct,
+  onPayInvoiceClick,
 }: InvoiceSummaryProps) => {
   const { logoBase64 } = useSelector(getCustomizationState)
 
@@ -226,6 +238,7 @@ const InvoiceSummary = ({
         logo={logoBase64 as string}
         invoice={invoice}
         onFastPayClick={onFastPayClick}
+        onPayInvoiceClick={onPayInvoiceClick}
         issuedProduct={issuedProduct}
       />
       <div className="flex-grow">

@@ -1,19 +1,18 @@
 import { saveCredentials } from '@/store/authSlice'
 import { resetStoreAction } from '@/store/store'
+import { KanmonClient, axiosWithApiKey } from '@/utils'
 import { getErrorCodeFromAxiosError } from '@/utils/getErrorCodeFromAxiosError'
 import Alert from '@mui/material/Alert'
 import Autocomplete from '@mui/material/Autocomplete'
 import Modal from '@mui/material/Modal'
 import TextField from '@mui/material/TextField'
 import { Form, Formik } from 'formik'
-import { isNil } from 'lodash'
+import _, { isNil } from 'lodash'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useAsync, useAsyncFn } from 'react-use'
 import { v4 } from 'uuid'
 import * as Yup from 'yup'
-import AdditonalConfigOptions from './additionalConfigOptions'
-import { KanmonClient, axiosWithApiKey, basicCssClassUpdater } from '@/utils'
 import { getApiKeyState } from '../../store/apiKeySlice'
 import {
   CreateBusinessAndUserRequestBody,
@@ -23,8 +22,7 @@ import {
   UserRole,
 } from '../../types/MoreTypes'
 import Button from '../shared/Button'
-import FormikTextInput from '../shared/FormikTextField'
-import _ from 'lodash'
+import AdditonalConfigOptions from './additionalConfigOptions'
 
 interface AutocompleteOption {
   email?: string
@@ -291,150 +289,92 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                   return (
                     <>
                       <Form>
-                        {/* Anon user screen*/}
-                        {existingBusinesses.length === 0 && (
-                          <>
-                            {!showAdditionalConfiguration ? (
-                              <>
-                                {/* quick start  */}
-                                <h1 className="text-xl font-semibold mb-8">
-                                  Start the process by creating a business
-                                </h1>
-                                <FormikTextInput
-                                  updateContainerCss={basicCssClassUpdater(
-                                    'mb-4',
-                                  )}
-                                  fieldName="email"
-                                  label={'Email'}
-                                  type="email"
-                                  placeholder={'Enter email'}
-                                />
+                        <>
+                          {!showAdditionalConfiguration ? (
+                            <>
+                              <h1 className="text-xl font-semibold mb-8">
+                                Select an existing business
+                              </h1>
+                              <Autocomplete<AutocompleteOption>
+                                options={existingBusinesses}
+                                onChange={(
+                                  _event,
+                                  value: AutocompleteOption | null,
+                                ) => {
+                                  setSelectedUser(value)
+                                }}
+                                getOptionLabel={(o: AutocompleteOption) =>
+                                  o.email ||
+                                  o.platformUserId ||
+                                  o.userId ||
+                                  o.businessId
+                                }
+                                renderInput={(params) => (
+                                  <TextField
+                                    {...params}
+                                    label="select a business"
+                                  />
+                                )}
+                              />
 
+                              <div className="mt-6">
                                 <Button
                                   fullWidth
-                                  disabled={!isValid || isSubmitting}
+                                  disabled={!selectedUser}
                                   variant="contained"
                                   color="primary"
-                                  onClick={() => handleSubmit()}
+                                  onClick={onExistingBusinessSelect}
                                 >
-                                  Start new demo
+                                  Select existing business
                                 </Button>
+                              </div>
 
-                                <p
-                                  onClick={() => {
-                                    setShowAdditionalConfiguration(true)
-                                    setSelectedUser(null)
-                                  }}
-                                  className="text-left text-sm hover:cursor-pointer text-[#1976d2] mt-4"
-                                >
-                                  Show additional configurations →
-                                </p>
-                              </>
-                            ) : (
-                              <AdditonalConfigOptions
-                                setShowAdditionalConfiguration={
-                                  setShowAdditionalConfiguration
-                                }
-                                handleSubmit={handleSubmit}
-                                isDisabled={isValid}
-                                platformEnabledProducts={
-                                  platform?.enabledProducts ??
-                                  Object.values(ProductType)
-                                }
-                              />
-                            )}
-                          </>
-                        )}
-
-                        {/* Auth'd user screen */}
-                        {existingBusinesses.length > 0 && (
-                          <>
-                            {!showAdditionalConfiguration ? (
-                              <>
-                                <h1 className="text-xl font-semibold mb-8">
-                                  Select an existing business
-                                </h1>
-                                <Autocomplete<AutocompleteOption>
-                                  options={existingBusinesses}
-                                  onChange={(
-                                    _event,
-                                    value: AutocompleteOption | null,
-                                  ) => {
-                                    setSelectedUser(value)
-                                  }}
-                                  getOptionLabel={(o: AutocompleteOption) =>
-                                    o.email ||
-                                    o.platformUserId ||
-                                    o.userId ||
-                                    o.businessId
-                                  }
-                                  renderInput={(params) => (
-                                    <TextField
-                                      {...params}
-                                      label="select a business"
-                                    />
-                                  )}
+                              <div className="my-6 flex justify-center items-center">
+                                <hr
+                                  className="inline-block bg-gray-200"
+                                  style={{ height: '2px', width: '200px' }}
                                 />
+                                <span className="text-xl mx-4"> OR </span>
+                                <hr
+                                  className="inline-block bg-gray-200"
+                                  style={{ height: '2px', width: '200px' }}
+                                />
+                              </div>
 
-                                <div className="mt-6">
-                                  <Button
-                                    fullWidth
-                                    disabled={!selectedUser}
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={onExistingBusinessSelect}
-                                  >
-                                    Select existing business
-                                  </Button>
-                                </div>
+                              <Button
+                                fullWidth
+                                disabled={!isValid || isSubmitting}
+                                variant="contained"
+                                color="primary"
+                                onClick={() => handleSubmit()}
+                              >
+                                Start new demo
+                              </Button>
 
-                                <div className="my-6 flex justify-center items-center">
-                                  <hr
-                                    className="inline-block bg-gray-200"
-                                    style={{ height: '2px', width: '200px' }}
-                                  />
-                                  <span className="text-xl mx-4"> OR </span>
-                                  <hr
-                                    className="inline-block bg-gray-200"
-                                    style={{ height: '2px', width: '200px' }}
-                                  />
-                                </div>
-
-                                <Button
-                                  fullWidth
-                                  disabled={!isValid || isSubmitting}
-                                  variant="contained"
-                                  color="primary"
-                                  onClick={() => handleSubmit()}
-                                >
-                                  Start new demo
-                                </Button>
-
-                                <p
-                                  onClick={() => {
-                                    setShowAdditionalConfiguration(true)
-                                    setSelectedUser(null)
-                                  }}
-                                  className="text-left text-sm hover:cursor-pointer text-[#1976d2] mt-4"
-                                >
-                                  Show additional configurations →
-                                </p>
-                              </>
-                            ) : (
-                              <AdditonalConfigOptions
-                                setShowAdditionalConfiguration={
-                                  setShowAdditionalConfiguration
-                                }
-                                handleSubmit={handleSubmit}
-                                isDisabled={!isValid || isSubmitting}
-                                platformEnabledProducts={
-                                  platform?.enabledProducts ??
-                                  Object.values(ProductType)
-                                }
-                              />
-                            )}
-                          </>
-                        )}
+                              <p
+                                onClick={() => {
+                                  setShowAdditionalConfiguration(true)
+                                  setSelectedUser(null)
+                                }}
+                                className="text-left text-sm hover:cursor-pointer text-[#1976d2] mt-4"
+                              >
+                                Show additional configurations →
+                              </p>
+                            </>
+                          ) : (
+                            <AdditonalConfigOptions
+                              setShowAdditionalConfiguration={
+                                setShowAdditionalConfiguration
+                              }
+                              handleSubmit={handleSubmit}
+                              isDisabled={!isValid || isSubmitting}
+                              platformEnabledProducts={
+                                platform?.enabledProducts ??
+                                Object.values(ProductType)
+                              }
+                            />
+                          )}
+                        </>
                       </Form>
 
                       {renderErrorAlert()}

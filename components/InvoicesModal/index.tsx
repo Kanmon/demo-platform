@@ -10,6 +10,7 @@ interface InvoicesModalProps {
   onClose: () => void
   selectedInvoice: PlatformInvoice
   onFinanceInvoice: () => void
+  onPayInvoice: () => void
   issuedProduct?: IssuedProduct
 }
 
@@ -19,7 +20,8 @@ const InvoicesModal = ({
   open,
   onClose: onCloseProps,
   selectedInvoice,
-  onFinanceInvoice: onInvoiceCreate,
+  onFinanceInvoice,
+  onPayInvoice,
   issuedProduct,
 }: InvoicesModalProps) => {
   const onClose = () => {
@@ -44,7 +46,8 @@ const InvoicesModal = ({
           <FontAwesomeIcon icon={faTimes} fixedWidth={false} />
         </div>
         <InvoiceSummary
-          onFastPayClick={onInvoiceCreate}
+          onPayInvoiceClick={onPayInvoice}
+          onFastPayClick={onFinanceInvoice}
           invoice={selectedInvoice}
           issuedProduct={issuedProduct as IssuedProduct}
         />

@@ -1,10 +1,10 @@
 import { resetStoreAction } from '@/store/store'
 import {
+  ExternalProductType,
   KANMON_CONNECT,
-  KanmonConnectComponent,
   KanmonConnectEnviroment,
   KanmonConnectParams,
-  ExternalProductType,
+  ShowKanmonConnectMessage,
 } from '@kanmon/web-sdk'
 import axios from 'axios'
 import { useRouter } from 'next/router'
@@ -13,15 +13,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useAsync } from 'react-use'
 import { getApiKeyState } from '../store/apiKeySlice'
 
-interface ShowArgs {
-  component?: KanmonConnectComponent
-  sessionToken?: string
-}
-
 interface KanmonConnectContext {
   ready: boolean
   error: Error | undefined
-  showKanmonConnect: (showArgs?: ShowArgs) => void
+  showKanmonConnect: (showArgs?: ShowKanmonConnectMessage) => void
 }
 
 export const KanmonConnectContext = createContext<KanmonConnectContext>(
@@ -92,7 +87,7 @@ const KanmonConnectContextProvider = ({
     setReady(true)
   }, [])
 
-  const showKanmonConnect = (showArgs?: ShowArgs) => {
+  const showKanmonConnect = (showArgs?: ShowKanmonConnectMessage) => {
     KANMON_CONNECT.show(showArgs)
   }
 
