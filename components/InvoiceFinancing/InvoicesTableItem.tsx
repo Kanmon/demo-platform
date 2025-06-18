@@ -145,7 +145,7 @@ function InvoiceTableItem({
           <div className="space-x-1">
             {invoice.kanmonInvoiceId ? (
               <span className="inline-flex font-medium rounded-full text-center px-2.5 py-0.5 bg-emerald-100 text-emerald-600">
-                Waiting for Repayment
+                Financed
               </span>
             ) : (
               <span>-</span>
