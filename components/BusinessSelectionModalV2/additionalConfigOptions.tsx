@@ -9,6 +9,7 @@ import FormikTextInput from '../shared/FormikTextField'
 import { basicCssClassUpdater } from '@/utils'
 import { FormValues } from './index'
 import FormikSelectInput from '../shared/FormikSelectField'
+import FormikCheckboxInput from '../shared/FormikCheckBoxField'
 
 export const notInvoiceFinancingProduct = (productType: ProductType) => {
   return productType !== ProductType.ACCOUNTS_PAYABLE_FINANCING
@@ -89,6 +90,13 @@ const AdditonalConfigOptions = ({
                 value: TestingPrequalType.ANON,
               },
             ]}
+          />
+        </div>
+        <div className="col-span-6">
+          <FormikCheckboxInput<FormValues>
+            fieldName="analyticsEnabled"
+            label="Enable Analytics"
+            containerClass="flex items-center"
           />
         </div>
       </div>

@@ -70,6 +70,7 @@ export interface FormValues {
   platformBusinessId: string
   prequalifyForProduct: ProductType | null
   prequalType: TestingPrequalType | null
+  analyticsEnabled: boolean
 }
 
 const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
@@ -180,12 +181,14 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
     platformBusinessId,
     userRoles,
     prequalType,
+    analyticsEnabled,
   }: {
     email: string
     prequalifyForProduct: ProductType | null
     platformBusinessId: string
     userRoles: UserRole[]
     prequalType: TestingPrequalType | null
+    analyticsEnabled: boolean
   }) => {
     await createBusiness({
       email,
@@ -193,6 +196,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
       platformBusinessId,
       userRoles,
       prequalType: prequalType ?? undefined,
+      analyticsEnabled: analyticsEnabled ?? undefined,
     })
   }
 
@@ -253,6 +257,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
       platformBusinessId: v4(),
       prequalType: null,
       prequalifyForProduct: null,
+      analyticsEnabled: false,
     }
   }
 
@@ -279,6 +284,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                     platformBusinessId: values.platformBusinessId,
                     prequalifyForProduct: values.prequalifyForProduct,
                     prequalType: values.prequalType,
+                    analyticsEnabled: values.analyticsEnabled,
                   })
                 }}
                 initialValues={initialValues}

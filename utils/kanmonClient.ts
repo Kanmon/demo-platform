@@ -207,6 +207,26 @@ export class KanmonClient {
       return response.data
     }
 
+  TEST_ONLY_setAnalyticsEnabledOnBusiness = async (
+    businessId: string,
+    analyticsEnabled: boolean,
+  ): Promise<PlatformDetails | null> => {
+    const headers = this.getApiHeader()
+
+    const response = await axios.post(
+      `${NEXT_PUBLIC_KANMON_API_HOST}/v1/testing/set-analytics-enabled-on-business`,
+      {
+        businessId,
+        analyticsEnabled,
+      },
+      {
+        headers,
+      },
+    )
+
+    return response.data
+  }
+
   TEST_ONLY_CreateEmbeddedSession = async (
     payload: CreateSessionTokenRequestBody,
   ): Promise<EmbeddedSession> => {
