@@ -141,6 +141,13 @@ const create_business_v2 = async (
       }
     }
 
+    if (payload.analyticsEnabled) {
+      await client.TEST_ONLY_setAnalyticsEnabledOnBusiness(
+        business.id,
+        payload.analyticsEnabled,
+      )
+    }
+
     res.json(createUserResponse)
   } catch (ex: any) {
     const errorStatus = ex.response.status

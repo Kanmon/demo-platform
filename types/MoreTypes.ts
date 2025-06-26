@@ -1,5 +1,11 @@
 import { Address } from '@kanmon/sdk'
-import { IsEnum, IsOptional, IsString, ValidateIf } from 'class-validator'
+import {
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  ValidateIf,
+} from 'class-validator'
 
 export enum TestingPrequalType {
   STANDARD = 'STANDARD',
@@ -40,6 +46,10 @@ export class CreateBusinessAndUserRequestBody {
   @IsEnum(TestingPrequalType)
   @IsOptional()
   prequalType?: TestingPrequalType
+
+  @IsBoolean()
+  @IsOptional()
+  analyticsEnabled?: boolean
 }
 
 export type CreateUserResponsePayload = {
