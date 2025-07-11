@@ -75,7 +75,7 @@ const FormikTextInput = <FormData,>({
               error={meta.touched && !!meta.error}
               sx={customInputSx}
             />
-            {showErrorMessage && (
+            {showErrorMessage && meta.error && meta.touched && (
               <div className="min-h-6">
                 {meta.touched && meta.error && (
                   <FieldErrorText

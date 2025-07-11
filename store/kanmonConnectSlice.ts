@@ -9,6 +9,7 @@ export interface KanmonConnectState {
   currentWorkflowState: UserState | null
   issuedProduct: IssuedProduct | null
   isOpen: boolean
+  useCdnSdk?: boolean
 }
 
 const initialState: KanmonConnectState = {
@@ -16,6 +17,7 @@ const initialState: KanmonConnectState = {
   currentWorkflowState: null,
   issuedProduct: null,
   isOpen: false,
+  useCdnSdk: false, // This can be set based on your application logic
 }
 
 export const kanmonConnectSlice = createSlice({
@@ -42,6 +44,9 @@ export const kanmonConnectSlice = createSlice({
     ) {
       state.issuedProduct = action.payload.issuedProduct
     },
+    updateUseCdnSdk(state, action: { payload: { useCdnSdk: boolean } }) {
+      state.useCdnSdk = action.payload.useCdnSdk
+    },
   },
 
   extraReducers: {
@@ -54,8 +59,12 @@ export const kanmonConnectSlice = createSlice({
   },
 })
 
-export const { updateOnWorkflowChange, updateOnHide, updateIssuedProduct } =
-  kanmonConnectSlice.actions
+export const {
+  updateOnWorkflowChange,
+  updateOnHide,
+  updateIssuedProduct,
+  updateUseCdnSdk,
+} = kanmonConnectSlice.actions
 
 export const getKanmonConnectSlice = (state: AppState) => state.kanmonConnect
 
