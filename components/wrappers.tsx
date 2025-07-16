@@ -45,12 +45,12 @@ export const TempAuthWrapper: React.FC<Props> = ({ children }) => {
   const queryApiKey = query?.kanmonApiKey as string | undefined
 
   const apiKey = queryApiKey || storeApiKey
-  
+
   useEffect(() => {
-    if(isReady && !storeApiKey && apiKey) {
+    if (isReady && !storeApiKey && apiKey) {
       dispatch(saveApiKey({ apiKey }))
     }
-  }, [isReady, storeApiKey, apiKey, dispatch])  
+  }, [isReady, storeApiKey, apiKey, dispatch])
 
   const { loading: validatingApiKey } = useAsync(async () => {
     try {
