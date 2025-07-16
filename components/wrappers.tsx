@@ -49,8 +49,16 @@ export const TempAuthWrapper: React.FC<Props> = ({ children }) => {
   useEffect(() => {
     if (isReady && !storeApiKey && apiKey) {
       dispatch(saveApiKey({ apiKey }))
+    } else if (
+      isReady &&
+      queryApiKey &&
+      storeApiKey &&
+      queryApiKey != storeApiKey
+    ) {
+      dispatch(resetStoreAction(true))
+      dispatch(saveApiKey({ apiKey }))
     }
-  }, [isReady, storeApiKey, apiKey, dispatch])
+  }, [isReady, storeApiKey, apiKey, dispatch, queryApiKey])
 
   const { loading: validatingApiKey } = useAsync(async () => {
     try {
