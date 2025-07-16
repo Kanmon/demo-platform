@@ -11,7 +11,6 @@ import Button from '../shared/Button'
 import { genericErrorMessage } from '@/utils/constants'
 import { Form, Formik } from 'formik'
 import * as Yup from 'yup'
-import FormikCheckboxInput from '@/components/shared/FormikCheckBoxField'
 import FormikTextInput from '@/components/shared/FormikTextField'
 
 const getSaveApiKeyErrorMessage = (error: any) => {
@@ -98,7 +97,13 @@ const ApiKeyModal = ({ open }: any) => {
               validationSchema={apiKeyValidationSchema}
               validateOnMount={true}
             >
-              {({ isValid, handleSubmit, isSubmitting }) => {
+              {({
+                isValid,
+                handleSubmit,
+                isSubmitting,
+                values,
+                setFieldValue,
+              }) => {
                 return (
                   <div className="mt-4">
                     <h1 className="text-xl font-semibold mb-8">
@@ -111,12 +116,30 @@ const ApiKeyModal = ({ open }: any) => {
                           placeholder={'Set Api Key'}
                         />
                       </div>
-                      <div className="col-span-6">
-                        <FormikCheckboxInput<FormValues>
-                          fieldName="useCdnSdk"
-                          label="Use CDN SDK"
-                          containerClass="flex items-center mb-4"
-                        />
+                      <div className="flex justify-start mb-4">
+                        <div className="inline-flex rounded-md border border-gray-200 bg-gray-50 text-sm font-medium">
+                          <button
+                            type="button"
+                            onClick={() => setFieldValue('useCdnSdk', false)}
+                            className={`px-3 py-1 rounded-l-md transition-colors duration-150
+                              ${!values.useCdnSdk ? 'bg-white text-blue-600 border border-gray-300' : 'text-gray-600'}
+                            `}
+                          >
+                            Web-sdk NPM
+                            <span className="ml-1 text-[10px] text-blue-600 bg-blue-100 rounded px-1">
+                              (recommended)
+                            </span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setFieldValue('useCdnSdk', true)}
+                            className={`px-3 py-1 rounded-r-md transition-colors duration-150
+                              ${values.useCdnSdk ? 'bg-white text-blue-600 border border-gray-300' : 'text-gray-600'}
+                            `}
+                          >
+                            Kanmon CDN
+                          </button>
+                        </div>
                       </div>
 
                       <Button

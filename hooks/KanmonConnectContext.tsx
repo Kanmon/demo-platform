@@ -45,7 +45,7 @@ interface KanmonConnectContextProviderProps {
   connectUrlPath?: string
 }
 
-const NEXT_PUBLIC_WIDGET_HOST = `${process.env.NEXT_PUBLIC_WIDGET_HOST}/scripts/v2/kanmon-connect.js`
+const NEXT_PUBLIC_KANMON_CDN_HOST = `${process.env.NEXT_PUBLIC_KANMON_CDN_HOST}/scripts/v2/kanmon-connect.js`
 const KanmonConnectContextProvider = ({
   children,
   userId,
@@ -57,7 +57,7 @@ const KanmonConnectContextProvider = ({
   const { apiKey } = useSelector(getApiKeyState)
   const { useCdnSdk } = useSelector(getKanmonConnectSlice)
   const [scriptLoading] = useScript({
-    src: NEXT_PUBLIC_WIDGET_HOST,
+    src: NEXT_PUBLIC_KANMON_CDN_HOST,
   })
   const [ready, setReady] = useState(false)
 
