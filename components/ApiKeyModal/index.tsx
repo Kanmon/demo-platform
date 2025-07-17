@@ -2,10 +2,9 @@ import { axiosWithApiKey } from '@/utils'
 import { getErrorCodeFromAxiosError } from '@/utils/getErrorCodeFromAxiosError'
 import { Alert, TextField } from '@mui/material'
 import Modal from '@mui/material/Modal'
-import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { useAsync, useAsyncFn } from 'react-use'
+import { useAsyncFn } from 'react-use'
 import { saveApiKey } from '../../store/apiKeySlice'
 import Button from '../shared/Button'
 import { genericErrorMessage } from '@/utils/constants'
@@ -22,7 +21,6 @@ const getSaveApiKeyErrorMessage = (error: any) => {
 
 const ApiKeyModal = ({ open }: any) => {
   const dispatch = useDispatch()
-  const { query, pathname, replace, isReady } = useRouter()
   const [localApiKey, setLocalApiKey] = useState('')
 
   const [{ loading: saveApiKeyLoading, error: saveApiKeyError }, saveApiKeyFn] =
@@ -33,38 +31,6 @@ const ApiKeyModal = ({ open }: any) => {
     })
 
   const error = getSaveApiKeyErrorMessage(saveApiKeyError)
-
-  const { value: doneValidatedApiKeyFromQueryParam } = useAsync(
-    async function extractApiKeyFromQueryParamWhenEmbedded() {
-      if (!isReady) {
-        return null
-      }
-
-      const queryApiKey = query?.kanmonApiKey as string | undefined
-
-      if (queryApiKey) {
-        try {
-          await saveApiKeyFn(queryApiKey)
-        } finally {
-          // Remove query params after saving them
-          replace(
-            {
-              pathname: pathname, // Keep the current path
-              query: {}, // Empty query object removes all query parameters
-            },
-            undefined,
-            { shallow: true },
-          )
-        }
-      }
-
-      return true
-    },
-    [query?.kanmonApiKey],
-  )
-
-  // Prevent flickering when api key is passed through query param
-  if (!doneValidatedApiKeyFromQueryParam) return null
 
   return (
     <Modal open={open}>
