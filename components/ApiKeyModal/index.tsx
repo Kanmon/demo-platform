@@ -2,9 +2,8 @@ import { axiosWithApiKey } from '@/utils'
 import { getErrorCodeFromAxiosError } from '@/utils/getErrorCodeFromAxiosError'
 import { Alert } from '@mui/material'
 import Modal from '@mui/material/Modal'
-import { useRouter } from 'next/router'
 import { useDispatch } from 'react-redux'
-import { useAsync, useAsyncFn } from 'react-use'
+import { useAsyncFn } from 'react-use'
 import { saveApiKey } from '../../store/apiKeySlice'
 import { updateUseCdnSdk } from '../../store/kanmonConnectSlice'
 import Button from '../shared/Button'
@@ -34,7 +33,6 @@ const apiKeyValidationSchema = Yup.object().shape({
 
 const ApiKeyModal = ({ open }: any) => {
   const dispatch = useDispatch()
-  const { query, pathname, replace, isReady } = useRouter()
 
   const [{ loading: saveApiKeyLoading, error: saveApiKeyError }, saveApiKeyFn] =
     useAsyncFn(async (values: FormValues) => {
@@ -46,38 +44,6 @@ const ApiKeyModal = ({ open }: any) => {
     })
 
   const error = getSaveApiKeyErrorMessage(saveApiKeyError)
-
-  const { value: doneValidatedApiKeyFromQueryParam } = useAsync(
-    async function extractApiKeyFromQueryParamWhenEmbedded() {
-      if (!isReady) {
-        return null
-      }
-
-      const queryApiKey = query?.kanmonApiKey as string | undefined
-
-      if (queryApiKey) {
-        try {
-          await saveApiKeyFn({ apiKey: queryApiKey, useCdnSdk: false })
-        } finally {
-          // Remove query params after saving them
-          replace(
-            {
-              pathname: pathname, // Keep the current path
-              query: {}, // Empty query object removes all query parameters
-            },
-            undefined,
-            { shallow: true },
-          )
-        }
-      }
-
-      return true
-    },
-    [query?.kanmonApiKey, query?.useCdnSdk],
-  )
-
-  // Prevent flickering when api key is passed through query param
-  if (!doneValidatedApiKeyFromQueryParam) return null
 
   const initialValues: FormValues = {
     apiKey: '',

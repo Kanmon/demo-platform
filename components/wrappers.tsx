@@ -15,8 +15,10 @@ import { useDispatch, useSelector, useStore } from 'react-redux'
 import { useAsync } from 'react-use'
 import { PersistGate } from 'redux-persist/integration/react'
 import KanmonConnectContextProvider from '../hooks/KanmonConnectContext'
-import { getApiKeyState } from '../store/apiKeySlice'
+import { getApiKeyState, saveApiKey } from '../store/apiKeySlice'
 import ApiKeyModal from './ApiKeyModal'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 
 interface Props {
   children?: React.ReactNode
@@ -36,8 +38,27 @@ export const TempReduxWrapper: React.FC<Props> = ({ children }) => {
 
 export const TempAuthWrapper: React.FC<Props> = ({ children }) => {
   const { userId } = useSelector(getAuthState)
-  const { apiKey } = useSelector(getApiKeyState)
+  const { apiKey: storeApiKey } = useSelector(getApiKeyState)
   const { dispatch } = useStore()
+  const { query, isReady } = useRouter()
+
+  const queryApiKey = query?.kanmonApiKey as string | undefined
+
+  const apiKey = queryApiKey || storeApiKey
+
+  useEffect(() => {
+    if (isReady && !storeApiKey && apiKey) {
+      dispatch(saveApiKey({ apiKey }))
+    } else if (
+      isReady &&
+      queryApiKey &&
+      storeApiKey &&
+      queryApiKey != storeApiKey
+    ) {
+      dispatch(resetStoreAction(true))
+      dispatch(saveApiKey({ apiKey }))
+    }
+  }, [isReady, storeApiKey, apiKey, dispatch, queryApiKey])
 
   const { loading: validatingApiKey } = useAsync(async () => {
     try {
@@ -60,6 +81,9 @@ export const TempAuthWrapper: React.FC<Props> = ({ children }) => {
         <ApiKeyModal open />
       </div>
     )
+  }
+  if (!isReady) {
+    return null
   }
 
   return <div>{userId ? children : <BusinessSelectionModalV2 open />}</div>
