@@ -11,6 +11,7 @@ import { genericErrorMessage } from '@/utils/constants'
 import { Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import FormikTextInput from '@/components/shared/FormikTextField'
+import { useRouter } from 'next/router'
 
 const getSaveApiKeyErrorMessage = (error: any) => {
   if (!error) return null
@@ -33,6 +34,8 @@ const apiKeyValidationSchema = Yup.object().shape({
 
 const ApiKeyModal = ({ open }: any) => {
   const dispatch = useDispatch()
+  const router = useRouter()
+  const isConfigPage = router.pathname === '/config'
 
   const [{ loading: saveApiKeyLoading, error: saveApiKeyError }, saveApiKeyFn] =
     useAsyncFn(async (values: FormValues) => {
@@ -41,6 +44,9 @@ const ApiKeyModal = ({ open }: any) => {
 
       dispatch(saveApiKey({ apiKey }))
       dispatch(updateUseCdnSdk({ useCdnSdk }))
+      if (isConfigPage) {
+        router.push('/')
+      }
     })
 
   const error = getSaveApiKeyErrorMessage(saveApiKeyError)
@@ -82,31 +88,36 @@ const ApiKeyModal = ({ open }: any) => {
                           placeholder={'Set Api Key'}
                         />
                       </div>
-                      <div className="flex justify-start mb-4">
-                        <div className="inline-flex rounded-md border border-gray-200 bg-gray-50 text-sm font-medium">
-                          <button
-                            type="button"
-                            onClick={() => setFieldValue('useCdnSdk', false)}
-                            className={`px-3 py-1 rounded-l-md transition-colors duration-150
-                              ${!values.useCdnSdk ? 'bg-white text-blue-600 border border-gray-300' : 'text-gray-600'}
-                            `}
-                          >
-                            Web-sdk NPM
-                            <span className="ml-1 text-[10px] text-blue-600 bg-blue-100 rounded px-1">
-                              (recommended)
-                            </span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setFieldValue('useCdnSdk', true)}
-                            className={`px-3 py-1 rounded-r-md transition-colors duration-150
-                              ${values.useCdnSdk ? 'bg-white text-blue-600 border border-gray-300' : 'text-gray-600'}
-                            `}
-                          >
-                            Kanmon CDN
-                          </button>
+                      {isConfigPage && (
+                        <div className="flex justify-start items-center mb-4">
+                          <span className="mr-3 text-sm font-medium text-gray-700">
+                            Integration Mode:
+                          </span>
+                          <div className="inline-flex rounded-md border border-gray-200 bg-gray-50 text-sm font-medium">
+                            <button
+                              type="button"
+                              onClick={() => setFieldValue('useCdnSdk', false)}
+                              className={`px-3 py-1 rounded-l-md transition-colors duration-150
+                            ${!values.useCdnSdk ? 'bg-white text-blue-600 border border-gray-300' : 'text-gray-600'}
+                          `}
+                            >
+                              @kanmon/web-sdk NPM
+                              <span className="ml-1 text-[10px] text-blue-600 bg-blue-100 rounded px-1">
+                                (recommended)
+                              </span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setFieldValue('useCdnSdk', true)}
+                              className={`px-3 py-1 rounded-r-md transition-colors duration-150
+                            ${values.useCdnSdk ? 'bg-white text-blue-600 border border-gray-300' : 'text-gray-600'}
+                          `}
+                            >
+                              Kanmon CDN
+                            </button>
+                          </div>
                         </div>
-                      </div>
+                      )}
 
                       <Button
                         fullWidth
