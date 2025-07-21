@@ -2,7 +2,10 @@ import { Form, Formik } from 'formik'
 import { useDispatch, useSelector } from 'react-redux'
 import { useAsyncFn } from 'react-use'
 import { saveApiKey } from '../../store/apiKeySlice'
-import { getKanmonConnectSlice, updateUseCdnSdk } from '../../store/kanmonConnectSlice'
+import {
+  getKanmonConnectSlice,
+  updateUseCdnSdk,
+} from '../../store/kanmonConnectSlice'
 import { getErrorCodeFromAxiosError } from '@/utils/getErrorCodeFromAxiosError'
 import { genericErrorMessage } from '@/utils/constants'
 import FormikTextInput from '@/components/shared/FormikTextField'
@@ -10,7 +13,6 @@ import { axiosWithApiKey, basicCssClassUpdater } from '@/utils'
 import { Alert, Box } from '@mui/material'
 import Button from '@/components/shared/Button'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
 
 interface FormValues {
   apiKey: string
@@ -30,10 +32,8 @@ const getSaveApiKeyErrorMessage = (error: any) => {
 const ConfigPage = () => {
   const dispatch = useDispatch()
   const router = useRouter()
-  const data = useSelector(
-    getKanmonConnectSlice,
-  )
-  
+  const data = useSelector(getKanmonConnectSlice)
+
   const initialValues: FormValues = {
     apiKey: '',
     useCdnSdk: data.useCdnSdk ?? false,
@@ -60,18 +60,22 @@ const ConfigPage = () => {
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 overflow-hidden">
           {/* Header Section */}
           <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-6 text-white">
-                         <div className="flex items-center space-x-3 mb-2">
-               <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                 <img
-                   src="/icons/settings.svg"
-                   alt="Settings"
-                   width={24}
-                   height={24}
-                 />
-               </div>
+            <div className="flex items-center space-x-3 mb-2">
+              <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                <img
+                  src="/icons/settings.svg"
+                  alt="Settings"
+                  width={24}
+                  height={24}
+                />
+              </div>
               <div>
-                <h1 className="text-2xl font-bold tracking-tight">Configuration</h1>
-                <p className="text-indigo-100 text-sm">Set up your Kanmon integration</p>
+                <h1 className="text-2xl font-bold tracking-tight">
+                  Configuration
+                </h1>
+                <p className="text-indigo-100 text-sm">
+                  Set up your Kanmon integration
+                </p>
               </div>
             </div>
           </div>
@@ -96,22 +100,24 @@ const ConfigPage = () => {
                   <Form className="space-y-6">
                     {/* API Key Section */}
                     <div className="space-y-3">
-                                             <div className="flex items-center space-x-2">
-                         <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
-                           <img
-                             src="/icons/key.svg"
-                             alt="API Key"
-                             width={16}
-                             height={16}
-                           />
-                         </div>
-                        <label className="text-sm font-semibold text-gray-700">API Key</label>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
+                          <img
+                            src="/icons/key.svg"
+                            alt="API Key"
+                            width={16}
+                            height={16}
+                          />
+                        </div>
+                        <label className="text-sm font-semibold text-gray-700">
+                          API Key
+                        </label>
                       </div>
-                                             <FormikTextInput<FormValues>
-                         fieldName="apiKey"
-                         placeholder="Enter your Kanmon API key"
-                         updateContainerCss={basicCssClassUpdater('w-full')}
-                         customInputSx={{
+                      <FormikTextInput<FormValues>
+                        fieldName="apiKey"
+                        placeholder="Enter your Kanmon API key"
+                        updateContainerCss={basicCssClassUpdater('w-full')}
+                        customInputSx={{
                           '& .MuiOutlinedInput-root': {
                             borderRadius: '12px',
                             backgroundColor: 'white',
@@ -129,18 +135,20 @@ const ConfigPage = () => {
 
                     {/* Integration Mode Section */}
                     <div className="space-y-3">
-                                             <div className="flex items-center space-x-2">
-                         <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                           <img
-                             src="/icons/check-circle.svg"
-                             alt="Integration Mode"
-                             width={16}
-                             height={16}
-                           />
-                         </div>
-                        <label className="text-sm font-semibold text-gray-700">Integration Mode</label>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                          <img
+                            src="/icons/check-circle.svg"
+                            alt="Integration Mode"
+                            width={16}
+                            height={16}
+                          />
+                        </div>
+                        <label className="text-sm font-semibold text-gray-700">
+                          Integration Mode
+                        </label>
                       </div>
-                      
+
                       <div className="bg-gray-50 rounded-xl p-1 border border-gray-200">
                         <div className="grid grid-cols-2 gap-1">
                           <button
@@ -152,20 +160,30 @@ const ConfigPage = () => {
                                 : 'text-gray-600 hover:bg-gray-100'
                             }`}
                           >
-                                                         <div className="flex items-center space-x-3">
-                               <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                                 !values.useCdnSdk ? 'bg-indigo-100' : 'bg-gray-200'
-                               }`}>
-                                 <img
-                                   src={!values.useCdnSdk ? "/icons/book.svg" : "/icons/book-gray.svg"}
-                                   alt="NPM Package"
-                                   width={16}
-                                   height={16}
-                                 />
-                               </div>
+                            <div className="flex items-center space-x-3">
+                              <div
+                                className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                                  !values.useCdnSdk
+                                    ? 'bg-indigo-100'
+                                    : 'bg-gray-200'
+                                }`}
+                              >
+                                <img
+                                  src={
+                                    !values.useCdnSdk
+                                      ? '/icons/book.svg'
+                                      : '/icons/book-gray.svg'
+                                  }
+                                  alt="NPM Package"
+                                  width={16}
+                                  height={16}
+                                />
+                              </div>
                               <div>
                                 <div className="font-medium">NPM Package</div>
-                                <div className="text-xs text-gray-500">@kanmon/web-sdk</div>
+                                <div className="text-xs text-gray-500">
+                                  @kanmon/web-sdk
+                                </div>
                               </div>
                             </div>
                             {!values.useCdnSdk && (
@@ -176,7 +194,7 @@ const ConfigPage = () => {
                               </div>
                             )}
                           </button>
-                          
+
                           <button
                             type="button"
                             onClick={() => setFieldValue('useCdnSdk', true)}
@@ -186,20 +204,30 @@ const ConfigPage = () => {
                                 : 'text-gray-600 hover:bg-gray-100'
                             }`}
                           >
-                                                         <div className="flex items-center space-x-3">
-                               <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                                 values.useCdnSdk ? 'bg-indigo-100' : 'bg-gray-200'
-                               }`}>
-                                 <img
-                                   src={values.useCdnSdk ? "/icons/globe.svg" : "/icons/globe-gray.svg"}
-                                   alt="CDN"
-                                   width={16}
-                                   height={16}
-                                 />
-                               </div>
+                            <div className="flex items-center space-x-3">
+                              <div
+                                className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                                  values.useCdnSdk
+                                    ? 'bg-indigo-100'
+                                    : 'bg-gray-200'
+                                }`}
+                              >
+                                <img
+                                  src={
+                                    values.useCdnSdk
+                                      ? '/icons/globe.svg'
+                                      : '/icons/globe-gray.svg'
+                                  }
+                                  alt="CDN"
+                                  width={16}
+                                  height={16}
+                                />
+                              </div>
                               <div>
                                 <div className="font-medium">CDN</div>
-                                <div className="text-xs text-gray-500">Script tag</div>
+                                <div className="text-xs text-gray-500">
+                                  Script tag
+                                </div>
                               </div>
                             </div>
                           </button>
@@ -215,7 +243,8 @@ const ConfigPage = () => {
                         disabled={!isValid || isSubmitting || loading}
                         onClick={() => handleSubmit()}
                         sx={{
-                          background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                          background:
+                            'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
                           borderRadius: '12px',
                           padding: '12px 24px',
                           fontSize: '16px',
@@ -223,7 +252,8 @@ const ConfigPage = () => {
                           textTransform: 'none',
                           boxShadow: '0 4px 14px 0 rgba(99, 102, 241, 0.4)',
                           '&:hover': {
-                            background: 'linear-gradient(135deg, #5855eb 0%, #7c3aed 100%)',
+                            background:
+                              'linear-gradient(135deg, #5855eb 0%, #7c3aed 100%)',
                             boxShadow: '0 6px 20px 0 rgba(99, 102, 241, 0.5)',
                           },
                           '&:disabled': {
@@ -238,17 +268,17 @@ const ConfigPage = () => {
                             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                             <span>Applying Configuration...</span>
                           </div>
-                                                 ) : (
-                           <div className="flex items-center space-x-2">
-                             <img
-                               src="/icons/check.svg"
-                               alt="Apply"
-                               width={20}
-                               height={20}
-                             />
-                             <span>Apply Configuration</span>
-                           </div>
-                         )}
+                        ) : (
+                          <div className="flex items-center space-x-2">
+                            <img
+                              src="/icons/check.svg"
+                              alt="Apply"
+                              width={20}
+                              height={20}
+                            />
+                            <span>Apply Configuration</span>
+                          </div>
+                        )}
                       </Button>
                     </div>
                   </Form>
@@ -259,7 +289,7 @@ const ConfigPage = () => {
             {/* Error Display */}
             {error && (
               <Box className="mt-6">
-                <Alert 
+                <Alert
                   severity="error"
                   sx={{
                     borderRadius: '12px',
@@ -279,7 +309,10 @@ const ConfigPage = () => {
         <div className="mt-8 text-center">
           <p className="text-sm text-gray-500">
             Need help? Check out our{' '}
-            <a href="#" className="text-indigo-600 hover:text-indigo-700 font-medium underline">
+            <a
+              href="#"
+              className="text-indigo-600 hover:text-indigo-700 font-medium underline"
+            >
               documentation
             </a>
           </p>
