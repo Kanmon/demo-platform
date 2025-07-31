@@ -130,7 +130,9 @@ const ConfigPage = () => {
           <p className="text-sm text-gray-500">
             Need help? Check out our{' '}
             <a
-              href="#"
+              href="https://www.npmjs.com/package/@kanmon/web-sdk"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-indigo-600 hover:text-indigo-700 font-medium underline"
             >
               documentation
