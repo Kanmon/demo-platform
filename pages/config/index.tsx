@@ -12,17 +12,12 @@ import FormikTextInput from '@/components/shared/FormikTextField'
 import { axiosWithApiKey } from '@/utils'
 import Button from '@/components/shared/Button'
 import { Alert } from '@mui/material'
-import * as Yup from 'yup'
 import { useRouter } from 'next/router'
 
 interface FormValues {
   apiKey: string
   useCdnSdk: boolean
 }
-
-const apiKeyValidationSchema = Yup.object().shape({
-  apiKey: Yup.string().trim().required('Api Key is required'),
-})
 
 const getSaveApiKeyErrorMessage = (error: any) => {
   if (!error) return null
@@ -65,7 +60,6 @@ const ConfigPage = () => {
             await saveApiKeyFn(values)
           }}
           initialValues={initialValues}
-          validationSchema={apiKeyValidationSchema}
           validateOnMount={true}
         >
           {({ isValid, handleSubmit, isSubmitting, values, setFieldValue }) => {
@@ -118,7 +112,7 @@ const ConfigPage = () => {
                     onClick={() => handleSubmit()}
                     color="primary"
                   >
-                    Start new demo
+                    Apply Configuration
                   </Button>
                 </Form>
               </div>
