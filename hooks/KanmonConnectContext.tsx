@@ -102,7 +102,6 @@ const KanmonConnectContextProvider = ({
       // Check if CDN SDK is available
       if (useCdnSdk) {
         window.KANMON_CONNECT.start({
-          launchMode: 'widget',
           ...config,
         })
         setReady(true)
