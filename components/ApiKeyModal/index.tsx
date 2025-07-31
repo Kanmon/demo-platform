@@ -10,7 +10,6 @@ import { genericErrorMessage } from '@/utils/constants'
 import { Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import FormikTextInput from '@/components/shared/FormikTextField'
-import { useRouter } from 'next/router'
 
 const getSaveApiKeyErrorMessage = (error: any) => {
   if (!error) return null
