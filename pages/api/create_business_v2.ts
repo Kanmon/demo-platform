@@ -120,6 +120,7 @@ const create_business_v2 = async (
         country: 'USA',
       },
       roles: payload.userRoles,
+      isUsCitizen: true,
     })
 
     if (payload.prequalifyForProduct && payload.prequalType) {
