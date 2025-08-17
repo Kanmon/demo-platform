@@ -14,6 +14,7 @@ import path from 'path'
 import { PlatformInvoice } from '../../types/DemoInvoicesTypes'
 import { extractApiKeyFromHeader, KanmonClient } from '../../utils'
 import getInvoiceTotalCents from '../../utils/getInvoiceTotal'
+import { File } from 'fetch-blob/file'
 
 export interface CreateEmbeddedSessionPayload {
   productType: ProductType
@@ -77,9 +78,8 @@ const getSessionInvoiceWithFileConnectSessionTokenData = async (
       ),
     )
 
-    const blob = new Blob([data], { type: 'application/pdf' })
-
-    blobInvoices.push(blob)
+    const file  = new File([new Blob([data], { type: 'application/pdf' })], 'sample-invoice.pdf', { type: 'application/pdf' })
+    blobInvoices.push(file)
   }
 
   const documentResponse = await sdkClient.documents.createBusinessDocument({
