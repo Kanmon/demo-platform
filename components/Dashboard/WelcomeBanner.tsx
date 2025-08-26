@@ -74,7 +74,9 @@ export const WelcomeBanner = ({ ctaText }: { ctaText: string | null }) => {
       <div className="flex justify-between items-center">
         <div className="relative">
           <h1 className="text-2xl md:text-3xl text-slate-800 font-semibold mb-1">
-            Need funding, Tycho LLC? 👋
+            {ctaText && /^see\s+offers/i.test(ctaText)
+              ? ctaText
+              : `Need funding, Tycho LLC? 👋`}
           </h1>
           <p className="text-slate-600">
             Get a small business loan from us today!
