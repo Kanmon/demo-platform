@@ -29,6 +29,7 @@ interface AutocompleteOption {
   userId: string
   platformUserId?: string
   businessId: string
+  businessName: string
 }
 
 interface BusinessSelectionModalProps {
@@ -165,6 +166,8 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
             platformUserId: u.platformUserId,
             userId: u.id,
             businessId: u.businessId,
+            businessName:
+              businesses.find((b) => b.id === u.businessId)?.name ?? '',
           }
         })
         .filter((biz) => biz.email || biz.platformUserId)
@@ -209,6 +212,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
         userId: selectedUser.userId,
         email: selectedUser.email,
         businessId: selectedUser.businessId,
+        businessName: selectedUser.businessName,
       }),
     )
   }
@@ -314,7 +318,8 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
                                   o.email ||
                                   o.platformUserId ||
                                   o.userId ||
-                                  o.businessId
+                                  o.businessId ||
+                                  o.businessName
                                 }
                                 renderInput={(params) => (
                                   <TextField
