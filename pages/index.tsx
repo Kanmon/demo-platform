@@ -39,7 +39,7 @@ export const V2Home: React.FC = () => {
   const { showKanmonConnect } = useKanmonConnectContext()
 
   const { apiKey } = useSelector(getApiKeyState)
-  const { userId, businessName } = useSelector(getAuthState)
+  const { userId, businessName, prequalification } = useSelector(getAuthState)
 
   async function fetchIssuedProductDetails() {
     const params = new URLSearchParams()
@@ -103,10 +103,14 @@ export const V2Home: React.FC = () => {
     )
   }
 
+  const bannerText = prequalification
+    ? `You are pre-qualified! See your offer${businessName ? `, ${businessName}` : ''} 👋`
+    : undefined
+
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
-        <WelcomeBanner ctaText={ctaText} businessName={businessName} />
+        <WelcomeBanner ctaText={ctaText} bannerText={bannerText} />
 
         <div className="sm:flex sm:justify-between sm:items-center mb-8">
           <DashboardAvatars />

@@ -152,6 +152,7 @@ const create_business_v2 = async (
     res.json({
       ...createUserResponse,
       businessName: business.name,
+      platformBusinessId: business.platformBusinessId,
     })
   } catch (ex: any) {
     const errorStatus = ex.response.status

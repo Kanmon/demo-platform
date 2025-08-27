@@ -23,6 +23,7 @@ import {
 } from '../../types/MoreTypes'
 import Button from '../shared/Button'
 import AdditonalConfigOptions from './additionalConfigOptions'
+import { BusinessPrequalification } from '@kanmon/sdk'
 
 interface AutocompleteOption {
   email?: string
@@ -30,6 +31,7 @@ interface AutocompleteOption {
   platformUserId?: string
   businessId: string
   businessName: string
+  platformBusinessId: string
 }
 
 interface BusinessSelectionModalProps {
@@ -102,6 +104,12 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
 
       const results = axiosResponse.data
 
+      const prequalificationResponse = await axiosWithApiKey(apiKey).get<
+        BusinessPrequalification[]
+      >(
+        `/api/fetch_prequalification?platformBusinessId=${results.platformBusinessId}`,
+      )
+
       const { prequalType, email } = body
 
       if (prequalType !== TestingPrequalType.ANON) {
@@ -111,6 +119,8 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
             email,
             businessId: results.businessId,
             businessName: results.businessName,
+            platformBusinessId: results.platformBusinessId,
+            prequalification: prequalificationResponse.data.length > 0,
           }),
         )
       } else {
@@ -160,14 +170,15 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
 
       return matchingPrimaryUsers
         .map((u) => {
+          const business = businesses.find((b) => b.id === u.businessId)
           return {
             // Temporary
             email: u.email as unknown as string,
             platformUserId: u.platformUserId,
             userId: u.id,
             businessId: u.businessId,
-            businessName:
-              businesses.find((b) => b.id === u.businessId)?.name ?? '',
+            businessName: business?.name ?? '',
+            platformBusinessId: business?.platformBusinessId ?? '',
           }
         })
         .filter((biz) => biz.email || biz.platformUserId)
@@ -204,8 +215,14 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
     })
   }
 
-  const onExistingBusinessSelect = () => {
+  const onExistingBusinessSelect = async () => {
     if (!selectedUser) return
+
+    const prequalificationResponse = await axiosWithApiKey(apiKey).get<
+      BusinessPrequalification[]
+    >(
+      `/api/fetch_prequalification?platformBusinessId=${selectedUser.platformBusinessId}`,
+    )
 
     dispatch(
       saveCredentials({
@@ -213,6 +230,8 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
         email: selectedUser.email,
         businessId: selectedUser.businessId,
         businessName: selectedUser.businessName,
+        platformBusinessId: selectedUser.platformBusinessId,
+        prequalification: prequalificationResponse.data.length > 0,
       }),
     )
   }

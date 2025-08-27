@@ -62,6 +62,7 @@ export type CreateUserResponsePayload = {
   createdAt: string
   updatedAt: string
   businessName: string
+  platformBusinessId: string
 }
 
 export const productTypeToDisplayName: Record<ProductType, string> = {

@@ -7,12 +7,16 @@ export interface AuthState {
   email: string | undefined
   businessId: string | undefined
   businessName: string | undefined
+  platformBusinessId: string | undefined
+  prequalification: boolean | undefined
 }
 
 const initialState: AuthState = {
   userId: undefined,
   email: undefined,
   businessId: undefined,
+  platformBusinessId: undefined,
+  prequalification: false,
   businessName: undefined,
 }
 
@@ -28,6 +32,8 @@ export const authSlice = createSlice({
           userId: string
           businessId: string
           businessName: string
+          platformBusinessId: string
+          prequalification: boolean
         }
       },
     ) {
@@ -35,6 +41,8 @@ export const authSlice = createSlice({
       state.userId = action.payload.userId
       state.businessId = action.payload.businessId
       state.businessName = action.payload.businessName
+      state.platformBusinessId = action.payload.platformBusinessId
+      state.prequalification = action.payload.prequalification
     },
   },
 
