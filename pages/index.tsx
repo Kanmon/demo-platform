@@ -110,7 +110,10 @@ export const V2Home: React.FC = () => {
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
-        <WelcomeBanner ctaText={prequalification ? 'See Offers 🎉' : ctaText} bannerText={bannerText} />
+        <WelcomeBanner
+          ctaText={prequalification ? 'See Offers 🎉' : ctaText}
+          bannerText={bannerText}
+        />
 
         <div className="sm:flex sm:justify-between sm:items-center mb-8">
           <DashboardAvatars />
