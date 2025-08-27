@@ -13,6 +13,7 @@ import {
   EmbeddedSession,
   CreateSessionTokenRequestBody,
   GetAllUsersRequest,
+  GetPrequalificationsResponse,
 } from '@kanmon/sdk'
 import { ProductType, TestingPrequalType, UserRole } from '../types/MoreTypes'
 
@@ -144,6 +145,14 @@ export class KanmonClient {
     platformBusinessId?: string,
   ): Promise<GetBusinessesResponse> => {
     return this.sdkClient.businesses.getAllBusinesses({
+      platformBusinessIds: platformBusinessId,
+    })
+  }
+
+  getPreQualification = async (
+    platformBusinessId: string,
+  ): Promise<GetPrequalificationsResponse> => {
+    return this.sdkClient.prequalifications.getAllPrequalifiedBusinesses({
       platformBusinessIds: platformBusinessId,
     })
   }

@@ -6,12 +6,18 @@ export interface AuthState {
   userId: string | undefined
   email: string | undefined
   businessId: string | undefined
+  businessName: string | undefined
+  platformBusinessId: string | undefined
+  prequalification: boolean | undefined
 }
 
 const initialState: AuthState = {
   userId: undefined,
   email: undefined,
   businessId: undefined,
+  platformBusinessId: undefined,
+  prequalification: false,
+  businessName: undefined,
 }
 
 export const authSlice = createSlice({
@@ -21,12 +27,22 @@ export const authSlice = createSlice({
     saveCredentials(
       state,
       action: {
-        payload: { email?: string; userId: string; businessId: string }
+        payload: {
+          email?: string
+          userId: string
+          businessId: string
+          businessName: string
+          platformBusinessId: string
+          prequalification: boolean
+        }
       },
     ) {
       state.email = action.payload.email
       state.userId = action.payload.userId
       state.businessId = action.payload.businessId
+      state.businessName = action.payload.businessName
+      state.platformBusinessId = action.payload.platformBusinessId
+      state.prequalification = action.payload.prequalification
     },
   },
 

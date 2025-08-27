@@ -88,7 +88,7 @@ const create_business_v2 = async (
           zipcode: '27529',
           country: 'USA',
         },
-        name: `Sigma Electric Manufacturing Corp-${v4().slice(0, 12)}`,
+        name: `Sigma Manufacturing-${v4().slice(0, 7)}`,
         phoneNumber: '14152223333',
         ein: '123456789',
         website: 'https://www.my-business.com',
@@ -149,7 +149,11 @@ const create_business_v2 = async (
       )
     }
 
-    res.json(createUserResponse)
+    res.json({
+      ...createUserResponse,
+      businessName: business.name,
+      platformBusinessId: business.platformBusinessId,
+    })
   } catch (ex: any) {
     const errorStatus = ex.response.status
     const errorBody = await ex.response.json()

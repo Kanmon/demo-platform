@@ -3,7 +3,13 @@ import { useSelector } from 'react-redux'
 import { getCustomizationState } from '@/store/customizationSlice'
 import { useKanmonConnectContext } from '../../hooks/KanmonConnectContext'
 
-export const WelcomeBanner = ({ ctaText }: { ctaText: string | null }) => {
+export const WelcomeBanner = ({
+  ctaText,
+  bannerText,
+}: {
+  ctaText: string | null
+  bannerText?: string
+}) => {
   const customizationState = useSelector(getCustomizationState)
   const { showKanmonConnect } = useKanmonConnectContext()
 
@@ -74,7 +80,7 @@ export const WelcomeBanner = ({ ctaText }: { ctaText: string | null }) => {
       <div className="flex justify-between items-center">
         <div className="relative">
           <h1 className="text-2xl md:text-3xl text-slate-800 font-semibold mb-1">
-            Need funding, Tycho LLC? 👋
+            {bannerText ?? 'Need funding, Tycho LLC? 👋'}
           </h1>
           <p className="text-slate-600">
             Get a small business loan from us today!
