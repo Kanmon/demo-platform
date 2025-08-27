@@ -3,7 +3,13 @@ import { useSelector } from 'react-redux'
 import { getCustomizationState } from '@/store/customizationSlice'
 import { useKanmonConnectContext } from '../../hooks/KanmonConnectContext'
 
-export const WelcomeBanner = ({ ctaText }: { ctaText: string | null }) => {
+export const WelcomeBanner = ({
+  ctaText,
+  businessName,
+}: {
+  ctaText: string | null
+  businessName?: string
+}) => {
   const customizationState = useSelector(getCustomizationState)
   const { showKanmonConnect } = useKanmonConnectContext()
 
@@ -75,7 +81,7 @@ export const WelcomeBanner = ({ ctaText }: { ctaText: string | null }) => {
         <div className="relative">
           <h1 className="text-2xl md:text-3xl text-slate-800 font-semibold mb-1">
             {ctaText && /^see\s+offers/i.test(ctaText)
-              ? ctaText
+              ? `You are pre-qualified! See your offer${businessName ? `, ${businessName}` : ''} 👋`
               : `Need funding, Tycho LLC? 👋`}
           </h1>
           <p className="text-slate-600">

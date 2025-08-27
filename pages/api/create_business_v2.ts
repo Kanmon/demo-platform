@@ -149,7 +149,10 @@ const create_business_v2 = async (
       )
     }
 
-    res.json(createUserResponse)
+    res.json({
+      ...createUserResponse,
+      businessName: business.name,
+    })
   } catch (ex: any) {
     const errorStatus = ex.response.status
     const errorBody = await ex.response.json()

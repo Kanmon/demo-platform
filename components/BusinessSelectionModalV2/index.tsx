@@ -109,6 +109,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
             userId: results.id,
             email,
             businessId: results.businessId,
+            businessName: results.businessName,
           }),
         )
       } else {
