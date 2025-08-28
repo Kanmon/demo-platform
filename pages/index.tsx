@@ -102,8 +102,10 @@ export const V2Home: React.FC = () => {
       }),
     )
   }
+  const isPrequalified =
+    prequalification && currentWorkflowState === 'START_FLOW'
 
-  const bannerText = prequalification
+  const bannerText = isPrequalified
     ? `You are pre-qualified! See your offer${businessName ? `, ${businessName}` : ''} 👋`
     : undefined
 
@@ -111,7 +113,7 @@ export const V2Home: React.FC = () => {
     <>
       <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
         <WelcomeBanner
-          ctaText={prequalification ? 'See Offers 🎉' : ctaText}
+          ctaText={isPrequalified ? 'See Offers 🎉' : ctaText}
           bannerText={bannerText}
         />
 
