@@ -18,7 +18,7 @@ If you'd like to run the Demo Platform locally and explore it on your own, follo
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (version 18 or higher)
+- [Node.js](https://nodejs.org/) (version 22 or higher)
 - [Git](https://git-scm.com/)
 
 ### Installation
