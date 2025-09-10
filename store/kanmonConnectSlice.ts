@@ -46,7 +46,10 @@ export const kanmonConnectSlice = createSlice({
     ) {
       state.issuedProduct = action.payload.issuedProduct
     },
-    updateUseCdnSdk(state, action: { payload: { useCdnSdk: boolean, enableV2View: boolean } }) {
+    updateUseCdnSdk(
+      state,
+      action: { payload: { useCdnSdk: boolean; enableV2View: boolean } },
+    ) {
       state.useCdnSdk = action.payload.useCdnSdk
       state.enableV2View = action.payload.enableV2View
     },

@@ -86,7 +86,6 @@ const KanmonConnectContextProvider = ({
       const productSubsetDuringOnboarding =
         query?.productSubsetDuringOnboarding as string
 
-
       const config: KanmonConnectParams = {
         connectToken,
         environment: process.env

@@ -20,7 +20,6 @@ const ConfigPage = () => {
     useCdnSdk: data.useCdnSdk ?? false,
     enableV2View: data.enableV2View ?? false,
   }
-  
 
   const saveConfigFn = (values: FormValues) => {
     const { useCdnSdk, enableV2View } = values
@@ -67,7 +66,7 @@ const ConfigPage = () => {
                       >
                         Kanmon CDN
                       </button>
-                      <button 
+                      <button
                         type="button"
                         onClick={() => setFieldValue('enableV2View', true)}
                         className={`px-5 py-1 rounded-r-md transition-colors duration-150
