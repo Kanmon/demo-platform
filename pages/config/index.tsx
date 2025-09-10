@@ -9,6 +9,7 @@ import { useRouter } from 'next/router'
 
 interface FormValues {
   useCdnSdk: boolean
+  enableV2View: boolean
 }
 
 const ConfigPage = () => {
@@ -17,16 +18,18 @@ const ConfigPage = () => {
   const router = useRouter()
   const initialValues: FormValues = {
     useCdnSdk: data.useCdnSdk ?? false,
+    enableV2View: data.enableV2View ?? false,
   }
+  
 
   const saveConfigFn = (values: FormValues) => {
-    const { useCdnSdk } = values
-    dispatch(updateUseCdnSdk({ useCdnSdk }))
+    const { useCdnSdk, enableV2View } = values
+    dispatch(updateUseCdnSdk({ useCdnSdk, enableV2View }))
     router.push('/')
   }
 
   return (
-    <div className="top-1/2 left-1/2 absolute transform -translate-x-1/2 -translate-y-1/2 bg-white text-center rounded w-[450px] md:w-[550px]">
+    <div className="top-1/2 left-1/2 absolute transform -translate-x-1/2 -translate-y-1/2 bg-white text-center rounded w-[450px] md:w-[650px]">
       <div className="p-12">
         <Formik
           onSubmit={saveConfigFn}
@@ -63,6 +66,15 @@ const ConfigPage = () => {
                         `}
                       >
                         Kanmon CDN
+                      </button>
+                      <button 
+                        type="button"
+                        onClick={() => setFieldValue('enableV2View', true)}
+                        className={`px-5 py-1 rounded-r-md transition-colors duration-150
+                          ${values.enableV2View ? 'bg-white text-blue-600 border border-gray-300' : 'text-gray-600'}
+                        `}
+                      >
+                        Enable V2 Styling
                       </button>
                     </div>
                   </div>
