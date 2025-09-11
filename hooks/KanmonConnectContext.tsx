@@ -55,7 +55,7 @@ const KanmonConnectContextProvider = ({
   const dispatch = useDispatch()
 
   const { apiKey } = useSelector(getApiKeyState)
-  const { useCdnSdk } = useSelector(getKanmonConnectSlice)
+  const { useCdnSdk, enableV2View } = useSelector(getKanmonConnectSlice)
   const [scriptLoading] = useScript({
     src: NEXT_PUBLIC_KANMON_CDN_HOST,
   })
@@ -97,6 +97,7 @@ const KanmonConnectContextProvider = ({
         productSubsetDuringOnboarding: productSubsetDuringOnboarding?.split(
           ',',
         ) as ExternalProductType[] | undefined,
+        useV2: enableV2View,
       }
 
       // Check if CDN SDK is available
@@ -112,7 +113,7 @@ const KanmonConnectContextProvider = ({
         setReady(true)
       }
     },
-    [scriptLoading, useCdnSdk, apiKey],
+    [scriptLoading, useCdnSdk, apiKey, enableV2View],
   )
 
   const showKanmonConnect = (showArgs?: ShowKanmonConnectMessage) => {

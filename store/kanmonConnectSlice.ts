@@ -10,6 +10,7 @@ export interface KanmonConnectState {
   issuedProduct: IssuedProduct | null
   isOpen: boolean
   useCdnSdk?: boolean
+  enableV2View?: boolean
 }
 
 const initialState: KanmonConnectState = {
@@ -18,6 +19,7 @@ const initialState: KanmonConnectState = {
   issuedProduct: null,
   isOpen: false,
   useCdnSdk: false, // This can be set based on your application logic
+  enableV2View: false,
 }
 
 export const kanmonConnectSlice = createSlice({
@@ -44,8 +46,12 @@ export const kanmonConnectSlice = createSlice({
     ) {
       state.issuedProduct = action.payload.issuedProduct
     },
-    updateUseCdnSdk(state, action: { payload: { useCdnSdk: boolean } }) {
+    updateUseCdnSdk(
+      state,
+      action: { payload: { useCdnSdk: boolean; enableV2View: boolean } },
+    ) {
       state.useCdnSdk = action.payload.useCdnSdk
+      state.enableV2View = action.payload.enableV2View
     },
   },
 
