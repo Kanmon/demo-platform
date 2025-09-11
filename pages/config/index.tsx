@@ -28,7 +28,7 @@ const ConfigPage = () => {
   }
 
   return (
-    <div className="top-1/2 left-1/2 absolute transform -translate-x-1/2 -translate-y-1/2 bg-white text-center rounded w-[450px] md:w-[650px]">
+    <div className="top-1/2 left-1/2 absolute transform -translate-x-1/2 -translate-y-1/2 bg-white text-center rounded w-[450px] md:w-[550px]">
       <div className="p-12">
         <Formik
           onSubmit={saveConfigFn}
@@ -40,46 +40,89 @@ const ConfigPage = () => {
               <div className="mt-4">
                 <h1 className="text-xl font-semibold mb-8">Configurations</h1>
                 <Form>
-                  <div className="flex justify-start items-center mb-4">
-                    <span className="mr-3 text-sm font-medium text-gray-700">
+                  <div className="flex items-center gap-4 mb-4">
+                    <span className="w-44 text-sm font-medium text-gray-700">
                       Front end SDK Integration
                     </span>
-                    <div className="inline-flex rounded-md border border-gray-200 bg-gray-50 text-sm font-medium">
-                      <button
-                        type="button"
-                        onClick={() => setFieldValue('useCdnSdk', false)}
-                        className={`px-3 py-1 rounded-l-md transition-colors duration-150
-                          ${!values.useCdnSdk ? 'bg-white text-blue-600 border border-gray-300' : 'text-gray-600'}
-                        `}
-                      >
-                        @kanmon/web-sdk NPM
-                        <span className="ml-1 text-[10px] text-blue-600 bg-blue-100 rounded px-1">
-                          (recommended)
-                        </span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setFieldValue('useCdnSdk', true)}
-                        className={`px-3 py-1 rounded-r-md transition-colors duration-150
-                          ${values.useCdnSdk ? 'bg-white text-blue-600 border border-gray-300' : 'text-gray-600'}
-                        `}
-                      >
-                        Kanmon CDN
-                      </button>
-                    </div>
 
-                    <div className="inline-flex rounded-md border border-gray-200 bg-gray-50 text-sm font-medium ml-1">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setFieldValue('enableV2View', !values.enableV2View)
-                        }
-                        className={`px-5 py-1 rounded-md transition-colors duration-150
-                          ${values.enableV2View ? 'bg-white text-blue-600 border border-gray-300' : 'text-gray-600'}
-                        `}
-                      >
-                        Enable V2 Styling
-                      </button>
+                    <div className="w-[360px] rounded-md border border-gray-200 bg-gray-50 overflow-hidden">
+                      <div className="grid grid-cols-2 divide-x divide-gray-200">
+                        <button
+                          type="button"
+                          onClick={() => setFieldValue('useCdnSdk', false)}
+                          className={`py-2 px-3 text-sm font-medium transition-colors duration-150
+                            ${
+                              !values.useCdnSdk
+                                ? 'bg-white text-blue-600'
+                                : 'text-gray-600'
+                            }`}
+                        >
+                          @kanmon/
+                          <br />
+                          web-sdk NPM
+                          <br />
+                          <span className="ml-1 text-[10px] text-blue-600 rounded px-1">
+                            (recommended)
+                          </span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setFieldValue('useCdnSdk', true)}
+                          className={`py-2 px-3 text-sm font-medium transition-colors duration-150
+                            ${
+                              values.useCdnSdk
+                                ? 'bg-white text-blue-600'
+                                : 'text-gray-600'
+                            }`}
+                        >
+                          Kanmon CDN
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 mb-4">
+                    <span className="w-44 text-sm font-medium text-gray-700">
+                      Bizex design
+                    </span>
+
+                    <div className="w-[360px] rounded-md border border-gray-200 bg-gray-50 overflow-hidden">
+                      <div className="grid grid-cols-2 divide-x divide-gray-200">
+                        <button
+                          type="button"
+                          onClick={() => setFieldValue('enableV2View', false)}
+                          className={`py-2 px-3 text-sm font-medium transition-colors duration-150
+                            ${
+                              !values.enableV2View
+                                ? 'bg-white text-blue-600'
+                                : 'text-gray-600'
+                            }`}
+                        >
+                          V1
+                          <br />
+                          <span className="ml-1 text-[10px] text-blue-600 rounded px-1">
+                            (reccomended)
+                          </span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setFieldValue('enableV2View', true)}
+                          className={`py-2 px-3 text-sm font-medium transition-colors duration-150
+                            ${
+                              values.enableV2View
+                                ? 'bg-white text-blue-600'
+                                : 'text-gray-600'
+                            }`}
+                        >
+                          V2
+                          <br />
+                          <span className="ml-1 text-[10px] text-orange-600 rounded px-1">
+                            (development)
+                          </span>
+                        </button>
+                      </div>
                     </div>
                   </div>
 
