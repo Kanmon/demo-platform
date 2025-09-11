@@ -66,10 +66,13 @@ const ConfigPage = () => {
                       >
                         Kanmon CDN
                       </button>
+                    </div>
+
+                    <div className="inline-flex rounded-md border border-gray-200 bg-gray-50 text-sm font-medium ml-1">
                       <button
                         type="button"
-                        onClick={() => setFieldValue('enableV2View', true)}
-                        className={`px-5 py-1 rounded-r-md transition-colors duration-150
+                        onClick={() => setFieldValue('enableV2View', (!values.enableV2View))}
+                        className={`px-5 py-1 rounded-md transition-colors duration-150
                           ${values.enableV2View ? 'bg-white text-blue-600 border border-gray-300' : 'text-gray-600'}
                         `}
                       >
