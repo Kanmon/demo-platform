@@ -97,7 +97,7 @@ const KanmonConnectContextProvider = ({
         productSubsetDuringOnboarding: productSubsetDuringOnboarding?.split(
           ',',
         ) as ExternalProductType[] | undefined,
-        enableV2View,
+        useV2: enableV2View,
       }
 
       // Check if CDN SDK is available
