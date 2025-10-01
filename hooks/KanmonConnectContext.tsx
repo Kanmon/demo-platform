@@ -91,9 +91,9 @@ const KanmonConnectContextProvider = ({
         environment: process.env
           .NEXT_PUBLIC_DEPLOY_ENV as KanmonConnectEnviroment,
         ...(connectParamOverrides ? connectParamOverrides : {}),
-        customInitializationName: query?.customInitializationName as
-          | string
-          | undefined,
+        customInitializationName: enableV2View
+          ? 'v2'
+          : ((query?.customInitializationName as string) ?? 'default'),
         productSubsetDuringOnboarding: productSubsetDuringOnboarding?.split(
           ',',
         ) as ExternalProductType[] | undefined,
