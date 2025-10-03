@@ -65,13 +65,13 @@ const combinedReducers = combineReducers<RootState, AnyAction>(
 
 interface ResetStoreAction {
   type: 'RESET_STORE'
-  resetApiKey: boolean
+  completeReset: boolean
 }
 
-export const resetStoreAction = (resetApiKey: boolean): ResetStoreAction => {
+export const resetStoreAction = (completeReset: boolean): ResetStoreAction => {
   return {
     type: 'RESET_STORE',
-    resetApiKey,
+    completeReset,
   }
 }
 
@@ -83,12 +83,21 @@ const rootReducer: Reducer<RootState, AnyAction> = (state, action) => {
   // https://stackoverflow.com/questions/35622588/how-to-reset-the-state-of-a-redux-store/35641992#35641992
   if (isResetStoreAction(action)) {
     const resetState = allSlices.reduce((agg, nextSlice) => {
+      let sliceState = nextSlice.getInitialState()
+
+      // Preserve API key when completeReset is false
+      if (nextSlice.name === 'apiKey' && !action.completeReset && state?.apiKey) {
+        sliceState = state.apiKey
+      }
+
+      // Preserve configuration settings (useCdnSdk, enableV2View) when clicking "Start Over"
+      if (nextSlice.name === 'kanmonConnect' && !action.completeReset && state?.kanmonConnect) {
+        sliceState = state?.kanmonConnect
+      }
+
       return {
         ...agg,
-        [nextSlice.name]:
-          nextSlice.name === 'apiKey' && !action.resetApiKey
-            ? state?.apiKey
-            : nextSlice.getInitialState(),
+        [nextSlice.name]: sliceState,
       }
     }, {} as RootState)
 
