@@ -186,7 +186,7 @@ function ApiInvoices() {
             payorType === PayorType.INDIVIDUAL
               ? faker.person.fullName()
               : undefined,
-          createdAtIsoDate: DateTime.now().toISO(),
+          createdAtIsoDate: DateTime.now().toISODate(),
           dueDateIsoDate: DateTime.now()
             .plus({ days: _.random(30, 60) })
             .toISODate(),
