@@ -17,7 +17,7 @@ export const apiKeySlice = createSlice({
     saveApiKey(state, action: { payload: { apiKey?: string } }) {
       state.apiKey = action.payload.apiKey
     },
-    resetApiKey(state) {
+    completeReset(state) {
       state.apiKey = undefined
     },
   },
@@ -32,7 +32,7 @@ export const apiKeySlice = createSlice({
   },
 })
 
-export const { saveApiKey, resetApiKey } = apiKeySlice.actions
+export const { saveApiKey, completeReset } = apiKeySlice.actions
 
 export const getApiKeyState = (state: AppState) => state.apiKey
 

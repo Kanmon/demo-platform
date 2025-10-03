@@ -65,13 +65,13 @@ const combinedReducers = combineReducers<RootState, AnyAction>(
 
 interface ResetStoreAction {
   type: 'RESET_STORE'
-  resetApiKey: boolean
+  completeReset: boolean
 }
 
-export const resetStoreAction = (resetApiKey: boolean): ResetStoreAction => {
+export const resetStoreAction = (completeReset: boolean): ResetStoreAction => {
   return {
     type: 'RESET_STORE',
-    resetApiKey,
+    completeReset,
   }
 }
 
@@ -85,14 +85,14 @@ const rootReducer: Reducer<RootState, AnyAction> = (state, action) => {
     const resetState = allSlices.reduce((agg, nextSlice) => {
       let sliceState = nextSlice.getInitialState()
 
-      // Preserve API key when resetApiKey is false
-      if (nextSlice.name === 'apiKey' && !action.resetApiKey && state?.apiKey) {
+      // Preserve API key when completeReset is false
+      if (nextSlice.name === 'apiKey' && !action.completeReset && state?.apiKey) {
         sliceState = state.apiKey
       }
 
       // Preserve configuration settings (useCdnSdk, enableV2View) when clicking "Start Over"
       // These are user preferences that should persist when creating new businesses in demo
-      if (nextSlice.name === 'kanmonConnect' && !action.resetApiKey) {
+      if (nextSlice.name === 'kanmonConnect' && !action.completeReset) {
         sliceState = {
           ...nextSlice.getInitialState(),
           useCdnSdk: state?.kanmonConnect?.useCdnSdk ?? false,
