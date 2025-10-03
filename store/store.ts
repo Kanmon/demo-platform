@@ -83,12 +83,26 @@ const rootReducer: Reducer<RootState, AnyAction> = (state, action) => {
   // https://stackoverflow.com/questions/35622588/how-to-reset-the-state-of-a-redux-store/35641992#35641992
   if (isResetStoreAction(action)) {
     const resetState = allSlices.reduce((agg, nextSlice) => {
+      let sliceState = nextSlice.getInitialState()
+
+      // Preserve API key when resetApiKey is false
+      if (nextSlice.name === 'apiKey' && !action.resetApiKey && state?.apiKey) {
+        sliceState = state.apiKey
+      }
+
+      // Preserve configuration settings (useCdnSdk, enableV2View) when doing a "Start Over"
+      // These are user preferences that should persist across demo resets
+      if (nextSlice.name === 'kanmonConnect' && !action.resetApiKey) {
+        sliceState = {
+          ...nextSlice.getInitialState(),
+          useCdnSdk: state?.kanmonConnect?.useCdnSdk ?? false,
+          enableV2View: state?.kanmonConnect?.enableV2View ?? false,
+        }
+      }
+
       return {
         ...agg,
-        [nextSlice.name]:
-          nextSlice.name === 'apiKey' && !action.resetApiKey
-            ? state?.apiKey
-            : nextSlice.getInitialState(),
+        [nextSlice.name]: sliceState,
       }
     }, {} as RootState)
 
