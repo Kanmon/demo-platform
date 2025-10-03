@@ -90,8 +90,8 @@ const rootReducer: Reducer<RootState, AnyAction> = (state, action) => {
         sliceState = state.apiKey
       }
 
-      // Preserve configuration settings (useCdnSdk, enableV2View) when doing a "Start Over"
-      // These are user preferences that should persist across demo resets
+      // Preserve configuration settings (useCdnSdk, enableV2View) when clicking "Start Over"
+      // These are user preferences that should persist when creating new businesses in demo
       if (nextSlice.name === 'kanmonConnect' && !action.resetApiKey) {
         sliceState = {
           ...nextSlice.getInitialState(),
