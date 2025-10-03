@@ -91,13 +91,8 @@ const rootReducer: Reducer<RootState, AnyAction> = (state, action) => {
       }
 
       // Preserve configuration settings (useCdnSdk, enableV2View) when clicking "Start Over"
-      // These are user preferences that should persist when creating new businesses in demo
-      if (nextSlice.name === 'kanmonConnect' && !action.completeReset) {
-        sliceState = {
-          ...nextSlice.getInitialState(),
-          useCdnSdk: state?.kanmonConnect?.useCdnSdk ?? false,
-          enableV2View: state?.kanmonConnect?.enableV2View ?? false,
-        }
+      if (nextSlice.name === 'kanmonConnect' && !action.completeReset && state?.kanmonConnect) {
+        sliceState = state?.kanmonConnect
       }
 
       return {
