@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { CircularProgress } from '@mui/material'
 import _, { isEmpty } from 'lodash'
 import { DateTime } from 'luxon'
@@ -13,13 +13,14 @@ import {
   getIssuedProductSelector,
   getNewInvoiceNumber,
   updateInvoiceIssuedProduct,
+  updateInvoice,
 } from '../../store/apiInvoicesSlice'
 import {
   getKanmonConnectSlice,
   updateOnHide,
 } from '../../store/kanmonConnectSlice'
 import { getCustomizationState } from '../../store/customizationSlice'
-import { IssuedProduct, ProductType } from '@kanmon/sdk'
+import { Invoice, IssuedProduct, ProductType } from '@kanmon/sdk'
 import {
   axiosWithApiKey,
   formatDollarsWithCents,
@@ -47,6 +48,7 @@ import { getApiKeyState } from '../../store/apiKeySlice'
 import { getAuthState } from '../../store/authSlice'
 import { KanmonConnectComponent } from '@kanmon/web-sdk'
 import { genericErrorMessage } from '@/utils/constants'
+import { FinanceInvoicePayload } from '../../pages/api/finance_invoice'
 
 function ApiInvoices() {
   const { showKanmonConnect } = useKanmonConnectContext()
@@ -69,7 +71,7 @@ function ApiInvoices() {
   const { buttonBgColor, ctaButtonColor } = useSelector(getCustomizationState)
   const dispatch = useDispatch()
 
-  async function fetchIssuedProductDetails() {
+  const fetchIssuedProductDetails = useCallback(async () => {
     const params = new URLSearchParams()
     params.append('userId', userId as string)
     const url = `/api/fetch_invoice_financing_issued_product?${params.toString()}`
@@ -85,7 +87,7 @@ function ApiInvoices() {
     dispatch(
       updateInvoiceIssuedProduct({ issuedProduct: issuedProductResp.data }),
     )
-  }
+  }, [userId, apiKey, dispatch])
 
   useEffect(
     function unselectInvoicesWhenHidingWidget() {
@@ -102,7 +104,7 @@ function ApiInvoices() {
         fetchIssuedProductDetails()
       }
     },
-    [currentWorkflowState],
+    [currentWorkflowState, fetchIssuedProductDetails],
   )
 
   // prettier-ignore
@@ -324,6 +326,93 @@ function ApiInvoices() {
     })
   }
 
+  const financeInvoiceAutoSubmit = async () => {
+    if (!issuedProduct) {
+      toast.error('No issued product found')
+      return
+    }
+
+    if (selectedInvoiceIds.size === 0) {
+      toast.error('Please select at least one invoice')
+      return
+    }
+
+    const invoicesToFinance: PlatformInvoice[] = [...selectedInvoiceIds]
+      .map((invoiceId) =>
+        allPersistedInvoices.find(
+          (persistedInvoice) => persistedInvoice.id === invoiceId,
+        ),
+      )
+      .filter(Boolean) as PlatformInvoice[]
+
+    if (invoicesToFinance.length === 0) {
+      toast.error('Selected invoices not found')
+      return
+    }
+
+    // Validate required fields
+    const invalidInvoices = invoicesToFinance.filter((invoice) => {
+      return (
+        _.isNil(invoice.payorType) ||
+        _.isNil(invoice.dueDateIsoDate) ||
+        _.isEmpty(invoice.items)
+      )
+    })
+
+    if (invalidInvoices.length > 0) {
+      toast.error(
+        'Cannot submit these invoices because some fields are missing.',
+      )
+      return
+    }
+
+    const payload: FinanceInvoicePayload = {
+      invoices: invoicesToFinance,
+      issuedProductId: issuedProduct.id,
+      platformBusinessId: issuedProduct.platformBusinessId as string,
+    }
+
+    try {
+      const resp = await axiosWithApiKey(apiKey).post<{
+        invoices: Invoice[]
+      }>('/api/finance_invoice', payload)
+
+      // Update invoices with kanmonInvoiceId to show "Financed" status
+      resp.data.invoices.forEach((financedInvoice) => {
+        const platformInvoice = invoicesToFinance.find(
+          (inv) => inv.id === financedInvoice.platformInvoiceId,
+        )
+        if (platformInvoice) {
+          dispatch(
+            updateInvoice({
+              invoice: {
+                ...platformInvoice,
+                kanmonInvoiceId: financedInvoice.id,
+              },
+            }),
+          )
+        }
+      })
+
+      // Refresh issued product details to update available limit
+      await fetchIssuedProductDetails()
+
+      // Clear selected invoices
+      setSelectedInvoiceIds(new Set())
+
+      // Show success notification
+      toast.success(
+        `Successfully financed ${resp.data.invoices.length} invoice${
+          resp.data.invoices.length > 1 ? 's' : ''
+        }`,
+      )
+    } catch (ex: any) {
+      console.error('Failed to finance invoice', ex)
+      const errorMessage = ex.response?.data?.message || genericErrorMessage
+      toast.error(errorMessage)
+    }
+  }
+
   const showLaunchKanmonConnectCTA = !(
     currentWorkflowState === 'NO_OFFERS_EXTENDED'
   )
@@ -383,6 +472,23 @@ function ApiInvoices() {
                     ),
                     onClick: () => onFinanceSelectedInvoicesClick(true),
                   },
+                  ...(issuedProduct?.servicingData.productType ===
+                  ProductType.ACCOUNTS_PAYABLE_FINANCING
+                    ? [
+                        {
+                          label: (
+                            <span>
+                              Finance ({selectedInvoiceIds.size}){' '}
+                              {formatInvoiceFinancingProductName(
+                                selectedInvoiceIds.size > 1,
+                              )}{' '}
+                              (auto-submit)
+                            </span>
+                          ),
+                          onClick: financeInvoiceAutoSubmit,
+                        },
+                      ]
+                    : []),
                 ]}
               />
             ) : (

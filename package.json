@@ -18,7 +18,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
-    "@kanmon/sdk": "3.0.0",
+    "@kanmon/sdk": "file:../sdk/ts/dist",
     "@kanmon/web-sdk": "2.2.11-next-7ce7d90d921f1473b5a54a81232b306b1a21c054.0",
     "@mui/icons-material": "^5.15.20",
     "@mui/material": "^5.15.20",
