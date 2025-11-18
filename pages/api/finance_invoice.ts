@@ -1,4 +1,8 @@
-import { FinanceInvoiceRequestBody, KanmonPlatformApi } from '@kanmon/sdk'
+import {
+  FinanceInvoiceRequestBody,
+  KanmonPlatformApi,
+  ProductType,
+} from '@kanmon/sdk'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { extractApiKeyFromHeader } from '../../utils'
 import { PlatformInvoice } from '../../types/DemoInvoicesTypes'
@@ -25,9 +29,9 @@ const financeInvoice = async (req: NextApiRequest, res: NextApiResponse) => {
 
   // Block this endpoint in production
   if (NEXT_PUBLIC_DEPLOY_ENV === 'production') {
-    res.status(501).send({
-      message: 'This endpoint is not supported in production',
-      errorCode: 'InternalServerError',
+    res.status(404).send({
+      message: 'Endpoint not found',
+      errorCode: 'NotFoundException',
     })
     return
   }
@@ -55,15 +59,25 @@ const financeInvoice = async (req: NextApiRequest, res: NextApiResponse) => {
       return
     }
 
-    // Get invoice payment plan ID from the first pricing plan
-    const servicingData = issuedProduct.servicingData as any
+    if (
+      issuedProduct.servicingData.productType !==
+      ProductType.ACCOUNTS_PAYABLE_FINANCING
+    ) {
+      res.status(409).send({
+        message: 'The product type is not supported for this operation.',
+        errorCode: 'IncorrectProductTypeException',
+      })
+      return
+    }
+
+    const servicingData = issuedProduct.servicingData
     if (
       !servicingData.pricingPlans ||
       servicingData.pricingPlans.length === 0
     ) {
-      res.status(400).send({
-        message: 'No pricing plans found for issued product',
-        errorCode: 'BadRequestException',
+      res.status(404).send({
+        message: 'Pricing plans not found',
+        errorCode: 'NotFoundException',
       })
       return
     }

@@ -337,13 +337,13 @@ function ApiInvoices() {
       return
     }
 
-    const invoicesToFinance: PlatformInvoice[] = [...selectedInvoiceIds]
-      .map((invoiceId) =>
+    const invoicesToFinance: PlatformInvoice[] = _.compact(
+      [...selectedInvoiceIds].map((invoiceId) =>
         allPersistedInvoices.find(
           (persistedInvoice) => persistedInvoice.id === invoiceId,
         ),
-      )
-      .filter(Boolean) as PlatformInvoice[]
+      ),
+    )
 
     if (invoicesToFinance.length === 0) {
       toast.error('Selected invoices not found')
