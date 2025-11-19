@@ -86,12 +86,20 @@ const rootReducer: Reducer<RootState, AnyAction> = (state, action) => {
       let sliceState = nextSlice.getInitialState()
 
       // Preserve API key when completeReset is false
-      if (nextSlice.name === 'apiKey' && !action.completeReset && state?.apiKey) {
+      if (
+        nextSlice.name === 'apiKey' &&
+        !action.completeReset &&
+        state?.apiKey
+      ) {
         sliceState = state.apiKey
       }
 
       // Preserve configuration settings (useCdnSdk, enableV2View) when clicking "Start Over"
-      if (nextSlice.name === 'kanmonConnect' && !action.completeReset && state?.kanmonConnect) {
+      if (
+        nextSlice.name === 'kanmonConnect' &&
+        !action.completeReset &&
+        state?.kanmonConnect
+      ) {
         sliceState = state?.kanmonConnect
       }
 
