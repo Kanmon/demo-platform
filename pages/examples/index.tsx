@@ -1,10 +1,14 @@
 import { Box, Modal } from '@mui/material'
 import { useState } from 'react'
-import { useSelector } from 'react-redux'
-import { getKanmonConnectSlice } from '../../store/kanmonConnectSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  getKanmonConnectSlice,
+  updateOnHide,
+} from '../../store/kanmonConnectSlice'
 import { getCustomizationState } from '../../store/customizationSlice'
 import { WelcomeBanner } from '../../components/Dashboard/WelcomeBanner'
 import { useKanmonConnectContext } from '../../hooks/KanmonConnectContext'
+import { KanmonConnectComponent } from '@kanmon/web-sdk'
 
 const style = {
   position: 'absolute',
@@ -24,6 +28,17 @@ export const CtaExamplesPage = () => {
   const { ctaButtonColor } = useSelector(getCustomizationState)
   const [open, setOpen] = useState(false)
   const { showKanmonConnect } = useKanmonConnectContext()
+  const dispatch = useDispatch()
+  const openBankAccounts = async () => {
+    showKanmonConnect({
+      component: KanmonConnectComponent.BANK_ACCOUNTS,
+    })
+    dispatch(
+      updateOnHide({
+        isOpen: true,
+      }),
+    )
+  }
 
   return (
     <>
@@ -95,6 +110,18 @@ export const CtaExamplesPage = () => {
               </div>
             </Box>
           </Modal>
+        </div>
+        {/* Test button for bank accounts - available regardless of product type */}
+
+        <div className="mb-8">
+          <div className="text-4xl mb-4 font-medium">Bank Accounts</div>
+          <div
+            className="md:mr-24 text-white btn-lg px-4 py-2 text-lg z-20 rounded-md hover:cursor-pointer forty-percent-darker-on-hover"
+            style={{ backgroundColor: ctaButtonColor }}
+            onClick={openBankAccounts}
+          >
+            <div className="whitespace-nowrap">Bank Accounts</div>
+          </div>
         </div>
       </div>
     </>
