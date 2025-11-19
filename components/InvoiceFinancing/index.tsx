@@ -378,7 +378,7 @@ function ApiInvoices() {
     try {
       const resp = await axiosWithApiKey(apiKey).post<{
         invoices: Invoice[]
-        failedInvoices?: FailedInvoice[]
+        failedInvoices: FailedInvoice[]
       }>('/api/finance_invoice', payload)
 
       // Track successful and failed invoices by invoice number
@@ -404,8 +404,8 @@ function ApiInvoices() {
       })
 
       // Process failed invoices from response
-      if (resp.data.failedInvoices && resp.data.failedInvoices.length > 0) {
-        resp.data.failedInvoices.forEach((failedInvoice) => {
+      if (resp.data.failedInvoices.length > 0) {
+        resp.data.failedInvoices.map((failedInvoice) => {
           failedInvoiceNumbers.push(failedInvoice.platformInvoiceNumber)
         })
       }

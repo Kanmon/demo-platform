@@ -1,5 +1,6 @@
 import {
   FinanceInvoiceRequestBody,
+  Invoice,
   KanmonPlatformApi,
   ProductType,
 } from '@kanmon/sdk'
@@ -88,7 +89,7 @@ const financeInvoice = async (req: NextApiRequest, res: NextApiResponse) => {
   const invoicePaymentPlanId = servicingData.pricingPlans[0].id
 
   // Finance each invoice, handling partial failures
-  const financedInvoices = []
+  const financedInvoices: Invoice[] = []
   const failedInvoices: FailedInvoice[] = []
 
   for (const invoice of requestBody.invoices) {
