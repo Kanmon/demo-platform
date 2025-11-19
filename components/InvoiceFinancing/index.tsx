@@ -20,7 +20,7 @@ import {
   updateOnHide,
 } from '../../store/kanmonConnectSlice'
 import { getCustomizationState } from '../../store/customizationSlice'
-import { Invoice, IssuedProduct, ProductType } from '@kanmon/sdk'
+import { IssuedProduct, ProductType } from '@kanmon/sdk'
 import {
   axiosWithApiKey,
   formatDollarsWithCents,
@@ -50,7 +50,7 @@ import { KanmonConnectComponent } from '@kanmon/web-sdk'
 import { genericErrorMessage } from '@/utils/constants'
 import {
   FinanceInvoicePayload,
-  FailedInvoice,
+  FinanceInvoiceResponse,
 } from '../../pages/api/finance_invoice'
 
 function ApiInvoices() {
@@ -376,10 +376,10 @@ function ApiInvoices() {
     }
 
     try {
-      const resp = await axiosWithApiKey(apiKey).post<{
-        invoices: Invoice[]
-        failedInvoices: FailedInvoice[]
-      }>('/api/finance_invoice', payload)
+      const resp = await axiosWithApiKey(apiKey).post<FinanceInvoiceResponse>(
+        '/api/finance_invoice',
+        payload,
+      )
 
       // Track successful and failed invoices by invoice number
       const successfulInvoiceNumbers: string[] = []

@@ -22,6 +22,11 @@ export interface FailedInvoice {
   errorCode: string
 }
 
+export interface FinanceInvoiceResponse {
+  invoices: Invoice[]
+  failedInvoices: FailedInvoice[]
+}
+
 const financeInvoice = async (req: NextApiRequest, res: NextApiResponse) => {
   const apiKey = extractApiKeyFromHeader(req.headers.authorization)
   if (!apiKey) {
@@ -133,10 +138,11 @@ const financeInvoice = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   // Always return 200 with both successful and failed invoices
-  res.status(200).json({
+  const response: FinanceInvoiceResponse = {
     invoices: financedInvoices,
     failedInvoices: failedInvoices,
-  })
+  }
+  res.status(200).json(response)
 }
 
 export default financeInvoice
