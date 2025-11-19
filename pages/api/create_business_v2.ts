@@ -95,6 +95,12 @@ const create_business_v2 = async (
       })
 
       business = createBusinessResponse
+      if (payload.analyticsEnabled) {
+        await client.TEST_ONLY_setAnalyticsEnabledOnBusiness(
+          business.id,
+          payload.analyticsEnabled,
+        )
+      }
     } catch (ex: any) {
       const errorStatus = ex.response.status
       const errorBody = await ex.response.json()
@@ -140,13 +146,6 @@ const create_business_v2 = async (
 
         return res.status(ex?.response?.status ?? 500).json(response)
       }
-    }
-
-    if (payload.analyticsEnabled) {
-      await client.TEST_ONLY_setAnalyticsEnabledOnBusiness(
-        business.id,
-        payload.analyticsEnabled,
-      )
     }
 
     res.json({
