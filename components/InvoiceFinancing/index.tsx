@@ -48,7 +48,10 @@ import { getApiKeyState } from '../../store/apiKeySlice'
 import { getAuthState } from '../../store/authSlice'
 import { KanmonConnectComponent } from '@kanmon/web-sdk'
 import { genericErrorMessage } from '@/utils/constants'
-import { FinanceInvoicePayload } from '../../pages/api/finance_invoice'
+import {
+  FinanceInvoicePayload,
+  FailedInvoice,
+} from '../../pages/api/finance_invoice'
 
 function ApiInvoices() {
   const { showKanmonConnect } = useKanmonConnectContext()
@@ -375,9 +378,14 @@ function ApiInvoices() {
     try {
       const resp = await axiosWithApiKey(apiKey).post<{
         invoices: Invoice[]
+        failedInvoices?: FailedInvoice[]
       }>('/api/finance_invoice', payload)
 
-      // Update invoices with kanmonInvoiceId to show "Financed" status
+      // Track successful and failed invoices by invoice number
+      const successfulInvoiceNumbers: string[] = []
+      const failedInvoiceNumbers: string[] = []
+
+      // Process successfully financed invoices
       resp.data.invoices.forEach((financedInvoice) => {
         const platformInvoice = invoicesToFinance.find(
           (inv) => inv.id === financedInvoice.platformInvoiceId,
@@ -391,8 +399,16 @@ function ApiInvoices() {
               },
             }),
           )
+          successfulInvoiceNumbers.push(platformInvoice.invoiceNumber)
         }
       })
+
+      // Process failed invoices from response
+      if (resp.data.failedInvoices && resp.data.failedInvoices.length > 0) {
+        resp.data.failedInvoices.forEach((failedInvoice) => {
+          failedInvoiceNumbers.push(failedInvoice.platformInvoiceNumber)
+        })
+      }
 
       // Refresh issued product details to update available limit
       await fetchIssuedProductDetails()
@@ -400,12 +416,22 @@ function ApiInvoices() {
       // Clear selected invoices
       setSelectedInvoiceIds(new Set())
 
-      // Show success notification
-      toast.success(
-        `Successfully financed ${resp.data.invoices.length} invoice${
-          resp.data.invoices.length > 1 ? 's' : ''
-        }`,
-      )
+      // Show success notification with details
+      if (successfulInvoiceNumbers.length > 0) {
+        toast.success(
+          `Successfully financed ${successfulInvoiceNumbers.length} invoice${
+            successfulInvoiceNumbers.length > 1 ? 's' : ''
+          }: ${successfulInvoiceNumbers.join(', ')}`,
+        )
+      }
+
+      if (failedInvoiceNumbers.length > 0) {
+        toast.error(
+          `Failed to finance ${failedInvoiceNumbers.length} invoice${
+            failedInvoiceNumbers.length > 1 ? 's' : ''
+          }: ${failedInvoiceNumbers.join(', ')}`,
+        )
+      }
     } catch (ex: any) {
       console.error('Failed to finance invoice', ex)
       const errorMessage = ex.response?.data?.message || genericErrorMessage

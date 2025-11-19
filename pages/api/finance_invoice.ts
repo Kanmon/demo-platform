@@ -14,6 +14,13 @@ export interface FinanceInvoicePayload {
   platformBusinessId: string
 }
 
+export interface FailedInvoice {
+  platformInvoiceId: string
+  platformInvoiceNumber: string
+  error: string
+  errorCode: string
+}
+
 const financeInvoice = async (req: NextApiRequest, res: NextApiResponse) => {
   const apiKey = extractApiKeyFromHeader(req.headers.authorization)
   if (!apiKey) {
@@ -40,53 +47,52 @@ const financeInvoice = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const sdkClient = new KanmonPlatformApi(apiKey, NEXT_PUBLIC_DEPLOY_ENV)
 
-  try {
-    // Get the issued product to retrieve the invoice payment plan ID
-    const issuedProductsResponse =
-      await sdkClient.issuedProducts.getAllIssuedProducts({
-        ids: requestBody.issuedProductId,
-      })
+  // Get the issued product to retrieve the invoice payment plan ID
+  const issuedProductsResponse =
+    await sdkClient.issuedProducts.getAllIssuedProducts({
+      ids: requestBody.issuedProductId,
+    })
 
-    const issuedProduct = issuedProductsResponse.issuedProducts.find(
-      (ip) => ip.id === requestBody.issuedProductId,
-    )
+  const issuedProduct = issuedProductsResponse.issuedProducts.find(
+    (ip) => ip.id === requestBody.issuedProductId,
+  )
 
-    if (!issuedProduct) {
-      res.status(404).send({
-        message: 'Issued product not found',
-        errorCode: 'NotFoundException',
-      })
-      return
-    }
+  if (!issuedProduct) {
+    res.status(404).send({
+      message: 'Issued product not found',
+      errorCode: 'NotFoundException',
+    })
+    return
+  }
 
-    if (
-      issuedProduct.servicingData.productType !==
-      ProductType.ACCOUNTS_PAYABLE_FINANCING
-    ) {
-      res.status(409).send({
-        message: 'The product type is not supported for this operation.',
-        errorCode: 'IncorrectProductTypeException',
-      })
-      return
-    }
+  if (
+    issuedProduct.servicingData.productType !==
+    ProductType.ACCOUNTS_PAYABLE_FINANCING
+  ) {
+    res.status(409).send({
+      message: 'The product type is not supported for this operation.',
+      errorCode: 'IncorrectProductTypeException',
+    })
+    return
+  }
 
-    const servicingData = issuedProduct.servicingData
-    if (
-      !servicingData.pricingPlans ||
-      servicingData.pricingPlans.length === 0
-    ) {
-      res.status(404).send({
-        message: 'Pricing plans not found',
-        errorCode: 'NotFoundException',
-      })
-      return
-    }
+  const servicingData = issuedProduct.servicingData
+  if (!servicingData.pricingPlans || servicingData.pricingPlans.length === 0) {
+    res.status(404).send({
+      message: 'Pricing plans not found',
+      errorCode: 'NotFoundException',
+    })
+    return
+  }
 
-    const invoicePaymentPlanId = servicingData.pricingPlans[0].id
+  const invoicePaymentPlanId = servicingData.pricingPlans[0].id
 
-    // Finance each invoice
-    const financedInvoices = []
-    for (const invoice of requestBody.invoices) {
+  // Finance each invoice, handling partial failures
+  const financedInvoices = []
+  const failedInvoices: FailedInvoice[] = []
+
+  for (const invoice of requestBody.invoices) {
+    try {
       const invoiceAmountCents = getInvoiceTotalCents(invoice, true)
       const financeRequestBody: FinanceInvoiceRequestBody = {
         issuedProductId: requestBody.issuedProductId,
@@ -111,32 +117,25 @@ const financeInvoice = async (req: NextApiRequest, res: NextApiResponse) => {
         financeInvoiceRequestBody: financeRequestBody,
       })
       financedInvoices.push(financedInvoice)
+    } catch (invoiceError: any) {
+      const errorData = await invoiceError.response.json()
+
+      failedInvoices.push({
+        platformInvoiceId: invoice.id,
+        platformInvoiceNumber: invoice.invoiceNumber,
+        error:
+          errorData?.message ||
+          'Please try again or reach out to Kanmon for help.',
+        errorCode: errorData?.errorCode || 'InternalServerError',
+      })
     }
-
-    res.json({ invoices: financedInvoices })
-  } catch (ex: any) {
-    let errorData: any = null
-    let statusCode = 500
-    let errorMessage = 'Please try again or reach out to Kanmon for help.'
-    let errorCode = 'InternalServerError'
-
-    // Handle SDK ResponseError (Fetch API Response)
-    if (ex.response && typeof ex.response.json === 'function') {
-      statusCode = ex.response.status || 500
-
-      errorData = (await ex.response.json()) || null
-
-      if (errorData) {
-        errorMessage = errorData.message || errorMessage
-        errorCode = errorData.errorCode || errorCode
-      }
-    }
-
-    res.status(statusCode).send({
-      message: errorMessage,
-      errorCode: errorCode,
-    })
   }
+
+  // Always return 200 with both successful and failed invoices
+  res.status(200).json({
+    invoices: financedInvoices,
+    failedInvoices: failedInvoices,
+  })
 }
 
 export default financeInvoice
