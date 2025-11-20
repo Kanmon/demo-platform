@@ -102,6 +102,18 @@ export const V2Home: React.FC = () => {
       }),
     )
   }
+
+  const openBankAccounts = async () => {
+    showKanmonConnect({
+      component: KanmonConnectComponent.BANK_ACCOUNTS,
+    })
+    dispatch(
+      updateOnHide({
+        isOpen: true,
+      }),
+    )
+  }
+
   const isPrequalified =
     prequalification && currentWorkflowState === 'START_FLOW'
 
@@ -136,6 +148,10 @@ export const V2Home: React.FC = () => {
                     label: 'Download Agreements',
                     onClick: downloadAgreements,
                   },
+                  {
+                    label: 'Bank Accounts',
+                    onClick: openBankAccounts,
+                  },
                 ]}
               />
             )}
@@ -150,6 +166,10 @@ export const V2Home: React.FC = () => {
                   {
                     label: 'Download Agreements',
                     onClick: downloadAgreements,
+                  },
+                  {
+                    label: 'Bank Accounts',
+                    onClick: openBankAccounts,
                   },
                 ]}
               />
