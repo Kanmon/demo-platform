@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { CircularProgress } from '@mui/material'
 import _, { isEmpty } from 'lodash'
 import { DateTime } from 'luxon'
@@ -13,6 +13,7 @@ import {
   getIssuedProductSelector,
   getNewInvoiceNumber,
   updateInvoiceIssuedProduct,
+  updateInvoice,
 } from '../../store/apiInvoicesSlice'
 import {
   getKanmonConnectSlice,
@@ -47,6 +48,10 @@ import { getApiKeyState } from '../../store/apiKeySlice'
 import { getAuthState } from '../../store/authSlice'
 import { KanmonConnectComponent } from '@kanmon/web-sdk'
 import { genericErrorMessage } from '@/utils/constants'
+import {
+  FinanceInvoicePayload,
+  FinanceInvoiceResponse,
+} from '../../pages/api/finance_invoice'
 
 function ApiInvoices() {
   const { showKanmonConnect } = useKanmonConnectContext()
@@ -69,7 +74,7 @@ function ApiInvoices() {
   const { buttonBgColor, ctaButtonColor } = useSelector(getCustomizationState)
   const dispatch = useDispatch()
 
-  async function fetchIssuedProductDetails() {
+  const fetchIssuedProductDetails = useCallback(async () => {
     const params = new URLSearchParams()
     params.append('userId', userId as string)
     const url = `/api/fetch_invoice_financing_issued_product?${params.toString()}`
@@ -85,7 +90,7 @@ function ApiInvoices() {
     dispatch(
       updateInvoiceIssuedProduct({ issuedProduct: issuedProductResp.data }),
     )
-  }
+  }, [userId, apiKey, dispatch])
 
   useEffect(
     function unselectInvoicesWhenHidingWidget() {
@@ -102,7 +107,7 @@ function ApiInvoices() {
         fetchIssuedProductDetails()
       }
     },
-    [currentWorkflowState],
+    [currentWorkflowState, fetchIssuedProductDetails],
   )
 
   // prettier-ignore
@@ -324,6 +329,116 @@ function ApiInvoices() {
     })
   }
 
+  const financeInvoiceAutoSubmit = async () => {
+    if (!issuedProduct) {
+      toast.error('No issued product found')
+      return
+    }
+
+    if (selectedInvoiceIds.size === 0) {
+      toast.error('Please select at least one invoice')
+      return
+    }
+
+    const invoicesToFinance: PlatformInvoice[] = _.compact(
+      [...selectedInvoiceIds].map((invoiceId) =>
+        allPersistedInvoices.find(
+          (persistedInvoice) => persistedInvoice.id === invoiceId,
+        ),
+      ),
+    )
+
+    if (invoicesToFinance.length === 0) {
+      toast.error('Selected invoices not found')
+      return
+    }
+
+    // Validate required fields
+    const invalidInvoices = invoicesToFinance.filter((invoice) => {
+      return (
+        _.isNil(invoice.payorType) ||
+        _.isNil(invoice.dueDateIsoDate) ||
+        _.isEmpty(invoice.items)
+      )
+    })
+
+    if (invalidInvoices.length > 0) {
+      toast.error(
+        'Cannot submit these invoices because some fields are missing.',
+      )
+      return
+    }
+
+    const payload: FinanceInvoicePayload = {
+      invoices: invoicesToFinance,
+      issuedProductId: issuedProduct.id,
+      platformBusinessId: issuedProduct.platformBusinessId as string,
+    }
+
+    try {
+      const resp = await axiosWithApiKey(apiKey).post<FinanceInvoiceResponse>(
+        '/api/finance_invoice',
+        payload,
+      )
+
+      // Track successful and failed invoices by invoice number
+      const successfulInvoiceNumbers: string[] = []
+      const failedInvoiceNumbers: string[] = []
+
+      // Process successfully financed invoices
+      resp.data.invoices.forEach((financedInvoice) => {
+        const platformInvoice = invoicesToFinance.find(
+          (inv) => inv.id === financedInvoice.platformInvoiceId,
+        )
+        if (platformInvoice) {
+          dispatch(
+            updateInvoice({
+              invoice: {
+                ...platformInvoice,
+                kanmonInvoiceId: financedInvoice.id,
+              },
+            }),
+          )
+          successfulInvoiceNumbers.push(platformInvoice.invoiceNumber)
+        }
+      })
+
+      // Process failed invoices from response
+      if (resp.data.failedInvoices.length > 0) {
+        resp.data.failedInvoices.map((failedInvoice) => {
+          failedInvoiceNumbers.push(failedInvoice.platformInvoiceNumber)
+        })
+      }
+
+      // Refresh issued product details to update available limit
+      await fetchIssuedProductDetails()
+
+      // Clear selected invoices
+      setSelectedInvoiceIds(new Set())
+
+      // Show success notification with details
+      if (successfulInvoiceNumbers.length > 0) {
+        toast.success(
+          `Successfully financed ${successfulInvoiceNumbers.length} invoice${
+            successfulInvoiceNumbers.length > 1 ? 's' : ''
+          }: ${successfulInvoiceNumbers.join(', ')}`,
+        )
+      }
+
+      if (failedInvoiceNumbers.length > 0) {
+        toast.error(
+          `Failed to finance ${failedInvoiceNumbers.length} invoice${
+            failedInvoiceNumbers.length > 1 ? 's' : ''
+          }: ${failedInvoiceNumbers.join(', ')}`,
+        )
+      }
+    } catch (ex: any) {
+      console.error('Failed to finance invoice', ex)
+      const errorMessage = ex.response?.data?.message || genericErrorMessage
+      toast.error(errorMessage)
+    }
+  }
+
   const showLaunchKanmonConnectCTA = !(
     currentWorkflowState === 'NO_OFFERS_EXTENDED'
   )
@@ -383,6 +498,23 @@ function ApiInvoices() {
                     ),
                     onClick: () => onFinanceSelectedInvoicesClick(true),
                   },
+                  ...(issuedProduct?.servicingData.productType ===
+                  ProductType.ACCOUNTS_PAYABLE_FINANCING
+                    ? [
+                        {
+                          label: (
+                            <span>
+                              Finance ({selectedInvoiceIds.size}){' '}
+                              {formatInvoiceFinancingProductName(
+                                selectedInvoiceIds.size > 1,
+                              )}{' '}
+                              (auto-submit)
+                            </span>
+                          ),
+                          onClick: financeInvoiceAutoSubmit,
+                        },
+                      ]
+                    : []),
                 ]}
               />
             ) : (
