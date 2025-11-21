@@ -7,6 +7,7 @@ import {
   ClickAwayListener,
   MenuList,
   MenuItem,
+  CircularProgress,
 } from '@mui/material'
 import _ from 'lodash'
 import React, { useState, useRef } from 'react'
@@ -14,24 +15,27 @@ import Button from '../shared/Button'
 
 interface SplitButtonProps {
   buttonColor?: string
+  loading?: boolean
   options: {
     label: React.ReactNode
     onClick: () => void
   }[]
 }
 
-export const SplitButton = ({ options, buttonColor }: SplitButtonProps) => {
+export const SplitButton = ({ options, buttonColor, loading = false }: SplitButtonProps) => {
   const [open, setOpen] = useState(false)
   const anchorRef = useRef<HTMLDivElement>(null)
   const [selectedIndex, setSelectedIndex] = useState(0)
 
   const handleMenuItemClick = (index: number) => {
+    if (loading) return
     options[index]?.onClick()
     setSelectedIndex(index)
     setOpen(false)
   }
 
   const handleButtonClick = () => {
+    if (loading) return
     options[selectedIndex]?.onClick()
   }
 
@@ -65,12 +69,23 @@ export const SplitButton = ({ options, buttonColor }: SplitButtonProps) => {
             borderColor: buttonColor,
             paddingLeft: '35px',
             paddingRight: '0px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: loading ? '8px' : '0',
           }}
           onClick={handleButtonClick}
+          disabled={loading}
         >
+          {loading && (
+            <CircularProgress size={16} sx={{ color: 'white' }} />
+          )}
           {options[selectedIndex].label}
         </Button>
-        <Button style={{ backgroundColor: buttonColor }} onClick={handleToggle}>
+        <Button 
+          style={{ backgroundColor: buttonColor }} 
+          onClick={handleToggle}
+          disabled={loading}
+        >
           <ArrowDropDownIcon />
         </Button>
       </ButtonGroup>
@@ -100,6 +115,7 @@ export const SplitButton = ({ options, buttonColor }: SplitButtonProps) => {
                       key={index}
                       selected={index === selectedIndex}
                       onClick={() => handleMenuItemClick(index)}
+                      disabled={loading}
                     >
                       {option.label}
                     </MenuItem>
