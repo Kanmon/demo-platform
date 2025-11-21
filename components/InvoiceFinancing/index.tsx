@@ -68,6 +68,7 @@ function ApiInvoices() {
   const [selectedInvoiceIds, setSelectedInvoiceIds] = useState(
     new Set<string>(),
   )
+  const [isLoading, setIsLoading] = useState(false)
   const { ctaText, currentWorkflowState, isOpen } = useSelector(
     getKanmonConnectSlice,
   )
@@ -163,59 +164,71 @@ function ApiInvoices() {
   }
 
   // hard coded for now
-  const onCreateInvoiceClick = () => {
-    const newInvoiceNumber = getNewInvoiceNumber()
+  const onCreateInvoiceClick = async () => {
+    setIsLoading(true)
+    try {
+      const newInvoiceNumber = getNewInvoiceNumber()
 
-    const payorType =
-      Math.random() < 0.5 ? PayorType.BUSINESS : PayorType.INDIVIDUAL
+      const payorType =
+        Math.random() < 0.5 ? PayorType.BUSINESS : PayorType.INDIVIDUAL
 
-    dispatch(
-      createInvoice({
-        invoice: {
-          id: v4(),
-          payorType,
-          invoiceNumber: newInvoiceNumber,
-          billFromBusinessEmail: faker.internet.email(),
-          status: getRandomInvoiceStatus(),
-          billFromBusinessName:
-            payorType === PayorType.BUSINESS ? faker.company.name() : undefined,
-          customerFirstName:
-            payorType === PayorType.INDIVIDUAL
-              ? faker.person.firstName()
-              : undefined,
-          customerLastName:
-            payorType === PayorType.INDIVIDUAL
-              ? faker.person.lastName()
-              : undefined,
-          billToPersonFullName:
-            payorType === PayorType.INDIVIDUAL
-              ? faker.person.fullName()
-              : undefined,
-          createdAtIsoDate: DateTime.now().toISO(),
-          dueDateIsoDate: DateTime.now()
-            .plus({ days: _.random(30, 60) })
-            .toISODate(),
-          phoneNumber: faker.helpers.fromRegExp(/\(4\d\d\) \d{3}-\d{4}/),
-          billToPersonAddress: getFakeAddress(),
-          billFromPersonAddress: getFakeAddress(),
-          items: _.range(0, 3).map(() => ({
-            itemName: faker.commerce.product(),
-            itemCostCents: _.random(100_000, 500_000),
-            itemQuantity: _.random(2, 5),
-          })),
-        },
-      }),
-    )
+      dispatch(
+        createInvoice({
+          invoice: {
+            id: v4(),
+            payorType,
+            invoiceNumber: newInvoiceNumber,
+            billFromBusinessEmail: faker.internet.email(),
+            status: getRandomInvoiceStatus(),
+            billFromBusinessName:
+              payorType === PayorType.BUSINESS
+                ? faker.company.name()
+                : undefined,
+            customerFirstName:
+              payorType === PayorType.INDIVIDUAL
+                ? faker.person.firstName()
+                : undefined,
+            customerLastName:
+              payorType === PayorType.INDIVIDUAL
+                ? faker.person.lastName()
+                : undefined,
+            billToPersonFullName:
+              payorType === PayorType.INDIVIDUAL
+                ? faker.person.fullName()
+                : undefined,
+            createdAtIsoDate: DateTime.now().toISO(),
+            dueDateIsoDate: DateTime.now()
+              .plus({ days: _.random(30, 60) })
+              .toISODate(),
+            phoneNumber: faker.helpers.fromRegExp(/\(4\d\d\) \d{3}-\d{4}/),
+            billToPersonAddress: getFakeAddress(),
+            billFromPersonAddress: getFakeAddress(),
+            items: _.range(0, 3).map(() => ({
+              itemName: faker.commerce.product(),
+              itemCostCents: _.random(100_000, 500_000),
+              itemQuantity: _.random(2, 5),
+            })),
+          },
+        }),
+      )
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  const onDeleteSelectedInvoicesClick = () => {
-    dispatch(
-      deleteInvoices({
-        invoiceIds: [...selectedInvoiceIds],
-      }),
-    )
+  const onDeleteSelectedInvoicesClick = async () => {
+    setIsLoading(true)
+    try {
+      dispatch(
+        deleteInvoices({
+          invoiceIds: [...selectedInvoiceIds],
+        }),
+      )
 
-    setSelectedInvoiceIds(new Set())
+      setSelectedInvoiceIds(new Set())
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const financeInvoices = async (
@@ -302,13 +315,18 @@ function ApiInvoices() {
   const onFinanceSelectedInvoicesClick = async (
     includeInvoiceFile: boolean,
   ) => {
-    const invoices: PlatformInvoice[] = [...selectedInvoiceIds].map(
-      (invoiceId) =>
-        allPersistedInvoices.find(
-          (persistedInvoice) => persistedInvoice.id === invoiceId,
-        ),
-    ) as PlatformInvoice[]
-    return financeInvoices(invoices, includeInvoiceFile)
+    setIsLoading(true)
+    try {
+      const invoices: PlatformInvoice[] = [...selectedInvoiceIds].map(
+        (invoiceId) =>
+          allPersistedInvoices.find(
+            (persistedInvoice) => persistedInvoice.id === invoiceId,
+          ),
+      ) as PlatformInvoice[]
+      await financeInvoices(invoices, includeInvoiceFile)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const onFinanceInvoiceClick = async () => {
@@ -340,42 +358,43 @@ function ApiInvoices() {
       return
     }
 
-    const invoicesToFinance: PlatformInvoice[] = _.compact(
-      [...selectedInvoiceIds].map((invoiceId) =>
-        allPersistedInvoices.find(
-          (persistedInvoice) => persistedInvoice.id === invoiceId,
-        ),
-      ),
-    )
-
-    if (invoicesToFinance.length === 0) {
-      toast.error('Selected invoices not found')
-      return
-    }
-
-    // Validate required fields
-    const invalidInvoices = invoicesToFinance.filter((invoice) => {
-      return (
-        _.isNil(invoice.payorType) ||
-        _.isNil(invoice.dueDateIsoDate) ||
-        _.isEmpty(invoice.items)
-      )
-    })
-
-    if (invalidInvoices.length > 0) {
-      toast.error(
-        'Cannot submit these invoices because some fields are missing.',
-      )
-      return
-    }
-
-    const payload: FinanceInvoicePayload = {
-      invoices: invoicesToFinance,
-      issuedProductId: issuedProduct.id,
-      platformBusinessId: issuedProduct.platformBusinessId as string,
-    }
-
+    setIsLoading(true)
     try {
+      const invoicesToFinance: PlatformInvoice[] = _.compact(
+        [...selectedInvoiceIds].map((invoiceId) =>
+          allPersistedInvoices.find(
+            (persistedInvoice) => persistedInvoice.id === invoiceId,
+          ),
+        ),
+      )
+
+      if (invoicesToFinance.length === 0) {
+        toast.error('Selected invoices not found')
+        return
+      }
+
+      // Validate required fields
+      const invalidInvoices = invoicesToFinance.filter((invoice) => {
+        return (
+          _.isNil(invoice.payorType) ||
+          _.isNil(invoice.dueDateIsoDate) ||
+          _.isEmpty(invoice.items)
+        )
+      })
+
+      if (invalidInvoices.length > 0) {
+        toast.error(
+          'Cannot submit these invoices because some fields are missing.',
+        )
+        return
+      }
+
+      const payload: FinanceInvoicePayload = {
+        invoices: invoicesToFinance,
+        issuedProductId: issuedProduct.id,
+        platformBusinessId: issuedProduct.platformBusinessId as string,
+      }
+
       const resp = await axiosWithApiKey(apiKey).post<FinanceInvoiceResponse>(
         '/api/finance_invoice',
         payload,
@@ -436,6 +455,8 @@ function ApiInvoices() {
       console.error('Failed to finance invoice', ex)
       const errorMessage = ex.response?.data?.message || genericErrorMessage
       toast.error(errorMessage)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -470,10 +491,12 @@ function ApiInvoices() {
             <DeleteButton
               onClick={onDeleteSelectedInvoicesClick}
               numberOfSelectedInvoices={selectedInvoiceIds.size}
+              loading={isLoading}
             />
             {!_.isEmpty(selectedInvoiceIds) && issuedProduct ? (
               <SplitButton
                 buttonColor={buttonBgColor}
+                loading={isLoading}
                 options={[
                   {
                     label: (
@@ -519,17 +542,22 @@ function ApiInvoices() {
               />
             ) : (
               <button
-                className="btn text-white forty-percent-darker-on-hover"
+                className="btn text-white forty-percent-darker-on-hover flex items-center gap-2"
                 style={{ backgroundColor: buttonBgColor }}
                 onClick={onCreateInvoiceClick}
+                disabled={isLoading}
               >
-                <svg
-                  className="w-4 h-4 fill-current opacity-50 shrink-0"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
-                </svg>
-                <span className="hidden xs:block ml-2">
+                {isLoading ? (
+                  <CircularProgress size={16} sx={{ color: 'white' }} />
+                ) : (
+                  <svg
+                    className="w-4 h-4 fill-current opacity-50 shrink-0"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
+                  </svg>
+                )}
+                <span className="hidden xs:block">
                   Create {formatInvoiceFinancingProductName()}
                 </span>
               </button>
