@@ -164,71 +164,59 @@ function ApiInvoices() {
   }
 
   // hard coded for now
-  const onCreateInvoiceClick = async () => {
-    setIsLoading(true)
-    try {
-      const newInvoiceNumber = getNewInvoiceNumber()
+  const onCreateInvoiceClick = () => {
+    const newInvoiceNumber = getNewInvoiceNumber()
 
-      const payorType =
-        Math.random() < 0.5 ? PayorType.BUSINESS : PayorType.INDIVIDUAL
+    const payorType =
+      Math.random() < 0.5 ? PayorType.BUSINESS : PayorType.INDIVIDUAL
 
-      dispatch(
-        createInvoice({
-          invoice: {
-            id: v4(),
-            payorType,
-            invoiceNumber: newInvoiceNumber,
-            billFromBusinessEmail: faker.internet.email(),
-            status: getRandomInvoiceStatus(),
-            billFromBusinessName:
-              payorType === PayorType.BUSINESS
-                ? faker.company.name()
-                : undefined,
-            customerFirstName:
-              payorType === PayorType.INDIVIDUAL
-                ? faker.person.firstName()
-                : undefined,
-            customerLastName:
-              payorType === PayorType.INDIVIDUAL
-                ? faker.person.lastName()
-                : undefined,
-            billToPersonFullName:
-              payorType === PayorType.INDIVIDUAL
-                ? faker.person.fullName()
-                : undefined,
-            createdAtIsoDate: DateTime.now().toISO(),
-            dueDateIsoDate: DateTime.now()
-              .plus({ days: _.random(30, 60) })
-              .toISODate(),
-            phoneNumber: faker.helpers.fromRegExp(/\(4\d\d\) \d{3}-\d{4}/),
-            billToPersonAddress: getFakeAddress(),
-            billFromPersonAddress: getFakeAddress(),
-            items: _.range(0, 3).map(() => ({
-              itemName: faker.commerce.product(),
-              itemCostCents: _.random(100_000, 500_000),
-              itemQuantity: _.random(2, 5),
-            })),
-          },
-        }),
-      )
-    } finally {
-      setIsLoading(false)
-    }
+    dispatch(
+      createInvoice({
+        invoice: {
+          id: v4(),
+          payorType,
+          invoiceNumber: newInvoiceNumber,
+          billFromBusinessEmail: faker.internet.email(),
+          status: getRandomInvoiceStatus(),
+          billFromBusinessName:
+            payorType === PayorType.BUSINESS ? faker.company.name() : undefined,
+          customerFirstName:
+            payorType === PayorType.INDIVIDUAL
+              ? faker.person.firstName()
+              : undefined,
+          customerLastName:
+            payorType === PayorType.INDIVIDUAL
+              ? faker.person.lastName()
+              : undefined,
+          billToPersonFullName:
+            payorType === PayorType.INDIVIDUAL
+              ? faker.person.fullName()
+              : undefined,
+          createdAtIsoDate: DateTime.now().toISO(),
+          dueDateIsoDate: DateTime.now()
+            .plus({ days: _.random(30, 60) })
+            .toISODate(),
+          phoneNumber: faker.helpers.fromRegExp(/\(4\d\d\) \d{3}-\d{4}/),
+          billToPersonAddress: getFakeAddress(),
+          billFromPersonAddress: getFakeAddress(),
+          items: _.range(0, 3).map(() => ({
+            itemName: faker.commerce.product(),
+            itemCostCents: _.random(100_000, 500_000),
+            itemQuantity: _.random(2, 5),
+          })),
+        },
+      }),
+    )
   }
 
-  const onDeleteSelectedInvoicesClick = async () => {
-    setIsLoading(true)
-    try {
-      dispatch(
-        deleteInvoices({
-          invoiceIds: [...selectedInvoiceIds],
-        }),
-      )
+  const onDeleteSelectedInvoicesClick = () => {
+    dispatch(
+      deleteInvoices({
+        invoiceIds: [...selectedInvoiceIds],
+      }),
+    )
 
-      setSelectedInvoiceIds(new Set())
-    } finally {
-      setIsLoading(false)
-    }
+    setSelectedInvoiceIds(new Set())
   }
 
   const financeInvoices = async (
@@ -491,7 +479,6 @@ function ApiInvoices() {
             <DeleteButton
               onClick={onDeleteSelectedInvoicesClick}
               numberOfSelectedInvoices={selectedInvoiceIds.size}
-              loading={isLoading}
             />
             {!_.isEmpty(selectedInvoiceIds) && issuedProduct ? (
               <SplitButton
