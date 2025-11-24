@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { useCallback, useEffect, useState } from 'react'
+import { useAsyncFn } from 'react-use'
 import { CircularProgress } from '@mui/material'
 import _, { isEmpty } from 'lodash'
 import { DateTime } from 'luxon'
@@ -299,17 +300,19 @@ function ApiInvoices() {
     }
   }
 
-  const onFinanceSelectedInvoicesClick = async (
-    includeInvoiceFile: boolean,
-  ) => {
-    const invoices: PlatformInvoice[] = [...selectedInvoiceIds].map(
-      (invoiceId) =>
-        allPersistedInvoices.find(
-          (persistedInvoice) => persistedInvoice.id === invoiceId,
-        ),
-    ) as PlatformInvoice[]
-    return financeInvoices(invoices, includeInvoiceFile)
-  }
+  const [{ loading: financeSelectedLoading }, onFinanceSelectedInvoicesClick] =
+    useAsyncFn(
+      async (includeInvoiceFile: boolean) => {
+        const invoices: PlatformInvoice[] = [...selectedInvoiceIds].map(
+          (invoiceId) =>
+            allPersistedInvoices.find(
+              (persistedInvoice) => persistedInvoice.id === invoiceId,
+            ),
+        ) as PlatformInvoice[]
+        await financeInvoices(invoices, includeInvoiceFile)
+      },
+      [selectedInvoiceIds, allPersistedInvoices, financeInvoices],
+    )
 
   const onFinanceInvoiceClick = async () => {
     const invoice = allPersistedInvoices.find(
@@ -329,119 +332,129 @@ function ApiInvoices() {
     })
   }
 
-  const financeInvoiceAutoSubmit = async () => {
-    if (!issuedProduct) {
-      toast.error('No issued product found')
-      return
-    }
-
-    if (selectedInvoiceIds.size === 0) {
-      toast.error('Please select at least one invoice')
-      return
-    }
-
-    const invoicesToFinance: PlatformInvoice[] = _.compact(
-      [...selectedInvoiceIds].map((invoiceId) =>
-        allPersistedInvoices.find(
-          (persistedInvoice) => persistedInvoice.id === invoiceId,
-        ),
-      ),
-    )
-
-    if (invoicesToFinance.length === 0) {
-      toast.error('Selected invoices not found')
-      return
-    }
-
-    // Validate required fields
-    const invalidInvoices = invoicesToFinance.filter((invoice) => {
-      return (
-        _.isNil(invoice.payorType) ||
-        _.isNil(invoice.dueDateIsoDate) ||
-        _.isEmpty(invoice.items)
-      )
-    })
-
-    if (invalidInvoices.length > 0) {
-      toast.error(
-        'Cannot submit these invoices because some fields are missing.',
-      )
-      return
-    }
-
-    const payload: FinanceInvoicePayload = {
-      invoices: invoicesToFinance,
-      issuedProductId: issuedProduct.id,
-      platformBusinessId: issuedProduct.platformBusinessId as string,
-    }
-
-    try {
-      const resp = await axiosWithApiKey(apiKey).post<FinanceInvoiceResponse>(
-        '/api/finance_invoice',
-        payload,
-      )
-
-      // Track successful and failed invoices by invoice number
-      const successfulInvoiceNumbers: string[] = []
-      const failedInvoiceNumbers: string[] = []
-
-      // Process successfully financed invoices
-      resp.data.invoices.forEach((financedInvoice) => {
-        const platformInvoice = invoicesToFinance.find(
-          (inv) => inv.id === financedInvoice.platformInvoiceId,
-        )
-        if (platformInvoice) {
-          dispatch(
-            updateInvoice({
-              invoice: {
-                ...platformInvoice,
-                kanmonInvoiceId: financedInvoice.id,
-              },
-            }),
-          )
-          successfulInvoiceNumbers.push(platformInvoice.invoiceNumber)
+  const [{ loading: financeAutoSubmitLoading }, financeInvoiceAutoSubmit] =
+    useAsyncFn(async () => {
+      try {
+        if (!issuedProduct) {
+          toast.error('No issued product found')
+          return
         }
-      })
 
-      // Process failed invoices from response
-      if (resp.data.failedInvoices.length > 0) {
-        resp.data.failedInvoices.map((failedInvoice) => {
-          failedInvoiceNumbers.push(failedInvoice.platformInvoiceNumber)
+        if (selectedInvoiceIds.size === 0) {
+          toast.error('Please select at least one invoice')
+          return
+        }
+
+        const invoicesToFinance: PlatformInvoice[] = _.compact(
+          [...selectedInvoiceIds].map((invoiceId) =>
+            allPersistedInvoices.find(
+              (persistedInvoice) => persistedInvoice.id === invoiceId,
+            ),
+          ),
+        )
+
+        if (invoicesToFinance.length === 0) {
+          toast.error('Selected invoices not found')
+          return
+        }
+
+        // Validate required fields
+        const invalidInvoices = invoicesToFinance.filter((invoice) => {
+          return (
+            _.isNil(invoice.payorType) ||
+            _.isNil(invoice.dueDateIsoDate) ||
+            _.isEmpty(invoice.items)
+          )
         })
-      }
 
-      // Refresh issued product details to update available limit
-      await fetchIssuedProductDetails()
+        if (invalidInvoices.length > 0) {
+          toast.error(
+            'Cannot submit these invoices because some fields are missing.',
+          )
+          return
+        }
 
-      // Clear selected invoices
-      setSelectedInvoiceIds(new Set())
+        const payload: FinanceInvoicePayload = {
+          invoices: invoicesToFinance,
+          issuedProductId: issuedProduct.id,
+          platformBusinessId: issuedProduct.platformBusinessId as string,
+        }
 
-      // Show success notification with details
-      if (successfulInvoiceNumbers.length > 0) {
-        toast.success(
-          `Successfully financed ${successfulInvoiceNumbers.length} invoice${
-            successfulInvoiceNumbers.length > 1 ? 's' : ''
-          }: ${successfulInvoiceNumbers.join(', ')}`,
+        const resp = await axiosWithApiKey(apiKey).post<FinanceInvoiceResponse>(
+          '/api/finance_invoice',
+          payload,
         )
-      }
 
-      if (failedInvoiceNumbers.length > 0) {
-        toast.error(
-          `Failed to finance ${failedInvoiceNumbers.length} invoice${
-            failedInvoiceNumbers.length > 1 ? 's' : ''
-          }: ${failedInvoiceNumbers.join(', ')}`,
-        )
+        // Track successful and failed invoices by invoice number
+        const successfulInvoiceNumbers: string[] = []
+        const failedInvoiceNumbers: string[] = []
+
+        // Process successfully financed invoices
+        resp.data.invoices.forEach((financedInvoice) => {
+          const platformInvoice = invoicesToFinance.find(
+            (inv) => inv.id === financedInvoice.platformInvoiceId,
+          )
+          if (platformInvoice) {
+            dispatch(
+              updateInvoice({
+                invoice: {
+                  ...platformInvoice,
+                  kanmonInvoiceId: financedInvoice.id,
+                },
+              }),
+            )
+            successfulInvoiceNumbers.push(platformInvoice.invoiceNumber)
+          }
+        })
+
+        // Process failed invoices from response
+        if (resp.data.failedInvoices.length > 0) {
+          resp.data.failedInvoices.map((failedInvoice) => {
+            failedInvoiceNumbers.push(failedInvoice.platformInvoiceNumber)
+          })
+        }
+
+        // Refresh issued product details to update available limit
+        await fetchIssuedProductDetails()
+
+        // Clear selected invoices
+        setSelectedInvoiceIds(new Set())
+
+        // Show success notification with details
+        if (successfulInvoiceNumbers.length > 0) {
+          toast.success(
+            `Successfully financed ${successfulInvoiceNumbers.length} invoice${
+              successfulInvoiceNumbers.length > 1 ? 's' : ''
+            }: ${successfulInvoiceNumbers.join(', ')}`,
+          )
+        }
+
+        if (failedInvoiceNumbers.length > 0) {
+          toast.error(
+            `Failed to finance ${failedInvoiceNumbers.length} invoice${
+              failedInvoiceNumbers.length > 1 ? 's' : ''
+            }: ${failedInvoiceNumbers.join(', ')}`,
+          )
+        }
+      } catch (ex: any) {
+        console.error('Failed to finance invoice', ex)
+        const errorMessage = ex.response?.data?.message || genericErrorMessage
+        toast.error(errorMessage)
       }
-    } catch (ex: any) {
-      console.error('Failed to finance invoice', ex)
-      const errorMessage = ex.response?.data?.message || genericErrorMessage
-      toast.error(errorMessage)
-    }
-  }
+    }, [
+      issuedProduct,
+      selectedInvoiceIds,
+      allPersistedInvoices,
+      apiKey,
+      dispatch,
+      fetchIssuedProductDetails,
+    ])
 
   const showLaunchKanmonConnectCTA = !(
     currentWorkflowState === 'NO_OFFERS_EXTENDED'
   )
+
+  const isLoading = financeSelectedLoading || financeAutoSubmitLoading
 
   return (
     <>
@@ -474,6 +487,7 @@ function ApiInvoices() {
             {!_.isEmpty(selectedInvoiceIds) && issuedProduct ? (
               <SplitButton
                 buttonColor={buttonBgColor}
+                loading={isLoading}
                 options={[
                   {
                     label: (
@@ -519,17 +533,22 @@ function ApiInvoices() {
               />
             ) : (
               <button
-                className="btn text-white forty-percent-darker-on-hover"
+                className="btn text-white forty-percent-darker-on-hover flex items-center gap-2"
                 style={{ backgroundColor: buttonBgColor }}
                 onClick={onCreateInvoiceClick}
+                disabled={isLoading}
               >
-                <svg
-                  className="w-4 h-4 fill-current opacity-50 shrink-0"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
-                </svg>
-                <span className="hidden xs:block ml-2">
+                {isLoading ? (
+                  <CircularProgress size={16} sx={{ color: 'white' }} />
+                ) : (
+                  <svg
+                    className="w-4 h-4 fill-current opacity-50 shrink-0"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
+                  </svg>
+                )}
+                <span className="hidden xs:block">
                   Create {formatInvoiceFinancingProductName()}
                 </span>
               </button>
