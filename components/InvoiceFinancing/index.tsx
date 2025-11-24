@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { useCallback, useEffect, useState } from 'react'
+import { useAsyncFn } from 'react-use'
 import { CircularProgress } from '@mui/material'
 import _, { isEmpty } from 'lodash'
 import { DateTime } from 'luxon'
@@ -68,7 +69,6 @@ function ApiInvoices() {
   const [selectedInvoiceIds, setSelectedInvoiceIds] = useState(
     new Set<string>(),
   )
-  const [isLoading, setIsLoading] = useState(false)
   const { ctaText, currentWorkflowState, isOpen } = useSelector(
     getKanmonConnectSlice,
   )
@@ -300,22 +300,19 @@ function ApiInvoices() {
     }
   }
 
-  const onFinanceSelectedInvoicesClick = async (
-    includeInvoiceFile: boolean,
-  ) => {
-    setIsLoading(true)
-    try {
-      const invoices: PlatformInvoice[] = [...selectedInvoiceIds].map(
-        (invoiceId) =>
-          allPersistedInvoices.find(
-            (persistedInvoice) => persistedInvoice.id === invoiceId,
-          ),
-      ) as PlatformInvoice[]
-      await financeInvoices(invoices, includeInvoiceFile)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const [{ loading: financeSelectedLoading }, onFinanceSelectedInvoicesClick] =
+    useAsyncFn(
+      async (includeInvoiceFile: boolean) => {
+        const invoices: PlatformInvoice[] = [...selectedInvoiceIds].map(
+          (invoiceId) =>
+            allPersistedInvoices.find(
+              (persistedInvoice) => persistedInvoice.id === invoiceId,
+            ),
+        ) as PlatformInvoice[]
+        await financeInvoices(invoices, includeInvoiceFile)
+      },
+      [selectedInvoiceIds, allPersistedInvoices, financeInvoices],
+    )
 
   const onFinanceInvoiceClick = async () => {
     const invoice = allPersistedInvoices.find(
@@ -335,122 +332,129 @@ function ApiInvoices() {
     })
   }
 
-  const financeInvoiceAutoSubmit = async () => {
-    if (!issuedProduct) {
-      toast.error('No issued product found')
-      return
-    }
-
-    if (selectedInvoiceIds.size === 0) {
-      toast.error('Please select at least one invoice')
-      return
-    }
-
-    setIsLoading(true)
-    try {
-      const invoicesToFinance: PlatformInvoice[] = _.compact(
-        [...selectedInvoiceIds].map((invoiceId) =>
-          allPersistedInvoices.find(
-            (persistedInvoice) => persistedInvoice.id === invoiceId,
-          ),
-        ),
-      )
-
-      if (invoicesToFinance.length === 0) {
-        toast.error('Selected invoices not found')
-        return
-      }
-
-      // Validate required fields
-      const invalidInvoices = invoicesToFinance.filter((invoice) => {
-        return (
-          _.isNil(invoice.payorType) ||
-          _.isNil(invoice.dueDateIsoDate) ||
-          _.isEmpty(invoice.items)
-        )
-      })
-
-      if (invalidInvoices.length > 0) {
-        toast.error(
-          'Cannot submit these invoices because some fields are missing.',
-        )
-        return
-      }
-
-      const payload: FinanceInvoicePayload = {
-        invoices: invoicesToFinance,
-        issuedProductId: issuedProduct.id,
-        platformBusinessId: issuedProduct.platformBusinessId as string,
-      }
-
-      const resp = await axiosWithApiKey(apiKey).post<FinanceInvoiceResponse>(
-        '/api/finance_invoice',
-        payload,
-      )
-
-      // Track successful and failed invoices by invoice number
-      const successfulInvoiceNumbers: string[] = []
-      const failedInvoiceNumbers: string[] = []
-
-      // Process successfully financed invoices
-      resp.data.invoices.forEach((financedInvoice) => {
-        const platformInvoice = invoicesToFinance.find(
-          (inv) => inv.id === financedInvoice.platformInvoiceId,
-        )
-        if (platformInvoice) {
-          dispatch(
-            updateInvoice({
-              invoice: {
-                ...platformInvoice,
-                kanmonInvoiceId: financedInvoice.id,
-              },
-            }),
-          )
-          successfulInvoiceNumbers.push(platformInvoice.invoiceNumber)
+  const [{ loading: financeAutoSubmitLoading }, financeInvoiceAutoSubmit] =
+    useAsyncFn(async () => {
+      try {
+        if (!issuedProduct) {
+          toast.error('No issued product found')
+          return
         }
-      })
 
-      // Process failed invoices from response
-      if (resp.data.failedInvoices.length > 0) {
-        resp.data.failedInvoices.map((failedInvoice) => {
-          failedInvoiceNumbers.push(failedInvoice.platformInvoiceNumber)
+        if (selectedInvoiceIds.size === 0) {
+          toast.error('Please select at least one invoice')
+          return
+        }
+
+        const invoicesToFinance: PlatformInvoice[] = _.compact(
+          [...selectedInvoiceIds].map((invoiceId) =>
+            allPersistedInvoices.find(
+              (persistedInvoice) => persistedInvoice.id === invoiceId,
+            ),
+          ),
+        )
+
+        if (invoicesToFinance.length === 0) {
+          toast.error('Selected invoices not found')
+          return
+        }
+
+        // Validate required fields
+        const invalidInvoices = invoicesToFinance.filter((invoice) => {
+          return (
+            _.isNil(invoice.payorType) ||
+            _.isNil(invoice.dueDateIsoDate) ||
+            _.isEmpty(invoice.items)
+          )
         })
-      }
 
-      // Refresh issued product details to update available limit
-      await fetchIssuedProductDetails()
+        if (invalidInvoices.length > 0) {
+          toast.error(
+            'Cannot submit these invoices because some fields are missing.',
+          )
+          return
+        }
 
-      // Clear selected invoices
-      setSelectedInvoiceIds(new Set())
+        const payload: FinanceInvoicePayload = {
+          invoices: invoicesToFinance,
+          issuedProductId: issuedProduct.id,
+          platformBusinessId: issuedProduct.platformBusinessId as string,
+        }
 
-      // Show success notification with details
-      if (successfulInvoiceNumbers.length > 0) {
-        toast.success(
-          `Successfully financed ${successfulInvoiceNumbers.length} invoice${
-            successfulInvoiceNumbers.length > 1 ? 's' : ''
-          }: ${successfulInvoiceNumbers.join(', ')}`,
+        const resp = await axiosWithApiKey(apiKey).post<FinanceInvoiceResponse>(
+          '/api/finance_invoice',
+          payload,
         )
-      }
 
-      if (failedInvoiceNumbers.length > 0) {
-        toast.error(
-          `Failed to finance ${failedInvoiceNumbers.length} invoice${
-            failedInvoiceNumbers.length > 1 ? 's' : ''
-          }: ${failedInvoiceNumbers.join(', ')}`,
-        )
+        // Track successful and failed invoices by invoice number
+        const successfulInvoiceNumbers: string[] = []
+        const failedInvoiceNumbers: string[] = []
+
+        // Process successfully financed invoices
+        resp.data.invoices.forEach((financedInvoice) => {
+          const platformInvoice = invoicesToFinance.find(
+            (inv) => inv.id === financedInvoice.platformInvoiceId,
+          )
+          if (platformInvoice) {
+            dispatch(
+              updateInvoice({
+                invoice: {
+                  ...platformInvoice,
+                  kanmonInvoiceId: financedInvoice.id,
+                },
+              }),
+            )
+            successfulInvoiceNumbers.push(platformInvoice.invoiceNumber)
+          }
+        })
+
+        // Process failed invoices from response
+        if (resp.data.failedInvoices.length > 0) {
+          resp.data.failedInvoices.map((failedInvoice) => {
+            failedInvoiceNumbers.push(failedInvoice.platformInvoiceNumber)
+          })
+        }
+
+        // Refresh issued product details to update available limit
+        await fetchIssuedProductDetails()
+
+        // Clear selected invoices
+        setSelectedInvoiceIds(new Set())
+
+        // Show success notification with details
+        if (successfulInvoiceNumbers.length > 0) {
+          toast.success(
+            `Successfully financed ${successfulInvoiceNumbers.length} invoice${
+              successfulInvoiceNumbers.length > 1 ? 's' : ''
+            }: ${successfulInvoiceNumbers.join(', ')}`,
+          )
+        }
+
+        if (failedInvoiceNumbers.length > 0) {
+          toast.error(
+            `Failed to finance ${failedInvoiceNumbers.length} invoice${
+              failedInvoiceNumbers.length > 1 ? 's' : ''
+            }: ${failedInvoiceNumbers.join(', ')}`,
+          )
+        }
+      } catch (ex: any) {
+        console.error('Failed to finance invoice', ex)
+        const errorMessage = ex.response?.data?.message || genericErrorMessage
+        toast.error(errorMessage)
       }
-    } catch (ex: any) {
-      console.error('Failed to finance invoice', ex)
-      const errorMessage = ex.response?.data?.message || genericErrorMessage
-      toast.error(errorMessage)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+    }, [
+      issuedProduct,
+      selectedInvoiceIds,
+      allPersistedInvoices,
+      apiKey,
+      dispatch,
+      fetchIssuedProductDetails,
+    ])
 
   const showLaunchKanmonConnectCTA = !(
     currentWorkflowState === 'NO_OFFERS_EXTENDED'
   )
+
+  const isLoading = financeSelectedLoading || financeAutoSubmitLoading
 
   return (
     <>
