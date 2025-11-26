@@ -22,7 +22,11 @@ interface SplitButtonProps {
   }[]
 }
 
-export const SplitButton = ({ options, buttonColor, loading = false }: SplitButtonProps) => {
+export const SplitButton = ({
+  options,
+  buttonColor,
+  loading = false,
+}: SplitButtonProps) => {
   const [open, setOpen] = useState(false)
   const anchorRef = useRef<HTMLDivElement>(null)
   const [selectedIndex, setSelectedIndex] = useState(0)
@@ -76,13 +80,11 @@ export const SplitButton = ({ options, buttonColor, loading = false }: SplitButt
           onClick={handleButtonClick}
           disabled={loading}
         >
-          {loading && (
-            <CircularProgress size={16} sx={{ color: 'white' }} />
-          )}
+          {loading && <CircularProgress size={16} sx={{ color: 'white' }} />}
           {options[selectedIndex].label}
         </Button>
-        <Button 
-          style={{ backgroundColor: buttonColor }} 
+        <Button
+          style={{ backgroundColor: buttonColor }}
           onClick={handleToggle}
           disabled={loading}
         >

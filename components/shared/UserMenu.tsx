@@ -1,19 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
 
+import { CopyTextWithToolTip } from '@/components/CopyTextWithToolTip'
 import UserAvatar from '@/public/images/user-avatar-32.png'
+import { getAuthState } from '@/store/authSlice'
 import {
   getCustomizationState,
   toggleEditMode,
 } from '@/store/customizationSlice'
+import { getIssuedProductSlice } from '@/store/issuedProductSlice'
 import { resetStoreAction } from '@/store/store'
+import { faCopy } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Image from 'next/image'
 import { useDispatch, useSelector } from 'react-redux'
 import Transition from './Transition'
-import { getAuthState } from '@/store/authSlice'
-import { CopyTextWithToolTip } from '@/components/CopyTextWithToolTip'
-import { getKanmonConnectSlice } from '@/store/kanmonConnectSlice'
-import { faCopy } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const IdentifierMenuItem = ({
   textToBeCopied,
@@ -38,7 +38,7 @@ export const UserMenu = ({ align }: { align: string }) => {
   const [clickCounter, setClickCounter] = useState(0)
   const { buttonBgColor } = useSelector(getCustomizationState)
   const authState = useSelector(getAuthState)
-  const kanmonConnectState = useSelector(getKanmonConnectSlice)
+  const issuedProductState = useSelector(getIssuedProductSlice)
 
   const trigger = useRef<HTMLButtonElement>(null)
   const dropdown = useRef<HTMLDivElement>(null)
@@ -146,10 +146,10 @@ export const UserMenu = ({ align }: { align: string }) => {
                 content={`Business ID: ${authState.businessId}`}
               />
             )}
-            {kanmonConnectState.issuedProduct?.id && (
+            {issuedProductState.issuedProduct?.id && (
               <IdentifierMenuItem
-                textToBeCopied={kanmonConnectState.issuedProduct.id}
-                content={`Issued Product ID: ${kanmonConnectState.issuedProduct?.id}`}
+                textToBeCopied={issuedProductState.issuedProduct.id}
+                content={`Issued Product ID: ${issuedProductState.issuedProduct?.id}`}
               />
             )}
           </div>
