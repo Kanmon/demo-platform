@@ -15,11 +15,11 @@ import { DemoDashboardCard10 } from '@/components/Dashboard/DemoDashboardCard10'
 import { DemoDashboardCard11 } from '@/components/Dashboard/DemoDashboardCard11'
 import { WelcomeBanner } from '@/components/Dashboard/WelcomeBanner'
 import { getCustomizationState } from '@/store/customizationSlice'
+import { getKanmonConnectSlice, updateOnHide } from '@/store/kanmonConnectSlice'
 import {
-  getKanmonConnectSlice,
+  getIssuedProductSlice,
   updateIssuedProduct,
-  updateOnHide,
-} from '@/store/kanmonConnectSlice'
+} from '@/store/issuedProductSlice'
 import { IssuedProduct } from '@kanmon/sdk'
 import { Datepicker } from '../components/shared/DatePicker'
 import { DashboardAvatars } from '../components/Dashboard/DashboardAvatars'
@@ -31,9 +31,8 @@ import { getApiKeyState } from '../store/apiKeySlice'
 import { KanmonConnectComponent } from '@kanmon/web-sdk'
 
 export const V2Home: React.FC = () => {
-  const { ctaText, currentWorkflowState, issuedProduct } = useSelector(
-    getKanmonConnectSlice,
-  )
+  const { ctaText, currentWorkflowState } = useSelector(getKanmonConnectSlice)
+  const { issuedProduct } = useSelector(getIssuedProductSlice)
   const { buttonBgColor } = useSelector(getCustomizationState)
   const dispatch = useDispatch()
   const { showKanmonConnect } = useKanmonConnectContext()
@@ -114,6 +113,39 @@ export const V2Home: React.FC = () => {
     )
   }
 
+  const openInvoiceHistory = async () => {
+    showKanmonConnect({
+      component: KanmonConnectComponent.INVOICE_HISTORY,
+    })
+    dispatch(
+      updateOnHide({
+        isOpen: true,
+      }),
+    )
+  }
+
+  const openUploadInvoice = async () => {
+    showKanmonConnect({
+      component: KanmonConnectComponent.UPLOAD_INVOICE,
+    })
+    dispatch(
+      updateOnHide({
+        isOpen: true,
+      }),
+    )
+  }
+
+  const openPayNow = async () => {
+    showKanmonConnect({
+      component: KanmonConnectComponent.PAY_NOW,
+    })
+    dispatch(
+      updateOnHide({
+        isOpen: true,
+      }),
+    )
+  }
+
   const isPrequalified =
     prequalification && currentWorkflowState === 'START_FLOW'
 
@@ -121,6 +153,7 @@ export const V2Home: React.FC = () => {
     ? `You are pre-qualified! See your offer${businessName ? `, ${businessName}` : ''} 👋`
     : undefined
 
+  console.log(issuedProduct?.servicingData.productType)
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
@@ -155,7 +188,10 @@ export const V2Home: React.FC = () => {
                 ]}
               />
             )}
-            {issuedProduct?.servicingData.productType === 'TERM_LOAN' && (
+            {(issuedProduct?.servicingData.productType === 'TERM_LOAN' ||
+              issuedProduct?.servicingData.productType === 'MCA' ||
+              issuedProduct?.servicingData.productType ===
+                'INTEGRATED_MCA') && (
               <SplitButton
                 buttonColor={buttonBgColor}
                 options={[
@@ -166,6 +202,36 @@ export const V2Home: React.FC = () => {
                   {
                     label: 'Download Agreements',
                     onClick: downloadAgreements,
+                  },
+                  {
+                    label: 'Bank Accounts',
+                    onClick: openBankAccounts,
+                  },
+                ]}
+              />
+            )}
+            {(issuedProduct?.servicingData.productType ===
+              'INVOICE_FINANCING' ||
+              issuedProduct?.servicingData.productType ===
+                'ACCOUNTS_PAYABLE_FINANCING') && (
+              <SplitButton
+                buttonColor={buttonBgColor}
+                options={[
+                  {
+                    label: 'Download Agreements',
+                    onClick: downloadAgreements,
+                  },
+                  {
+                    label: 'Invoice History',
+                    onClick: openInvoiceHistory,
+                  },
+                  {
+                    label: 'Upload Invoice',
+                    onClick: openUploadInvoice,
+                  },
+                  {
+                    label: 'Pay Now',
+                    onClick: openPayNow,
                   },
                   {
                     label: 'Bank Accounts',

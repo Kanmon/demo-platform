@@ -33,6 +33,10 @@ import {
   kanmonConnectSlice,
   KanmonConnectState,
 } from '@/store/kanmonConnectSlice'
+import {
+  issuedProductSlice,
+  IssuedProductState,
+} from '@/store/issuedProductSlice'
 import { ApiInvoicesState } from '../types/DemoInvoicesTypes'
 import { apiKeySlice, ApiKeyState } from '@/store/apiKeySlice'
 
@@ -41,6 +45,7 @@ export type RootState = CombinedState<{
   customization: CustomizationState
   apiInvoices: ApiInvoicesState
   kanmonConnect: KanmonConnectState
+  issuedProduct: IssuedProductState
   apiKey: ApiKeyState
 }>
 
@@ -51,6 +56,7 @@ const allSlices = [
   customizationSlice,
   apiInvoicesSlice,
   kanmonConnectSlice,
+  issuedProductSlice,
   apiKeySlice,
 ]
 
@@ -137,6 +143,7 @@ export const makeStore = () => {
         'customization',
         'apiInvoices',
         'kanmonConnect',
+        'issuedProduct',
         'apiKey',
       ], // make sure it does not clash with server keys
       storage,

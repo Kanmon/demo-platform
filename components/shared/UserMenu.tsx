@@ -12,6 +12,7 @@ import Transition from './Transition'
 import { getAuthState } from '@/store/authSlice'
 import { CopyTextWithToolTip } from '@/components/CopyTextWithToolTip'
 import { getKanmonConnectSlice } from '@/store/kanmonConnectSlice'
+import { getIssuedProductSlice } from '@/store/issuedProductSlice'
 import { faCopy } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -39,6 +40,7 @@ export const UserMenu = ({ align }: { align: string }) => {
   const { buttonBgColor } = useSelector(getCustomizationState)
   const authState = useSelector(getAuthState)
   const kanmonConnectState = useSelector(getKanmonConnectSlice)
+  const issuedProductState = useSelector(getIssuedProductSlice)
 
   const trigger = useRef<HTMLButtonElement>(null)
   const dropdown = useRef<HTMLDivElement>(null)
@@ -146,10 +148,10 @@ export const UserMenu = ({ align }: { align: string }) => {
                 content={`Business ID: ${authState.businessId}`}
               />
             )}
-            {kanmonConnectState.issuedProduct?.id && (
+            {issuedProductState.issuedProduct?.id && (
               <IdentifierMenuItem
-                textToBeCopied={kanmonConnectState.issuedProduct.id}
-                content={`Issued Product ID: ${kanmonConnectState.issuedProduct?.id}`}
+                textToBeCopied={issuedProductState.issuedProduct.id}
+                content={`Issued Product ID: ${issuedProductState.issuedProduct?.id}`}
               />
             )}
           </div>
