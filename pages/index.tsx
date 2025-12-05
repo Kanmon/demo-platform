@@ -153,7 +153,6 @@ export const V2Home: React.FC = () => {
     ? `You are pre-qualified! See your offer${businessName ? `, ${businessName}` : ''} 👋`
     : undefined
 
-  console.log(issuedProduct?.servicingData.productType)
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
