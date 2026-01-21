@@ -8,7 +8,6 @@ export interface KanmonConnectState {
   currentWorkflowState: UserState | null
   isOpen: boolean
   useCdnSdk?: boolean
-  enableV2View?: boolean
 }
 
 const initialState: KanmonConnectState = {
@@ -16,7 +15,6 @@ const initialState: KanmonConnectState = {
   currentWorkflowState: null,
   isOpen: false,
   useCdnSdk: false, // This can be set based on your application logic
-  enableV2View: false,
 }
 
 export const kanmonConnectSlice = createSlice({
@@ -33,12 +31,8 @@ export const kanmonConnectSlice = createSlice({
     updateOnHide(state, action: { payload: { isOpen: boolean } }) {
       state.isOpen = action.payload.isOpen
     },
-    updateUseCdnSdk(
-      state,
-      action: { payload: { useCdnSdk: boolean; enableV2View: boolean } },
-    ) {
+    updateUseCdnSdk(state, action: { payload: { useCdnSdk: boolean } }) {
       state.useCdnSdk = action.payload.useCdnSdk
-      state.enableV2View = action.payload.enableV2View
     },
   },
 

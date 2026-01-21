@@ -55,7 +55,7 @@ const KanmonConnectContextProvider = ({
   const dispatch = useDispatch()
 
   const { apiKey } = useSelector(getApiKeyState)
-  const { useCdnSdk, enableV2View } = useSelector(getKanmonConnectSlice)
+  const { useCdnSdk } = useSelector(getKanmonConnectSlice)
   const [scriptLoading] = useScript({
     src: NEXT_PUBLIC_KANMON_CDN_HOST,
   })
@@ -91,13 +91,12 @@ const KanmonConnectContextProvider = ({
         environment: process.env
           .NEXT_PUBLIC_DEPLOY_ENV as KanmonConnectEnviroment,
         ...(connectParamOverrides ? connectParamOverrides : {}),
-        customInitializationName: enableV2View
-          ? 'v2'
-          : ((query?.customInitializationName as string) ?? 'default'),
+        customInitializationName: query?.customInitializationName as
+          | string
+          | undefined,
         productSubsetDuringOnboarding: productSubsetDuringOnboarding?.split(
           ',',
         ) as ExternalProductType[] | undefined,
-        useV2: enableV2View,
       }
 
       // Check if CDN SDK is available
@@ -113,7 +112,7 @@ const KanmonConnectContextProvider = ({
         setReady(true)
       }
     },
-    [scriptLoading, useCdnSdk, apiKey, enableV2View],
+    [scriptLoading, useCdnSdk, apiKey],
   )
 
   const showKanmonConnect = (showArgs?: ShowKanmonConnectMessage) => {
@@ -130,7 +129,7 @@ const KanmonConnectContextProvider = ({
       console.log('ERROR', error)
       dispatch(resetStoreAction(true))
     }
-  }, [error])
+  }, [error, dispatch])
 
   return (
     <KanmonConnectContext.Provider value={{ ready, error, showKanmonConnect }}>

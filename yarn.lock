@@ -343,10 +343,10 @@
     node-fetch "^2.6.0"
     url-parse "^1.4.3"
 
-"@kanmon/web-sdk@2.2.11":
-  version "2.2.11"
-  resolved "https://registry.yarnpkg.com/@kanmon/web-sdk/-/web-sdk-2.2.11.tgz#7c5430b65a2e4fad1fe63ae83349b198a22c885c"
-  integrity sha512-1vASjgnAwM9DLLbTgkqnsY184lGLlHe9NsndChAlfoK0kA4uL/VmnY5iysQH8POgmG8a3lnWMV7uTnR9K+sICQ==
+"@kanmon/web-sdk@2.2.12-next-76ea1e5f1bd72086220a2f8482f5f179bd1ed9ca.0":
+  version "2.2.12-next-76ea1e5f1bd72086220a2f8482f5f179bd1ed9ca.0"
+  resolved "https://registry.yarnpkg.com/@kanmon/web-sdk/-/web-sdk-2.2.12-next-76ea1e5f1bd72086220a2f8482f5f179bd1ed9ca.0.tgz#6106a6793d5f09c37297dff9a6d23c0abbf61624"
+  integrity sha512-8v1Cm+0E907BOiRh5ivvmGPr79tGAjXFDJPdJw1AhxRr/ohSsWuJ0b3QxBHY8PsWP3IbBiVXy7/UpZXG5Yn0Aw==
   dependencies:
     tslib "^2.3.0"
 
