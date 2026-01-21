@@ -100,7 +100,7 @@ const rootReducer: Reducer<RootState, AnyAction> = (state, action) => {
         sliceState = state.apiKey
       }
 
-      // Preserve configuration settings (useCdnSdk, enableV2View) when clicking "Start Over"
+      // Preserve configuration settings (useCdnSdk) when clicking "Start Over"
       if (
         nextSlice.name === 'kanmonConnect' &&
         !action.completeReset &&

@@ -9,7 +9,6 @@ import { useRouter } from 'next/router'
 
 interface FormValues {
   useCdnSdk: boolean
-  enableV2View: boolean
 }
 
 const ConfigPage = () => {
@@ -18,12 +17,11 @@ const ConfigPage = () => {
   const router = useRouter()
   const initialValues: FormValues = {
     useCdnSdk: data.useCdnSdk ?? false,
-    enableV2View: data.enableV2View ?? false,
   }
 
   const saveConfigFn = (values: FormValues) => {
-    const { useCdnSdk, enableV2View } = values
-    dispatch(updateUseCdnSdk({ useCdnSdk, enableV2View }))
+    const { useCdnSdk } = values
+    dispatch(updateUseCdnSdk({ useCdnSdk }))
     router.push('/')
   }
 
@@ -77,50 +75,6 @@ const ConfigPage = () => {
                             }`}
                         >
                           Kanmon CDN
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4 mb-4">
-                    <span className="w-44 text-sm font-medium text-gray-700">
-                      Bizex design
-                    </span>
-
-                    <div className="w-[360px] rounded-md border border-gray-200 bg-gray-50 overflow-hidden">
-                      <div className="grid grid-cols-2 divide-x divide-gray-200">
-                        <button
-                          type="button"
-                          onClick={() => setFieldValue('enableV2View', false)}
-                          className={`py-2 px-3 text-sm font-medium transition-colors duration-150
-                            ${
-                              !values.enableV2View
-                                ? 'bg-white text-blue-600'
-                                : 'text-gray-600'
-                            }`}
-                        >
-                          V1
-                          <br />
-                          <span className="ml-1 text-[10px] text-blue-600 rounded px-1">
-                            (reccomended)
-                          </span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => setFieldValue('enableV2View', true)}
-                          className={`py-2 px-3 text-sm font-medium transition-colors duration-150
-                            ${
-                              values.enableV2View
-                                ? 'bg-white text-blue-600'
-                                : 'text-gray-600'
-                            }`}
-                        >
-                          V2
-                          <br />
-                          <span className="ml-1 text-[10px] text-orange-600 rounded px-1">
-                            (development)
-                          </span>
                         </button>
                       </div>
                     </div>
