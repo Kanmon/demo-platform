@@ -19,7 +19,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@kanmon/sdk": "3.1.0",
-    "@kanmon/web-sdk": "2.2.12-next-c5f236a8df827dcd1e1ee50f3ef8829cdbd3d76d.0",
+    "@kanmon/web-sdk": "2.2.12-next-76ea1e5f1bd72086220a2f8482f5f179bd1ed9ca.0",
     "@mui/icons-material": "^5.15.20",
     "@mui/material": "^5.15.20",
     "@reduxjs/toolkit": "1.9.5",
