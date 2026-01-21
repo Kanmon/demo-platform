@@ -129,7 +129,7 @@ const KanmonConnectContextProvider = ({
       console.log('ERROR', error)
       dispatch(resetStoreAction(true))
     }
-  }, [error])
+  }, [error, dispatch])
 
   return (
     <KanmonConnectContext.Provider value={{ ready, error, showKanmonConnect }}>
