@@ -512,23 +512,18 @@ function ApiInvoices() {
                     ),
                     onClick: () => onFinanceSelectedInvoicesClick(true),
                   },
-                  ...(issuedProduct?.servicingData.productType ===
-                  ProductType.ACCOUNTS_PAYABLE_FINANCING
-                    ? [
-                        {
-                          label: (
-                            <span>
-                              Finance ({selectedInvoiceIds.size}){' '}
-                              {formatInvoiceFinancingProductName(
-                                selectedInvoiceIds.size > 1,
-                              )}{' '}
-                              (auto-submit)
-                            </span>
-                          ),
-                          onClick: financeInvoiceAutoSubmit,
-                        },
-                      ]
-                    : []),
+                  {
+                    label: (
+                      <span>
+                        Finance ({selectedInvoiceIds.size}){' '}
+                        {formatInvoiceFinancingProductName(
+                          selectedInvoiceIds.size > 1,
+                        )}{' '}
+                        (auto-submit)
+                      </span>
+                    ),
+                    onClick: financeInvoiceAutoSubmit,
+                  },
                 ]}
               />
             ) : (

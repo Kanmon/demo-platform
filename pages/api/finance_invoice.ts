@@ -73,7 +73,8 @@ const financeInvoice = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (
     issuedProduct.servicingData.productType !==
-    ProductType.ACCOUNTS_PAYABLE_FINANCING
+      ProductType.ACCOUNTS_PAYABLE_FINANCING &&
+    issuedProduct.servicingData.productType !== ProductType.INVOICE_FINANCING
   ) {
     res.status(409).send({
       message: 'The product type is not supported for this operation.',
@@ -111,12 +112,26 @@ const financeInvoice = async (req: NextApiRequest, res: NextApiResponse) => {
         invoiceIssuedDate: invoice.createdAtIsoDate,
         description:
           invoice.items.map((item) => item.itemName).join(', ') || 'an invoice',
-        payeeEmail: invoice.billFromBusinessEmail,
-        payeeAddress: invoice.billFromPersonAddress,
-        payeeType: invoice.payorType === 'BUSINESS' ? 'BUSINESS' : 'INDIVIDUAL',
-        payeeBusinessName: invoice.billFromBusinessName,
-        payeeFirstName: invoice.customerFirstName,
-        payeeLastName: invoice.customerLastName,
+        ...(issuedProduct.servicingData.productType ===
+        ProductType.INVOICE_FINANCING
+          ? {
+              payorType:
+                invoice.payorType === 'BUSINESS' ? 'BUSINESS' : 'INDIVIDUAL',
+              payorBusinessName: invoice.billFromBusinessName,
+              payorFirstName: invoice.customerFirstName,
+              payorLastName: invoice.customerLastName,
+              payorEmail: invoice.billFromBusinessEmail,
+              payorAddress: invoice.billFromPersonAddress,
+            }
+          : {
+              payeeEmail: invoice.billFromBusinessEmail,
+              payeeAddress: invoice.billFromPersonAddress,
+              payeeType:
+                invoice.payorType === 'BUSINESS' ? 'BUSINESS' : 'INDIVIDUAL',
+              payeeBusinessName: invoice.billFromBusinessName,
+              payeeFirstName: invoice.customerFirstName,
+              payeeLastName: invoice.customerLastName,
+            }),
       }
 
       const financedInvoice = await sdkClient.invoices.financeInvoice({
@@ -124,6 +139,7 @@ const financeInvoice = async (req: NextApiRequest, res: NextApiResponse) => {
       })
       financedInvoices.push(financedInvoice)
     } catch (invoiceError: any) {
+      console.log('error', invoiceError)
       const errorData = await invoiceError.response.json()
 
       failedInvoices.push({
