@@ -139,7 +139,6 @@ const financeInvoice = async (req: NextApiRequest, res: NextApiResponse) => {
       })
       financedInvoices.push(financedInvoice)
     } catch (invoiceError: any) {
-      console.log('error', invoiceError)
       const errorData = await invoiceError.response.json()
 
       failedInvoices.push({
