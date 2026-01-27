@@ -39,9 +39,6 @@ jobs:
         with:
           node-version: 22.17.0
           cache: 'yarn'
-      - name: Use npm 9.9.1. Reference these GH issues https://github.com/yarnpkg/yarn/issues/3728#issuecomment-1737249792, https://github.com/npm/cli/pull/6554#issuecomment-1780237375
-        shell: bash
-        run: npm install -g npm@9.9.1
       - name: Cache Node Modules
         id: node-cache
         uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # 4.2.2
