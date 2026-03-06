@@ -50,9 +50,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
     const getIcon = (active: boolean) => {
       return (
         <FontAwesomeIcon
-          className={`fill-current h-4 w-4 mx-1 ${
-            active ? 'text-indigo-500' : 'text-slate-600'
-          }`}
+          className="fill-current h-4 w-4 mx-1"
+          style={{
+            color: active
+              ? customizationState.sidenavSelectedColor
+              : customizationState.sidenavTextColor,
+          }}
           icon={icon}
         />
       )
@@ -214,10 +217,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 viewBox="0 0 24 24"
               >
                 <path
-                  className="text-slate-400"
+                  style={{ color: customizationState.sidenavTextColor }}
                   d="M19.586 11l-5-5L16 4.586 23.414 12 16 19.414 14.586 18l5-5H7v-2z"
                 />
-                <path className="text-slate-600" d="M3 23H1V1h2z" />
+                <path style={{ color: customizationState.sidenavTextColor }} d="M3 23H1V1h2z" />
               </svg>
             </div>
           </div>

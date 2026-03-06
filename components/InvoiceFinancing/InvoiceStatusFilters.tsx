@@ -20,11 +20,11 @@ const InvoiceStatusFilters = ({
   currentFilter,
   allInvoices,
 }: InvoiceStatusFiltersProps) => {
-  const { buttonBgColor } = useSelector(getCustomizationState)
+  const { primaryColor, primaryTextColor } = useSelector(getCustomizationState)
 
   const baseButtonStyles =
     'inline-flex items-center justify-center text-sm font-medium leading-5 rounded-full px-3 py-1 border border-slate-200 hover:border-slate-300 shadow-sm duration-150 ease-in-out'
-  const selectedClassStyles = 'text-white'
+  const selectedClassStyles = ''
   const notSelectedClassStyles = 'bg-white text-slate-500'
 
   const addButtonBackgroundColor = (
@@ -57,10 +57,10 @@ const InvoiceStatusFilters = ({
             className={classNames(
               baseButtonStyles,
               addButtonBackgroundColor('ALL'),
-              'text-white',
             )}
             style={{
-              backgroundColor: 'ALL' === currentFilter ? buttonBgColor : '',
+              backgroundColor: 'ALL' === currentFilter ? primaryColor : '',
+              color: 'ALL' === currentFilter ? primaryTextColor : undefined,
             }}
           >
             All <span className="ml-1 text-indigo-200">{totalCount}</span>
@@ -78,8 +78,12 @@ const InvoiceStatusFilters = ({
             style={{
               backgroundColor:
                 PlatformInvoiceStatus.PAID === currentFilter
-                  ? buttonBgColor
+                  ? primaryColor
                   : '',
+              color:
+                PlatformInvoiceStatus.PAID === currentFilter
+                  ? primaryTextColor
+                  : undefined,
             }}
           >
             Paid <span className="ml-1 text-slate-400">{numPaid}</span>
@@ -97,8 +101,12 @@ const InvoiceStatusFilters = ({
             style={{
               backgroundColor:
                 PlatformInvoiceStatus.DUE === currentFilter
-                  ? buttonBgColor
+                  ? primaryColor
                   : '',
+              color:
+                PlatformInvoiceStatus.DUE === currentFilter
+                  ? primaryTextColor
+                  : undefined,
             }}
           >
             Due <span className="ml-1 text-slate-400">{numDue}</span>
@@ -116,8 +124,12 @@ const InvoiceStatusFilters = ({
             style={{
               backgroundColor:
                 PlatformInvoiceStatus.OVERDUE === currentFilter
-                  ? buttonBgColor
+                  ? primaryColor
                   : '',
+              color:
+                PlatformInvoiceStatus.OVERDUE === currentFilter
+                  ? primaryTextColor
+                  : undefined,
             }}
           >
             Overdue <span className="ml-1 text-slate-400">{numOverDue}</span>

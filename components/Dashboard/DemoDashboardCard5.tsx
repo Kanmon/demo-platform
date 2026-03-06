@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux'
 import { RealtimeChart } from '../Charts/RealtimeChart'
 
 export const DemoDashboardCard5 = () => {
-  const { buttonBgColor } = useSelector(getCustomizationState)
+  const { primaryColor } = useSelector(getCustomizationState)
 
   // Generate fake dates from now to back in time
   const chartData = useMemo(() => {
@@ -36,17 +36,17 @@ export const DemoDashboardCard5 = () => {
           backgroundColor: `rgba(${hexToRgbFormatted(
             getTailwindConfig().theme.colors.blue[500],
           )}, 0.08)`,
-          borderColor: buttonBgColor,
+          borderColor: primaryColor,
           borderWidth: 2,
           tension: 0,
           pointRadius: 0,
           pointHoverRadius: 3,
-          pointBackgroundColor: buttonBgColor,
+          pointBackgroundColor: primaryColor,
           clip: 20,
         },
       ],
     }
-  }, [buttonBgColor])
+  }, [primaryColor])
 
   return (
     <div className="flex flex-col col-span-full sm:col-span-6 bg-white shadow-lg rounded-sm border border-slate-200">

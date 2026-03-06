@@ -1,7 +1,6 @@
-import { useDispatch, useSelector } from 'react-redux'
-import { ResponsiveImage } from '../ResponsiveImage'
-import { getCustomizationState, saveNewLogo } from '@/store/customizationSlice'
-import { EditableImage } from '@/components/shared/EditableComponent/EditableImage'
+import { useSelector } from 'react-redux'
+import { getCustomizationState } from '@/store/customizationSlice'
+import { getPlatformStyleConfigState } from '@/store/platformStyleConfigSlice'
 
 export const DefaultLogoSVG = () => (
   <svg
@@ -35,44 +34,39 @@ export const DefaultLogoSVG = () => (
 )
 
 export const DefaultLogo = () => {
+  const { demoLogoAddedText } = useSelector(getCustomizationState)
+
   return (
     <div className="flex text-white justify-center items-center">
       <DefaultLogoSVG />
       <div className="ml-4 sidebar-expanded:flex hidden text-xl tracking-wide">
-        DEMO
+        {demoLogoAddedText}
       </div>
     </div>
   )
 }
 
 export const Logo: React.FC = () => {
-  const { logoBase64, editMode, logoHeight, logoWidth } = useSelector(
-    getCustomizationState,
-  )
-  const dispatch = useDispatch()
+  const { logoUrl } = useSelector(getCustomizationState)
+  const platformStyleConfig = useSelector(getPlatformStyleConfigState)
 
-  const dispatchImageChange = (imageBase64: string | undefined) => {
-    dispatch(saveNewLogo({ imageBase64 }))
+  // Priority: customization URL > platform config URL > default logo
+  const resolvedLogoUrl = logoUrl || platformStyleConfig.config?.auth0Logo
+
+  if (resolvedLogoUrl) {
+    return (
+      /* eslint-disable-next-line @next/next/no-img-element */
+      <img
+        src={resolvedLogoUrl}
+        alt="logo"
+        style={{
+          maxWidth: 160,
+          maxHeight: 40,
+          objectFit: 'contain',
+        }}
+      />
+    )
   }
 
-  const logoExists = logoBase64 != undefined
-
-  return (
-    <EditableImage
-      editMode={editMode}
-      itemExists={logoExists}
-      onUpload={dispatchImageChange}
-    >
-      {logoExists ? (
-        <ResponsiveImage
-          alt="logo"
-          src={logoBase64}
-          width={logoWidth}
-          height={logoHeight}
-        />
-      ) : (
-        <DefaultLogo />
-      )}
-    </EditableImage>
-  )
+  return <DefaultLogo />
 }

@@ -34,34 +34,26 @@ export const SidebarLinkItem: React.FC<SidebarItemProps> = ({
 
   const containerClasses = classNames(
     'block transition duration-150 truncate',
-    active
-      ? 'text-indigo-500 hover:cursor-default'
-      : 'text-slate-400 hover:text-slate-200 hover:cursor-pointer',
+    active ? 'hover:cursor-default' : 'hover:cursor-pointer',
   )
 
   const sideNavTextStyles =
     'text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200'
 
+  const textColor = active
+    ? customizationState.sidenavSelectedColor
+    : customizationState.sidenavTextColor
+
   return (
     <li className="mb-1 last:mb-0">
       <div className={containerClasses} onClick={setActive}>
         {disabled ? (
-          <span
-            className={sideNavTextStyles}
-            style={{
-              color: active ? customizationState.primaryColor : undefined,
-            }}
-          >
+          <span className={sideNavTextStyles} style={{ color: textColor }}>
             {title}
           </span>
         ) : (
           <Link href={linkHref} passHref legacyBehavior>
-            <a
-              className={sideNavTextStyles}
-              style={{
-                color: active ? customizationState.primaryColor : undefined,
-              }}
-            >
+            <a className={sideNavTextStyles} style={{ color: textColor }}>
               {title}
             </a>
           </Link>

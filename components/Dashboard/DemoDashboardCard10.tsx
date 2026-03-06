@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { getCustomizationState } from '@/store/customizationSlice'
 
 export const DemoDashboardCard10 = () => {
-  const { buttonBgColor } = useSelector(getCustomizationState)
+  const { primaryColor } = useSelector(getCustomizationState)
 
   return (
     <div className="col-span-full xl:col-span-6 bg-white shadow-lg rounded-sm border border-slate-200">
@@ -43,7 +43,7 @@ export const DemoDashboardCard10 = () => {
                   <div className="shrink-0 self-end ml-2">
                     <a
                       className="font-medium fifty-percent-darker-text-on-hover"
-                      style={{ color: buttonBgColor }}
+                      style={{ color: primaryColor }}
                       href="#0"
                     >
                       View<span className="hidden sm:inline"> -&gt;</span>
@@ -79,7 +79,7 @@ export const DemoDashboardCard10 = () => {
                   <div className="shrink-0 self-end ml-2">
                     <a
                       className="font-medium fifty-percent-darker-text-on-hover"
-                      style={{ color: buttonBgColor }}
+                      style={{ color: primaryColor }}
                       href="#0"
                     >
                       View<span className="hidden sm:inline"> -&gt;</span>
@@ -114,7 +114,7 @@ export const DemoDashboardCard10 = () => {
                   <div className="shrink-0 self-end ml-2">
                     <a
                       className="font-medium fifty-percent-darker-text-on-hover"
-                      style={{ color: buttonBgColor }}
+                      style={{ color: primaryColor }}
                       href="#0"
                     >
                       View<span className="hidden sm:inline"> -&gt;</span>
@@ -156,7 +156,7 @@ export const DemoDashboardCard10 = () => {
                   <div className="shrink-0 self-end ml-2">
                     <a
                       className="font-medium fifty-percent-darker-text-on-hover"
-                      style={{ color: buttonBgColor }}
+                      style={{ color: primaryColor }}
                       href="#0"
                     >
                       View<span className="hidden sm:inline"> -&gt;</span>
@@ -192,7 +192,7 @@ export const DemoDashboardCard10 = () => {
                   <div className="shrink-0 self-end ml-2">
                     <a
                       className="font-medium fifty-percent-darker-text-on-hover"
-                      style={{ color: buttonBgColor }}
+                      style={{ color: primaryColor }}
                       href="#0"
                     >
                       View<span className="hidden sm:inline"> -&gt;</span>

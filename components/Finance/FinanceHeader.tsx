@@ -1,8 +1,12 @@
 import React from 'react'
 import Link from 'next/link'
 import classNames from 'classnames'
+import { useSelector } from 'react-redux'
+import { getCustomizationState } from '@/store/customizationSlice'
 
 export const FinanceHeader: React.FC = () => {
+  const { programName } = useSelector(getCustomizationState)
+
   return (
     <div className="w-full flex justify-center py-8 shadow-md">
       <section className="max-w-screen-2xl w-5/6">
@@ -15,7 +19,7 @@ export const FinanceHeader: React.FC = () => {
                   'sm:text-5xl',
                 )}
               >
-                Flourish Capital
+                {programName}
               </h1>
             </div>
           </Link>

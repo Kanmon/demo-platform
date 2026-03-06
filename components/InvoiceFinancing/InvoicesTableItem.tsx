@@ -31,7 +31,7 @@ function InvoiceTableItem({
   showFinanceColumn,
 }: InvoiceTableItemProps) {
   const dispatch = useDispatch()
-  const { buttonBgColor } = useSelector(getCustomizationState)
+  const { primaryColor } = useSelector(getCustomizationState)
 
   const totalColor = (status: PlatformInvoiceStatus) => {
     switch (status) {
@@ -75,7 +75,7 @@ function InvoiceTableItem({
         <div
           onClick={onGetPaidNowClick}
           className="font-medium fifty-percent-darker-text-on-hover"
-          style={{ color: buttonBgColor }}
+          style={{ color: primaryColor }}
         >
           {invoice.invoiceNumber}
         </div>

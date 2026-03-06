@@ -33,7 +33,7 @@ import { KanmonConnectComponent } from '@kanmon/web-sdk'
 export const V2Home: React.FC = () => {
   const { ctaText, currentWorkflowState } = useSelector(getKanmonConnectSlice)
   const { issuedProduct } = useSelector(getIssuedProductSlice)
-  const { buttonBgColor } = useSelector(getCustomizationState)
+  const { primaryColor } = useSelector(getCustomizationState)
   const dispatch = useDispatch()
   const { showKanmonConnect } = useKanmonConnectContext()
 
@@ -170,7 +170,7 @@ export const V2Home: React.FC = () => {
 
             {issuedProduct?.servicingData.productType === 'LINE_OF_CREDIT' && (
               <SplitButton
-                buttonColor={buttonBgColor}
+                buttonColor={primaryColor}
                 options={[
                   {
                     label: 'New Draw Request',
@@ -192,7 +192,7 @@ export const V2Home: React.FC = () => {
               issuedProduct?.servicingData.productType ===
                 'INTEGRATED_MCA') && (
               <SplitButton
-                buttonColor={buttonBgColor}
+                buttonColor={primaryColor}
                 options={[
                   {
                     label: 'Payment History',
@@ -214,7 +214,7 @@ export const V2Home: React.FC = () => {
               issuedProduct?.servicingData.productType ===
                 'ACCOUNTS_PAYABLE_FINANCING') && (
               <SplitButton
-                buttonColor={buttonBgColor}
+                buttonColor={primaryColor}
                 options={[
                   {
                     label: 'Download Agreements',

@@ -36,7 +36,7 @@ export const UserMenu = ({ align }: { align: string }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dispatch = useDispatch()
   const [clickCounter, setClickCounter] = useState(0)
-  const { buttonBgColor } = useSelector(getCustomizationState)
+  const { primaryColor } = useSelector(getCustomizationState)
   const authState = useSelector(getAuthState)
   const issuedProductState = useSelector(getIssuedProductSlice)
 
@@ -76,7 +76,7 @@ export const UserMenu = ({ align }: { align: string }) => {
 
     // 5 Clicks to toggle
     if (newClickCounter >= 5) {
-      dispatch(toggleEditMode({}))
+      dispatch(toggleEditMode())
       setClickCounter(0)
     }
   }
@@ -157,7 +157,7 @@ export const UserMenu = ({ align }: { align: string }) => {
             <li>
               <div
                 className="font-medium text-sm flex items-center py-1 px-3"
-                style={{ color: buttonBgColor }}
+                style={{ color: primaryColor }}
               >
                 <div
                   className="hover:cursor-pointer fifty-percent-darker-text-on-hover"

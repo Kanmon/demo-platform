@@ -16,6 +16,7 @@ import {
   GetPrequalificationsResponse,
 } from '@kanmon/sdk'
 import { ProductType, TestingPrequalType, UserRole } from '../types/MoreTypes'
+import { PlatformStyleConfigurationsDTO } from '../types/PlatformStyleConfigTypes'
 
 const NEXT_PUBLIC_KANMON_API_HOST = process.env.NEXT_PUBLIC_KANMON_API_HOST
 const NEXT_PUBLIC_DEPLOY_ENV = process.env.NEXT_PUBLIC_DEPLOY_ENV as
@@ -114,6 +115,7 @@ export class BusinessIdParams {
 
 export interface PlatformDetails {
   id: string
+  programName?: string
   enabledProducts?: ProductType[]
 }
 export class KanmonClient {
@@ -174,6 +176,20 @@ export class KanmonClient {
   ): Promise<User> => {
     return this.sdkClient.users.createUser({ createUserRequestBody: user })
   }
+
+  getStyleConfigurations =
+    async (): Promise<PlatformStyleConfigurationsDTO> => {
+      const headers = this.getApiHeader()
+
+      const response = await axios.get(
+        `${NEXT_PUBLIC_KANMON_API_HOST}/platform/v2/style-configurations`,
+        {
+          headers,
+        },
+      )
+
+      return response.data
+    }
 
   // This is a test only endpoint used to simulate the creation of a prequalification
   // for a business. This is used for testing purposes only.

@@ -39,6 +39,10 @@ import {
 } from '@/store/issuedProductSlice'
 import { ApiInvoicesState } from '../types/DemoInvoicesTypes'
 import { apiKeySlice, ApiKeyState } from '@/store/apiKeySlice'
+import {
+  platformStyleConfigSlice,
+  PlatformStyleConfigState,
+} from '@/store/platformStyleConfigSlice'
 
 export type RootState = CombinedState<{
   auth: AuthState
@@ -47,6 +51,7 @@ export type RootState = CombinedState<{
   kanmonConnect: KanmonConnectState
   issuedProduct: IssuedProductState
   apiKey: ApiKeyState
+  platformStyleConfig: PlatformStyleConfigState
 }>
 
 export const resetStore = () => storage.removeItem('persist:kanmonDemo')
@@ -58,6 +63,7 @@ const allSlices = [
   kanmonConnectSlice,
   issuedProductSlice,
   apiKeySlice,
+  platformStyleConfigSlice,
 ]
 
 const combinedReducers = combineReducers<RootState, AnyAction>(
@@ -109,6 +115,15 @@ const rootReducer: Reducer<RootState, AnyAction> = (state, action) => {
         sliceState = state?.kanmonConnect
       }
 
+      // Preserve platform style config when clicking "Start Over" (same platform, different business)
+      if (
+        nextSlice.name === 'platformStyleConfig' &&
+        !action.completeReset &&
+        state?.platformStyleConfig
+      ) {
+        sliceState = state?.platformStyleConfig
+      }
+
       return {
         ...agg,
         [nextSlice.name]: sliceState,
@@ -145,6 +160,7 @@ export const makeStore = () => {
         'kanmonConnect',
         'issuedProduct',
         'apiKey',
+        'platformStyleConfig',
       ], // make sure it does not clash with server keys
       storage,
       // Automerge level 2 does a shallow merge two levels down

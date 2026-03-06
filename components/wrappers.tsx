@@ -8,8 +8,11 @@ import {
   updateOnHide,
   updateOnWorkflowChange,
 } from '@/store/kanmonConnectSlice'
+import { importCustomizationState } from '@/store/customizationSlice'
+import { savePlatformStyleConfig } from '@/store/platformStyleConfigSlice'
 import { resetStoreAction, RootState } from '@/store/store'
 import { axiosWithApiKey } from '@/utils'
+import { KanmonClient } from '@/utils/kanmonClient'
 import { KanmonConnectParams, OnEventCallbackEventType } from '@kanmon/web-sdk'
 import { useDispatch, useSelector, useStore } from 'react-redux'
 import { useAsync } from 'react-use'
@@ -64,6 +67,53 @@ export const TempAuthWrapper: React.FC<Props> = ({ children }) => {
     try {
       if (apiKey) {
         await axiosWithApiKey(apiKey).post('/api/test_api_key')
+
+        // Fetch platform style configuration and platform details after successful auth
+        const client = new KanmonClient(apiKey)
+
+        // Fetch both in parallel
+        const [styleConfigResult, platformResult] = await Promise.allSettled([
+          axiosWithApiKey(apiKey).get('/api/fetch_style_configurations'),
+          client.TEST_ONLY_GetPlatformForAuthenticatedUser(),
+        ])
+
+        const platformProgramName =
+          platformResult.status === 'fulfilled'
+            ? platformResult.value?.programName
+            : undefined
+
+        if (styleConfigResult.status === 'fulfilled') {
+          const data = styleConfigResult.value.data
+          dispatch(savePlatformStyleConfig(data))
+
+          // Map DTO demo fields to customization state
+          // Nullable demo fields fall back to initialState defaults
+          dispatch(
+            importCustomizationState({
+              primaryColor: data.demoPrimaryColor ?? '#6366f1',
+              primaryTextColor: data.demoPrimaryTextColor ?? '#ffffff',
+              secondaryColor: data.demoSecondaryColor ?? '#60a5fa',
+              secondaryTextColor: data.demoSecondaryTextColor ?? '#ffffff',
+              tertiaryColor: data.demoTertiaryColor ?? '#10b981',
+              sidenavBgColor: data.demoSidenavBgColor ?? '#1e293b',
+              sidenavTextColor: data.demoSidenavTextColor ?? '#94a3b8',
+              sidenavSelectedColor:
+                data.demoSidenavSelectedTextColor ?? '#6366f1',
+              defaultTextColor: data.demoDefaultTextColor ?? '#1E293B',
+              bannerBgColor: data.demoBannerBgColor ?? '#C7D2FE',
+              programName: platformProgramName ?? 'Flourish Capital',
+              demoLogoAddedText: 'DEMO',
+              logoUrl: data.demoLogoUrl ?? undefined,
+            }),
+          )
+        } else if (platformProgramName) {
+          // No style config but we have a program name
+          dispatch(
+            importCustomizationState({
+              programName: platformProgramName,
+            }),
+          )
+        }
       }
 
       return true

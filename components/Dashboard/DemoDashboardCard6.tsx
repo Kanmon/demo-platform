@@ -6,7 +6,8 @@ import { getCustomizationState } from '@/store/customizationSlice'
 import { DoughnutChart } from '../Charts/DoughnutChart'
 
 export const DemoDashboardCard6 = () => {
-  const { buttonBgColor } = useSelector(getCustomizationState)
+  const { primaryColor, secondaryColor, tertiaryColor } =
+    useSelector(getCustomizationState)
 
   const chartData = {
     labels: ['United States', 'Italy', 'Other'],
@@ -14,15 +15,11 @@ export const DemoDashboardCard6 = () => {
       {
         label: 'Top Countries',
         data: [35, 30, 35],
-        backgroundColor: [
-          buttonBgColor,
-          getTailwindConfig().theme.colors.blue[400],
-          pSBC(-0.5, buttonBgColor),
-        ],
+        backgroundColor: [primaryColor, secondaryColor, tertiaryColor],
         hoverBackgroundColor: [
-          pSBC(-0.3, buttonBgColor),
-          getTailwindConfig().theme.colors.blue[500],
-          pSBC(-0.8, buttonBgColor),
+          pSBC(-0.3, primaryColor),
+          pSBC(-0.2, secondaryColor),
+          pSBC(-0.2, tertiaryColor),
         ],
         hoverBorderColor: getTailwindConfig().theme.colors.white,
       },

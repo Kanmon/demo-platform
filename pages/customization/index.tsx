@@ -1,0 +1,229 @@
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  CustomizationState,
+  getCustomizationState,
+  updateCustomizationField,
+} from '@/store/customizationSlice'
+import { useState } from 'react'
+
+const ColorField = ({
+  label,
+  value,
+  onChange,
+}: {
+  label: string
+  value: string
+  onChange: (color: string) => void
+}) => {
+  return (
+    <div className="flex items-center justify-between py-3 border-b border-slate-100 last:border-0">
+      <label className="text-sm font-medium text-slate-700">{label}</label>
+      <div className="flex items-center gap-2">
+        <input
+          type="color"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-8 h-8 rounded cursor-pointer border border-slate-200 p-0"
+        />
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-24 text-xs font-mono text-slate-600 bg-slate-50 border border-slate-200 rounded px-2 py-1.5 uppercase"
+        />
+      </div>
+    </div>
+  )
+}
+
+const colorFields: { label: string; field: keyof CustomizationState }[] = [
+  { label: 'Primary Color', field: 'primaryColor' },
+  { label: 'Primary Text Color', field: 'primaryTextColor' },
+  { label: 'Secondary Color', field: 'secondaryColor' },
+  { label: 'Secondary Text Color', field: 'secondaryTextColor' },
+  { label: 'Tertiary Color', field: 'tertiaryColor' },
+  { label: 'Sidenav Background', field: 'sidenavBgColor' },
+  { label: 'Sidenav Text Color', field: 'sidenavTextColor' },
+  { label: 'Sidenav Selected Color', field: 'sidenavSelectedColor' },
+  { label: 'Default Text Color', field: 'defaultTextColor' },
+  { label: 'Banner Background', field: 'bannerBgColor' },
+]
+
+const CustomizationPage = () => {
+  const dispatch = useDispatch()
+  const customization = useSelector(getCustomizationState)
+
+  const [logoUrl, setLogoUrl] = useState(customization.logoUrl || '')
+  const [programName, setProgramName] = useState(customization.programName)
+  const [demoLogoAddedText, setDemoLogoAddedText] = useState(
+    customization.demoLogoAddedText,
+  )
+
+  const applyLogoUrl = () => {
+    dispatch(
+      updateCustomizationField({
+        field: 'logoUrl',
+        value: logoUrl || undefined,
+      }),
+    )
+  }
+
+  const applyProgramName = () => {
+    dispatch(
+      updateCustomizationField({
+        field: 'programName',
+        value: programName,
+      }),
+    )
+  }
+
+  const applyDemoLogoAddedText = () => {
+    dispatch(
+      updateCustomizationField({
+        field: 'demoLogoAddedText',
+        value: demoLogoAddedText,
+      }),
+    )
+  }
+
+  return (
+    <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-2xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-slate-800">Customization</h1>
+        <p className="text-sm text-slate-500 mt-1">
+          Override the platform theme colors and logo for this demo.
+        </p>
+      </div>
+
+      {/* Colors */}
+      <div className="bg-white rounded-lg shadow-sm border border-slate-200 mb-6">
+        <div className="px-5 py-4 border-b border-slate-200">
+          <h2 className="text-base font-semibold text-slate-800">Colors</h2>
+        </div>
+        <div className="px-5 py-2">
+          {colorFields.map(({ label, field }) => (
+            <ColorField
+              key={field}
+              label={label}
+              value={customization[field] as string}
+              onChange={(color) =>
+                dispatch(updateCustomizationField({ field, value: color }))
+              }
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Program Name */}
+      <div className="bg-white rounded-lg shadow-sm border border-slate-200 mb-6">
+        <div className="px-5 py-4 border-b border-slate-200">
+          <h2 className="text-base font-semibold text-slate-800">
+            Program Name
+          </h2>
+        </div>
+        <div className="px-5 py-4 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Brand name (shown on Example Program Page)
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={programName}
+                onChange={(e) => setProgramName(e.target.value)}
+                placeholder="Flourish Capital"
+                className="flex-1 text-sm text-slate-800 bg-white border border-slate-200 rounded px-3 py-2 focus:border-indigo-300 focus:ring-0"
+              />
+              <button
+                onClick={applyProgramName}
+                className="btn text-white"
+                style={{ backgroundColor: customization.primaryColor }}
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Logo Added Text */}
+      <div className="bg-white rounded-lg shadow-sm border border-slate-200 mb-6">
+        <div className="px-5 py-4 border-b border-slate-200">
+          <h2 className="text-base font-semibold text-slate-800">
+            Logo Added Text
+          </h2>
+        </div>
+        <div className="px-5 py-4 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Text shown next to logo in sidebar header
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={demoLogoAddedText}
+                onChange={(e) => setDemoLogoAddedText(e.target.value)}
+                placeholder="DEMO"
+                className="flex-1 text-sm text-slate-800 bg-white border border-slate-200 rounded px-3 py-2 focus:border-indigo-300 focus:ring-0"
+              />
+              <button
+                onClick={applyDemoLogoAddedText}
+                className="btn text-white"
+                style={{ backgroundColor: customization.primaryColor }}
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Logo */}
+      <div className="bg-white rounded-lg shadow-sm border border-slate-200">
+        <div className="px-5 py-4 border-b border-slate-200">
+          <h2 className="text-base font-semibold text-slate-800">Logo</h2>
+        </div>
+        <div className="px-5 py-4 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Logo URL
+            </label>
+            <input
+              type="text"
+              value={logoUrl}
+              onChange={(e) => setLogoUrl(e.target.value)}
+              placeholder="https://example.com/logo.png"
+              className="w-full text-sm text-slate-800 bg-white border border-slate-200 rounded px-3 py-2 focus:border-indigo-300 focus:ring-0"
+            />
+          </div>
+
+          <button
+            onClick={applyLogoUrl}
+            className="btn text-white"
+            style={{ backgroundColor: customization.primaryColor }}
+          >
+            Apply Logo
+          </button>
+
+          {(logoUrl || customization.logoUrl) && (
+            <div className="mt-3 p-3 bg-slate-50 rounded border border-slate-200">
+              <p className="text-xs text-slate-500 mb-2">Preview:</p>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={logoUrl || customization.logoUrl}
+                alt="Logo preview"
+                style={{
+                  maxWidth: 160,
+                  maxHeight: 40,
+                  objectFit: 'contain',
+                }}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default CustomizationPage

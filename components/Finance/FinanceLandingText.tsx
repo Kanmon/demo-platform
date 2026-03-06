@@ -1,19 +1,21 @@
 import classNames from 'classnames'
 import Image from 'next/image'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import baseImage from './images/baseHeroImage.webp'
 import { updateOnHide } from '../../store/kanmonConnectSlice'
 import { useKanmonConnectContext } from '../../hooks/KanmonConnectContext'
+import { getCustomizationState } from '../../store/customizationSlice'
 
 export const FinanceLandingText = ({
-  buttonBgColor,
+  primaryColor,
   ctaText,
 }: {
-  buttonBgColor: string
+  primaryColor: string
   ctaText: string | null
 }) => {
   const dispatch = useDispatch()
   const { showKanmonConnect } = useKanmonConnectContext()
+  const { primaryTextColor } = useSelector(getCustomizationState)
 
   return (
     <section
@@ -48,8 +50,8 @@ export const FinanceLandingText = ({
         </section>
         <div className="pt-11 pb-6">
           <div
-            className="md:mr-24 text-white btn-lg px-4 py-2 text-lg z-20 rounded-md hover:cursor-pointer forty-percent-darker-on-hover"
-            style={{ backgroundColor: buttonBgColor }}
+            className="md:mr-24 btn-lg px-4 py-2 text-lg z-20 rounded-md hover:cursor-pointer forty-percent-darker-on-hover"
+            style={{ backgroundColor: primaryColor, color: primaryTextColor }}
             onClick={() => {
               dispatch(
                 updateOnHide({
