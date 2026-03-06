@@ -1,70 +1,59 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { HYDRATE } from 'next-redux-wrapper'
 import { AppState } from './store'
 
 export interface CustomizationState {
   editMode: boolean
-  logoBase64: string | undefined
-  logoWidth: number
-  logoHeight: number
   primaryColor: string
-  ctaButtonColor: string
+  primaryTextColor: string
+  secondaryColor: string
+  secondaryTextColor: string
+  tertiaryColor: string
   sidenavBgColor: string
-  buttonBgColor: string
+  sidenavTextColor: string
+  sidenavSelectedColor: string
+  defaultTextColor: string
+  bannerBgColor: string
+  programName: string
+  demoLogoAddedText: string
+  logoUrl: string | undefined
 }
 
 const initialState: CustomizationState = {
   editMode: false,
-  logoBase64: undefined,
-  logoWidth: 32,
-  logoHeight: 32,
   primaryColor: '#6366f1',
-  ctaButtonColor: '#10b981',
+  primaryTextColor: '#ffffff',
+  secondaryColor: '#60a5fa',
+  secondaryTextColor: '#ffffff',
+  tertiaryColor: '#10b981',
   sidenavBgColor: '#1e293b',
-  buttonBgColor: '#6366f1',
+  sidenavTextColor: '#94a3b8',
+  sidenavSelectedColor: '#6366f1',
+  defaultTextColor: '#1E293B',
+  bannerBgColor: '#C7D2FE',
+  programName: 'Flourish Capital',
+  demoLogoAddedText: 'DEMO',
+  logoUrl: undefined,
 }
 
 export const customizationSlice = createSlice({
   name: 'customization',
   initialState,
   reducers: {
-    importCustomizationState(state, action: { payload: CustomizationState }) {
-      // Lets not touch this one
-      // state.editMode = true
-
-      state.logoBase64 = action.payload.logoBase64
-      state.primaryColor = action.payload.primaryColor
-      state.ctaButtonColor = action.payload.ctaButtonColor
-      state.sidenavBgColor = action.payload.sidenavBgColor
-      state.buttonBgColor = action.payload.buttonBgColor
-    },
-    saveNewLogo(
+    importCustomizationState(
       state,
-      action: { payload: { imageBase64: string | undefined } },
+      action: PayloadAction<Partial<CustomizationState>>,
     ) {
-      state.logoBase64 = action.payload.imageBase64
+      return { ...state, ...action.payload }
     },
-    toggleEditMode(state, _action: { payload: Record<string, unknown> }) {
+    toggleEditMode(state) {
       state.editMode = !state.editMode
     },
-    updatePrimaryColor(state, action: { payload: { color: string } }) {
-      state.primaryColor = action.payload.color
-    },
-    updateCtaButtonColor(state, action: { payload: { color: string } }) {
-      state.ctaButtonColor = action.payload.color
-    },
-    updateSidenavBgColor(state, action: { payload: { color: string } }) {
-      state.sidenavBgColor = action.payload.color
-    },
-    updateButtonBgColor(state, action: { payload: { color: string } }) {
-      state.buttonBgColor = action.payload.color
-    },
-    updateLogoDimensions(
-      state,
-      action: { payload: { width: number; height: number } },
+    updateCustomizationField<K extends keyof CustomizationState>(
+      state: CustomizationState,
+      action: PayloadAction<{ field: K; value: CustomizationState[K] }>,
     ) {
-      state.logoWidth = action.payload.width
-      state.logoHeight = action.payload.height
+      state[action.payload.field] = action.payload.value
     },
   },
 
@@ -79,14 +68,9 @@ export const customizationSlice = createSlice({
 })
 
 export const {
-  saveNewLogo,
-  toggleEditMode,
-  updatePrimaryColor,
   importCustomizationState,
-  updateLogoDimensions,
-  updateCtaButtonColor,
-  updateSidenavBgColor,
-  updateButtonBgColor,
+  toggleEditMode,
+  updateCustomizationField,
 } = customizationSlice.actions
 
 export const getCustomizationState = (state: AppState) => state.customization

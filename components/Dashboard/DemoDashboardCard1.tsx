@@ -10,7 +10,7 @@ import { getCustomizationState } from '@/store/customizationSlice'
 import Image from 'next/image'
 
 export const DemoDashboardCard1 = () => {
-  const { buttonBgColor } = useSelector(getCustomizationState)
+  const { primaryColor } = useSelector(getCustomizationState)
 
   const chartData = {
     labels: [
@@ -52,12 +52,12 @@ export const DemoDashboardCard1 = () => {
         backgroundColor: `rgba(${hexToRgbFormatted(
           getTailwindConfig().theme.colors.blue[500],
         )}, 0.08)`,
-        borderColor: buttonBgColor,
+        borderColor: primaryColor,
         borderWidth: 2,
         tension: 0,
         pointRadius: 0,
         pointHoverRadius: 3,
-        pointBackgroundColor: buttonBgColor,
+        pointBackgroundColor: primaryColor,
         clip: 20,
       },
       // Gray line

@@ -2,11 +2,11 @@ import React from 'react'
 
 import { useSelector } from 'react-redux'
 import { getCustomizationState } from '@/store/customizationSlice'
-import { getTailwindConfig } from '@/utils'
 import { LineChart2 } from '../Charts/LineChart2'
 
 export const DemoDashboardCard8 = () => {
-  const { buttonBgColor, primaryColor } = useSelector(getCustomizationState)
+  const { primaryColor, secondaryColor, tertiaryColor } =
+    useSelector(getCustomizationState)
 
   const chartData = {
     labels: [
@@ -54,36 +54,34 @@ export const DemoDashboardCard8 = () => {
         pointBackgroundColor: primaryColor,
         clip: 20,
       },
-      // Blue line
       {
         label: 'Previous',
         data: [
           184, 86, 42, 378, 42, 243, 38, 120, 0, 0, 42, 0, 84, 0, 276, 0, 124,
           42, 124, 88, 88, 215, 156, 88, 124, 64,
         ],
-        borderColor: getTailwindConfig().theme.colors.blue[400],
+        borderColor: secondaryColor,
         fill: false,
         borderWidth: 2,
         tension: 0,
         pointRadius: 0,
         pointHoverRadius: 3,
-        pointBackgroundColor: getTailwindConfig().theme.colors.blue[400],
+        pointBackgroundColor: secondaryColor,
         clip: 20,
       },
-      // emerald line
       {
         label: 'Average',
         data: [
           122, 170, 192, 86, 102, 124, 115, 115, 56, 104, 0, 72, 208, 186, 223,
           188, 114, 162, 200, 150, 118, 118, 76, 122, 230, 268,
         ],
-        borderColor: buttonBgColor,
+        borderColor: tertiaryColor,
         fill: false,
         borderWidth: 2,
         tension: 0,
         pointRadius: 0,
         pointHoverRadius: 3,
-        pointBackgroundColor: buttonBgColor,
+        pointBackgroundColor: tertiaryColor,
         clip: 20,
       },
     ],

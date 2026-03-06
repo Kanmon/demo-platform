@@ -14,7 +14,10 @@ export const WelcomeBanner = ({
   const { showKanmonConnect } = useKanmonConnectContext()
 
   return (
-    <div className="relative bg-indigo-200 p-4 sm:p-6 rounded-sm overflow-hidden mb-8">
+    <div
+      className="relative p-4 sm:p-6 rounded-sm overflow-hidden mb-8"
+      style={{ backgroundColor: customizationState.bannerBgColor }}
+    >
       <div
         className="absolute right-0 top-0 -mt-4 mr-16 pointer-events-none hidden xl:block"
         aria-hidden="true"
@@ -88,8 +91,11 @@ export const WelcomeBanner = ({
         </div>
 
         <div
-          className="md:mr-24 text-white btn-lg px-4 py-2 text-lg z-20 rounded-md hover:cursor-pointer forty-percent-darker-on-hover"
-          style={{ backgroundColor: customizationState.ctaButtonColor }}
+          className="md:mr-24 btn-lg px-4 py-2 text-lg z-20 rounded-md hover:cursor-pointer forty-percent-darker-on-hover"
+          style={{
+            backgroundColor: customizationState.primaryColor,
+            color: customizationState.primaryTextColor,
+          }}
           onClick={() => showKanmonConnect()}
         >
           {ctaText ? (

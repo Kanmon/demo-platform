@@ -230,12 +230,12 @@ const InvoiceSummary = ({
   issuedProduct,
   onPayInvoiceClick,
 }: InvoiceSummaryProps) => {
-  const { logoBase64 } = useSelector(getCustomizationState)
+  const { logoUrl } = useSelector(getCustomizationState)
 
   return (
     <>
       <TopSection
-        logo={logoBase64 as string}
+        logo={logoUrl || ''}
         invoice={invoice}
         onFastPayClick={onFastPayClick}
         onPayInvoiceClick={onPayInvoiceClick}

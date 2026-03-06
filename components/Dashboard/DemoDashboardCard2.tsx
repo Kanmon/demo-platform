@@ -11,7 +11,7 @@ import { LineChart1 } from '../Charts/LineChart1'
 import Image from 'next/image'
 
 export const DemoDashboardCard2 = () => {
-  const { buttonBgColor } = useSelector(getCustomizationState)
+  const { primaryColor } = useSelector(getCustomizationState)
 
   const chartData = {
     labels: [
@@ -53,12 +53,12 @@ export const DemoDashboardCard2 = () => {
         backgroundColor: `rgba(${hexToRgbFormatted(
           getTailwindConfig().theme.colors.blue[500],
         )}, 0.08)`,
-        borderColor: buttonBgColor,
+        borderColor: primaryColor,
         borderWidth: 2,
         tension: 0,
         pointRadius: 0,
         pointHoverRadius: 3,
-        pointBackgroundColor: buttonBgColor,
+        pointBackgroundColor: primaryColor,
         clip: 20,
       },
       // Gray line

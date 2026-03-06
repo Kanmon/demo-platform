@@ -72,7 +72,7 @@ function ApiInvoices() {
   const { ctaText, currentWorkflowState, isOpen } = useSelector(
     getKanmonConnectSlice,
   )
-  const { buttonBgColor, ctaButtonColor } = useSelector(getCustomizationState)
+  const { primaryColor, primaryTextColor } = useSelector(getCustomizationState)
   const dispatch = useDispatch()
 
   const fetchIssuedProductDetails = useCallback(async () => {
@@ -486,7 +486,7 @@ function ApiInvoices() {
             />
             {!_.isEmpty(selectedInvoiceIds) && issuedProduct ? (
               <SplitButton
-                buttonColor={buttonBgColor}
+                buttonColor={primaryColor}
                 loading={isLoading}
                 options={[
                   {
@@ -528,8 +528,8 @@ function ApiInvoices() {
               />
             ) : (
               <button
-                className="btn text-white forty-percent-darker-on-hover flex items-center gap-2"
-                style={{ backgroundColor: buttonBgColor }}
+                className="btn forty-percent-darker-on-hover flex items-center gap-2"
+                style={{ backgroundColor: primaryColor, color: primaryTextColor }}
                 onClick={onCreateInvoiceClick}
                 disabled={isLoading}
               >
@@ -551,8 +551,8 @@ function ApiInvoices() {
 
             {showLaunchKanmonConnectCTA && (
               <button
-                className="btn forty-percent-darker-on-hover text-white w-[170px]"
-                style={{ backgroundColor: ctaButtonColor }}
+                className="btn forty-percent-darker-on-hover w-[170px]"
+                style={{ backgroundColor: primaryColor, color: primaryTextColor }}
                 onClick={() => {
                   dispatch(
                     updateOnHide({
@@ -571,7 +571,7 @@ function ApiInvoices() {
             {issuedProduct?.servicingData.productType ===
               'INVOICE_FINANCING' && (
               <SplitButton
-                buttonColor={ctaButtonColor}
+                buttonColor={primaryColor}
                 options={[
                   {
                     label: 'Invoice History',

@@ -7,7 +7,7 @@ import Tooltip from '../shared/Tooltip'
 import { BarChart2 } from '../Charts/BarChart2'
 
 export const DemoDashboardCard9 = () => {
-  const { buttonBgColor } = useSelector(getCustomizationState)
+  const { primaryColor } = useSelector(getCustomizationState)
 
   const chartData = {
     labels: [
@@ -22,16 +22,16 @@ export const DemoDashboardCard9 = () => {
       {
         label: 'Stack 1',
         data: [6200, 9200, 6600, 8800, 5200, 9200],
-        backgroundColor: buttonBgColor,
-        hoverBackgroundColor: pSBC(-0.4, buttonBgColor),
+        backgroundColor: primaryColor,
+        hoverBackgroundColor: pSBC(-0.4, primaryColor),
         barPercentage: 0.66,
         categoryPercentage: 0.66,
       },
       {
         label: 'Stack 2',
         data: [-4000, -2600, -5350, -4000, -7500, -2000],
-        backgroundColor: pSBC(0.3, buttonBgColor),
-        hoverBackgroundColor: pSBC(0.1, buttonBgColor),
+        backgroundColor: pSBC(0.3, primaryColor),
+        hoverBackgroundColor: pSBC(0.1, primaryColor),
         barPercentage: 0.66,
         categoryPercentage: 0.66,
       },

@@ -2,12 +2,12 @@ import React from 'react'
 
 // Import utilities
 import { getCustomizationState } from '@/store/customizationSlice'
-import { getTailwindConfig, pSBC } from '@/utils'
+import { pSBC } from '@/utils'
 import { useSelector } from 'react-redux'
 import { BarChart1 } from '../Charts/BarChart1'
 
 export const DemoDashboardCard4 = () => {
-  const { buttonBgColor } = useSelector(getCustomizationState)
+  const { primaryColor, secondaryColor } = useSelector(getCustomizationState)
 
   const chartData = {
     labels: [
@@ -19,21 +19,19 @@ export const DemoDashboardCard4 = () => {
       '05-01-2021',
     ],
     datasets: [
-      // Light blue bars
       {
         label: 'Losses',
         data: [800, 1600, 900, 1300, 1950, 1700],
-        backgroundColor: getTailwindConfig().theme.colors.blue[400],
-        hoverBackgroundColor: getTailwindConfig().theme.colors.blue[500],
+        backgroundColor: secondaryColor,
+        hoverBackgroundColor: pSBC(-0.2, secondaryColor),
         barPercentage: 0.66,
         categoryPercentage: 0.66,
       },
-      // Blue bars
       {
         label: 'Gains',
         data: [4900, 2600, 5350, 4800, 5200, 4800],
-        backgroundColor: buttonBgColor,
-        hoverBackgroundColor: pSBC(-0.4, buttonBgColor),
+        backgroundColor: primaryColor,
+        hoverBackgroundColor: pSBC(-0.4, primaryColor),
         barPercentage: 0.66,
         categoryPercentage: 0.66,
       },

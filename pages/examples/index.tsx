@@ -21,7 +21,7 @@ const style = {
 
 export const CtaExamplesPage = () => {
   const { ctaText } = useSelector(getKanmonConnectSlice)
-  const { ctaButtonColor } = useSelector(getCustomizationState)
+  const { primaryColor, primaryTextColor } = useSelector(getCustomizationState)
   const [open, setOpen] = useState(false)
   const { showKanmonConnect } = useKanmonConnectContext()
 
@@ -42,8 +42,8 @@ export const CtaExamplesPage = () => {
         <div className="mb-8">
           <div className="text-4xl mb-4 font-medium">Button</div>
           <div
-            className="md:mr-24 text-white btn-lg px-4 py-2 text-lg z-20 rounded-md hover:cursor-pointer forty-percent-darker-on-hover"
-            style={{ backgroundColor: ctaButtonColor }}
+            className="md:mr-24 btn-lg px-4 py-2 text-lg z-20 rounded-md hover:cursor-pointer forty-percent-darker-on-hover"
+            style={{ backgroundColor: primaryColor, color: primaryTextColor }}
             onClick={() => showKanmonConnect()}
           >
             <div className="whitespace-nowrap">{ctaText}</div>
@@ -56,7 +56,7 @@ export const CtaExamplesPage = () => {
               setOpen(true)
             }}
             className="border-2 w-fit px-4 py-2 rounded-md bg-white text-lg font-medium cursor-pointer hover:bg-slate-200"
-            style={{ borderColor: ctaButtonColor }}
+            style={{ borderColor: primaryColor }}
           >
             Open Modal
           </div>

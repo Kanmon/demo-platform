@@ -8,7 +8,7 @@ import { getCustomizationState } from '@/store/customizationSlice'
 import { useSelector } from 'react-redux'
 
 export const DashboardAvatars = () => {
-  const { buttonBgColor } = useSelector(getCustomizationState)
+  const { primaryColor } = useSelector(getCustomizationState)
 
   return (
     <ul className="flex flex-wrap justify-center sm:justify-start mb-8 sm:mb-0 -space-x-3 -ml-px">
@@ -51,7 +51,7 @@ export const DashboardAvatars = () => {
       <li>
         <button
           className="flex justify-center items-center w-9 h-9 rounded-full bg-white border border-slate-200 hover:border-slate-300 shadow-sm transition duration-150 ml-2"
-          style={{ color: buttonBgColor }}
+          style={{ color: primaryColor }}
         >
           <span className="sr-only">Add new user</span>
           <svg className="w-4 h-4 fill-current" viewBox="0 0 16 16">

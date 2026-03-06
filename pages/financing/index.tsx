@@ -10,12 +10,12 @@ import { FinanceFaq } from '../../components/Finance/FinanceFaq'
 
 export const Financing: React.FC = () => {
   const { ctaText } = useSelector(getKanmonConnectSlice)
-  const { buttonBgColor } = useSelector(getCustomizationState)
+  const { primaryColor, programName } = useSelector(getCustomizationState)
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto bg-white">
       <Head>
-        <title>Flourish Capital</title>
+        <title>{programName}</title>
       </Head>
       <div className={classNames('flex justify-center items-center w-full')}>
         <div className="h-full w-full flex flex-col items-center">
@@ -24,7 +24,7 @@ export const Financing: React.FC = () => {
           <div className="w-5/6 px-0 max-w-screen-2xl">
             <FinanceLandingText
               ctaText={ctaText}
-              buttonBgColor={buttonBgColor}
+              primaryColor={primaryColor}
             />
             <hr className="mt-36" />
             <FinanceFaq />
@@ -32,7 +32,7 @@ export const Financing: React.FC = () => {
             <div className="flex justify-center items-center">
               <div className="mt-14 mb-12 text-xs px-16 text-center lg:text-[0.88rem]">
                 All loans are subject to credit approval. Your terms may vary.
-                Flourish Capital loans are issued by Kanmon. California Loans
+                {programName} loans are issued by Kanmon. California Loans
                 are made pursuant to a Department of Financial Protection and
                 Innovation California Lenders Law License. Read more about
                 Kanmon{' '}
