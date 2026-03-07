@@ -6,8 +6,9 @@ import { getCustomizationState } from '@/store/customizationSlice'
 import { DoughnutChart } from '../Charts/DoughnutChart'
 
 export const DemoDashboardCard6 = () => {
-  const { primaryColor, secondaryColor, tertiaryColor } =
-    useSelector(getCustomizationState)
+  const { primaryColor, secondaryColor, tertiaryColor } = useSelector(
+    getCustomizationState,
+  )
 
   const chartData = {
     labels: ['United States', 'Italy', 'Other'],

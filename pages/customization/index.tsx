@@ -54,8 +54,12 @@ const CustomizationPage = () => {
   const customization = useSelector(getCustomizationState)
 
   const [logoUrl, setLogoUrl] = useState(customization.logoUrl || '')
-  const [logoWidth, setLogoWidth] = useState<number | undefined>(customization.logoWidth)
-  const [logoHeight, setLogoHeight] = useState<number | undefined>(customization.logoHeight)
+  const [logoWidth, setLogoWidth] = useState<number | undefined>(
+    customization.logoWidth,
+  )
+  const [logoHeight, setLogoHeight] = useState<number | undefined>(
+    customization.logoHeight,
+  )
   const [programName, setProgramName] = useState(customization.programName)
   const [demoLogoAddedText, setDemoLogoAddedText] = useState(
     customization.demoLogoAddedText,
@@ -69,7 +73,9 @@ const CustomizationPage = () => {
       }),
     )
     dispatch(updateCustomizationField({ field: 'logoWidth', value: logoWidth }))
-    dispatch(updateCustomizationField({ field: 'logoHeight', value: logoHeight }))
+    dispatch(
+      updateCustomizationField({ field: 'logoHeight', value: logoHeight }),
+    )
   }
 
   const applyProgramName = () => {
@@ -209,7 +215,11 @@ const CustomizationPage = () => {
               <input
                 type="number"
                 value={logoWidth ?? ''}
-                onChange={(e) => setLogoWidth(e.target.value ? Number(e.target.value) : undefined)}
+                onChange={(e) =>
+                  setLogoWidth(
+                    e.target.value ? Number(e.target.value) : undefined,
+                  )
+                }
                 placeholder="160"
                 min={1}
                 className="w-full text-sm text-slate-800 bg-white border border-slate-200 rounded px-3 py-2 focus:border-indigo-300 focus:ring-0"
@@ -222,7 +232,11 @@ const CustomizationPage = () => {
               <input
                 type="number"
                 value={logoHeight ?? ''}
-                onChange={(e) => setLogoHeight(e.target.value ? Number(e.target.value) : undefined)}
+                onChange={(e) =>
+                  setLogoHeight(
+                    e.target.value ? Number(e.target.value) : undefined,
+                  )
+                }
                 placeholder="40"
                 min={1}
                 className="w-full text-sm text-slate-800 bg-white border border-slate-200 rounded px-3 py-2 focus:border-indigo-300 focus:ring-0"

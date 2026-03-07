@@ -15,11 +15,14 @@ export const WelcomeBanner = ({
   const customizationState = useSelector(getCustomizationState)
   const { showKanmonConnect } = useKanmonConnectContext()
 
-  const bannerColors = useMemo(() => ({
-    light: pSBC(-0.2, customizationState.bannerBgColor) as string,
-    mid: pSBC(-0.5, customizationState.bannerBgColor) as string,
-    dark: pSBC(-0.8, customizationState.bannerBgColor) as string,
-  }), [customizationState.bannerBgColor])
+  const bannerColors = useMemo(
+    () => ({
+      light: pSBC(-0.2, customizationState.bannerBgColor) as string,
+      mid: pSBC(-0.5, customizationState.bannerBgColor) as string,
+      dark: pSBC(-0.8, customizationState.bannerBgColor) as string,
+    }),
+    [customizationState.bannerBgColor],
+  )
 
   return (
     <div
@@ -47,7 +50,11 @@ export const WelcomeBanner = ({
               id="welcome-c"
             >
               <stop stopColor={bannerColors.dark} offset="0%" />
-              <stop stopColor={bannerColors.mid} stopOpacity="0" offset="100%" />
+              <stop
+                stopColor={bannerColors.mid}
+                stopOpacity="0"
+                offset="100%"
+              />
             </linearGradient>
           </defs>
           <g fill="none" fillRule="evenodd">

@@ -26,11 +26,23 @@ interface InvoiceTableItemProps {
 const statusStyles = (status: PlatformInvoiceStatus) => {
   switch (status) {
     case PlatformInvoiceStatus.PAID:
-      return { backgroundColor: 'rgba(16, 185, 129, 0.12)', color: 'rgba(16, 185, 129, 0.7)', border: '1px solid rgba(16, 185, 129, 0.3)' }
+      return {
+        backgroundColor: 'rgba(16, 185, 129, 0.12)',
+        color: 'rgba(16, 185, 129, 0.7)',
+        border: '1px solid rgba(16, 185, 129, 0.3)',
+      }
     case PlatformInvoiceStatus.DUE:
-      return { backgroundColor: 'rgba(245, 158, 11, 0.12)', color: 'rgba(245, 158, 11, 0.7)', border: '1px solid rgba(245, 158, 11, 0.3)' }
+      return {
+        backgroundColor: 'rgba(245, 158, 11, 0.12)',
+        color: 'rgba(245, 158, 11, 0.7)',
+        border: '1px solid rgba(245, 158, 11, 0.3)',
+      }
     case PlatformInvoiceStatus.OVERDUE:
-      return { backgroundColor: 'rgba(244, 63, 94, 0.12)', color: 'rgba(244, 63, 94, 0.7)', border: '1px solid rgba(244, 63, 94, 0.3)' }
+      return {
+        backgroundColor: 'rgba(244, 63, 94, 0.12)',
+        color: 'rgba(244, 63, 94, 0.7)',
+        border: '1px solid rgba(244, 63, 94, 0.3)',
+      }
   }
 }
 

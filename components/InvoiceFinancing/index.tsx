@@ -530,7 +530,10 @@ function ApiInvoices() {
             ) : (
               <button
                 className="btn forty-percent-darker-on-hover flex items-center gap-2"
-                style={{ backgroundColor: secondaryColor, color: secondaryTextColor }}
+                style={{
+                  backgroundColor: secondaryColor,
+                  color: secondaryTextColor,
+                }}
                 onClick={onCreateInvoiceClick}
                 disabled={isLoading}
               >
@@ -553,7 +556,10 @@ function ApiInvoices() {
             {showLaunchKanmonConnectCTA && (
               <button
                 className="btn forty-percent-darker-on-hover w-[170px]"
-                style={{ backgroundColor: primaryColor, color: primaryTextColor }}
+                style={{
+                  backgroundColor: primaryColor,
+                  color: primaryTextColor,
+                }}
                 onClick={() => {
                   dispatch(
                     updateOnHide({

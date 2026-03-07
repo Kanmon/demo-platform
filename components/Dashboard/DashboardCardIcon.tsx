@@ -1,7 +1,18 @@
 import { pSBC } from '@/utils/pSBC'
 
-export const DashboardCardIcon = ({ color, id }: { color: string; id: string }) => (
-  <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+export const DashboardCardIcon = ({
+  color,
+  id,
+}: {
+  color: string
+  id: string
+}) => (
+  <svg
+    width="32"
+    height="32"
+    viewBox="0 0 32 32"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <defs>
       <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id={`${id}-b`}>
         <stop stopColor={pSBC(0.4, color) as string} offset="0%" />

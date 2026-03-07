@@ -47,9 +47,7 @@ export const DefaultLogo = () => {
 }
 
 export const Logo: React.FC = () => {
-  const { logoUrl, demoLogoAddedText, logoHeight, logoWidth } = useSelector(
-    getCustomizationState,
-  )
+  const { logoUrl, logoHeight, logoWidth } = useSelector(getCustomizationState)
   const platformStyleConfig = useSelector(getPlatformStyleConfigState)
 
   // Priority: customization URL > platform config URL > default logo

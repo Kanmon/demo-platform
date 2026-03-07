@@ -17,7 +17,10 @@ const baseButtonStyles =
   'inline-flex items-center justify-center text-sm font-medium leading-5 rounded-full px-3 py-1 border border-slate-200 hover:border-slate-300 shadow-sm duration-150 ease-in-out'
 
 const selectedStyle = { backgroundColor: '#374151', color: '#ffffff' }
-const unselectedStyle = { backgroundColor: '', color: undefined } as React.CSSProperties
+const unselectedStyle = {
+  backgroundColor: '',
+  color: undefined,
+} as React.CSSProperties
 
 const InvoiceStatusFilters = ({
   onInvoiceStatusFilterSelect,
@@ -34,11 +37,19 @@ const InvoiceStatusFilters = ({
     { paid: 0, due: 0, overdue: 0 },
   )
 
-  const filters: { filter: PlatformInvoiceStatusFilter; label: string; count: number }[] = [
+  const filters: {
+    filter: PlatformInvoiceStatusFilter
+    label: string
+    count: number
+  }[] = [
     { filter: 'ALL', label: 'All', count: allInvoices.length },
     { filter: PlatformInvoiceStatus.PAID, label: 'Paid', count: counts.paid },
     { filter: PlatformInvoiceStatus.DUE, label: 'Due', count: counts.due },
-    { filter: PlatformInvoiceStatus.OVERDUE, label: 'Overdue', count: counts.overdue },
+    {
+      filter: PlatformInvoiceStatus.OVERDUE,
+      label: 'Overdue',
+      count: counts.overdue,
+    },
   ]
 
   return (
@@ -50,7 +61,10 @@ const InvoiceStatusFilters = ({
             <li key={filter} className="m-1">
               <button
                 onClick={() => onInvoiceStatusFilterSelect(filter)}
-                className={classNames(baseButtonStyles, !selected && 'bg-white text-slate-500')}
+                className={classNames(
+                  baseButtonStyles,
+                  !selected && 'bg-white text-slate-500',
+                )}
                 style={selected ? selectedStyle : unselectedStyle}
               >
                 {label} <span className="ml-1 opacity-60">{count}</span>
