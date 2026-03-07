@@ -151,12 +151,9 @@ export const KanmonConnectWrapper = ({
 
   const connectParamOverrides: Omit<KanmonConnectParams, 'connectToken'> = {
     onError: (error) => {
-      // keeping this log here, useful for testing.
       console.error('Kanmon Connect error', error)
     },
     onEvent: (event) => {
-      // keeping this log here, useful for testing.
-      console.log('Received event', event)
       switch (event.eventType) {
         case OnEventCallbackEventType.USER_CONFIRMED_INVOICE:
           dispatch(
