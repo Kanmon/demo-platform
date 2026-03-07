@@ -22,18 +22,15 @@ export const Financing: React.FC = () => {
           <FinanceHeader />
 
           <div className="w-5/6 px-0 max-w-screen-2xl">
-            <FinanceLandingText
-              ctaText={ctaText}
-              primaryColor={primaryColor}
-            />
+            <FinanceLandingText ctaText={ctaText} primaryColor={primaryColor} />
             <hr className="mt-36" />
             <FinanceFaq />
             <hr className="my-8" />
             <div className="flex justify-center items-center">
               <div className="mt-14 mb-12 text-xs px-16 text-center lg:text-[0.88rem]">
                 All loans are subject to credit approval. Your terms may vary.
-                {programName} loans are issued by Kanmon. California Loans
-                are made pursuant to a Department of Financial Protection and
+                {programName} loans are issued by Kanmon. California Loans are
+                made pursuant to a Department of Financial Protection and
                 Innovation California Lenders Law License. Read more about
                 Kanmon{' '}
                 <Link href="https://www.kanmon.com" passHref legacyBehavior>

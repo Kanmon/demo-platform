@@ -5,8 +5,9 @@ import { getCustomizationState } from '@/store/customizationSlice'
 import { LineChart2 } from '../Charts/LineChart2'
 
 export const DemoDashboardCard8 = () => {
-  const { primaryColor, secondaryColor, tertiaryColor } =
-    useSelector(getCustomizationState)
+  const { primaryColor, secondaryColor, tertiaryColor } = useSelector(
+    getCustomizationState,
+  )
 
   const chartData = {
     labels: [
