@@ -102,8 +102,10 @@ export const TempAuthWrapper: React.FC<Props> = ({ children }) => {
               defaultTextColor: data.demoDefaultTextColor ?? '#1E293B',
               bannerBgColor: data.demoBannerBgColor ?? '#C7D2FE',
               programName: platformProgramName ?? 'Flourish Capital',
-              demoLogoAddedText: 'DEMO',
+              demoLogoAddedText: data.demoLogoAdditionalText ?? 'DEMO',
               logoUrl: data.demoLogoUrl ?? undefined,
+              logoHeight: data.demoLogoHeight ?? undefined,
+              logoWidth: data.demoLogoWidth ?? undefined,
             }),
           )
         } else if (platformProgramName) {

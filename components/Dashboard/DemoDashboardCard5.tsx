@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import { getCustomizationState } from '@/store/customizationSlice'
-import { getTailwindConfig, hexToRgbFormatted } from '@/utils'
+import { hexToRgbFormatted } from '@/utils'
 import { useSelector } from 'react-redux'
 import { RealtimeChart } from '../Charts/RealtimeChart'
 
@@ -33,9 +33,7 @@ export const DemoDashboardCard5 = () => {
         {
           data,
           fill: true,
-          backgroundColor: `rgba(${hexToRgbFormatted(
-            getTailwindConfig().theme.colors.blue[500],
-          )}, 0.08)`,
+          backgroundColor: `rgba(${hexToRgbFormatted(primaryColor)}, 0.08)`,
           borderColor: primaryColor,
           borderWidth: 2,
           tension: 0,

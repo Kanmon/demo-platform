@@ -81,7 +81,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         }`}
         style={{ backgroundColor: customizationState.sidenavBgColor }}
       >
-        <div className="flex justify-between mb-10 pr-3 sm:px-2">
+        <div className="flex justify-between mb-8 pr-3 sm:px-2 h-10">
           <button
             ref={trigger}
             className="lg:hidden text-slate-500 hover:text-slate-400 bg-blend-hard-light bg-inherit"
@@ -220,7 +220,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   style={{ color: customizationState.sidenavTextColor }}
                   d="M19.586 11l-5-5L16 4.586 23.414 12 16 19.414 14.586 18l5-5H7v-2z"
                 />
-                <path style={{ color: customizationState.sidenavTextColor }} d="M3 23H1V1h2z" />
+                <path
+                  style={{ color: customizationState.sidenavTextColor }}
+                  d="M3 23H1V1h2z"
+                />
               </svg>
             </div>
           </div>
