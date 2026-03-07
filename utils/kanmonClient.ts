@@ -177,7 +177,10 @@ export class KanmonClient {
     return this.sdkClient.users.createUser({ createUserRequestBody: user })
   }
 
-  getStyleConfigurations =
+  // This is a test only endpoint used to retrieve the platform's style configuration.
+  // Used by the demo app to dynamically restyle the UI per platform.
+  // Does not function in production.
+  TEST_ONLY_GetStyleConfigurations =
     async (): Promise<PlatformStyleConfigurationsDTO> => {
       const headers = this.getApiHeader()
 
