@@ -1,6 +1,8 @@
+import { useMemo } from 'react'
 import { CircularProgress } from '@mui/material'
 import { useSelector } from 'react-redux'
 import { getCustomizationState } from '@/store/customizationSlice'
+import { pSBC } from '@/utils/pSBC'
 import { useKanmonConnectContext } from '../../hooks/KanmonConnectContext'
 
 export const WelcomeBanner = ({
@@ -12,6 +14,12 @@ export const WelcomeBanner = ({
 }) => {
   const customizationState = useSelector(getCustomizationState)
   const { showKanmonConnect } = useKanmonConnectContext()
+
+  const bannerColors = useMemo(() => ({
+    light: pSBC(-0.2, customizationState.bannerBgColor) as string,
+    mid: pSBC(-0.5, customizationState.bannerBgColor) as string,
+    dark: pSBC(-0.8, customizationState.bannerBgColor) as string,
+  }), [customizationState.bannerBgColor])
 
   return (
     <div
@@ -28,8 +36,8 @@ export const WelcomeBanner = ({
             <path id="welcome-e" d="M40 0l40 80-40-12.5L0 80z" />
             <path id="welcome-g" d="M40 0l40 80-40-12.5L0 80z" />
             <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="welcome-b">
-              <stop stopColor="#A5B4FC" offset="0%" />
-              <stop stopColor="#818CF8" offset="100%" />
+              <stop stopColor={bannerColors.light} offset="0%" />
+              <stop stopColor={bannerColors.mid} offset="100%" />
             </linearGradient>
             <linearGradient
               x1="50%"
@@ -38,8 +46,8 @@ export const WelcomeBanner = ({
               y2="100%"
               id="welcome-c"
             >
-              <stop stopColor="#4338CA" offset="0%" />
-              <stop stopColor="#6366F1" stopOpacity="0" offset="100%" />
+              <stop stopColor={bannerColors.dark} offset="0%" />
+              <stop stopColor={bannerColors.mid} stopOpacity="0" offset="100%" />
             </linearGradient>
           </defs>
           <g fill="none" fillRule="evenodd">

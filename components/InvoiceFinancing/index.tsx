@@ -72,7 +72,8 @@ function ApiInvoices() {
   const { ctaText, currentWorkflowState, isOpen } = useSelector(
     getKanmonConnectSlice,
   )
-  const { primaryColor, primaryTextColor } = useSelector(getCustomizationState)
+  const { primaryColor, primaryTextColor, secondaryColor, secondaryTextColor } =
+    useSelector(getCustomizationState)
   const dispatch = useDispatch()
 
   const fetchIssuedProductDetails = useCallback(async () => {
@@ -529,7 +530,7 @@ function ApiInvoices() {
             ) : (
               <button
                 className="btn forty-percent-darker-on-hover flex items-center gap-2"
-                style={{ backgroundColor: primaryColor, color: primaryTextColor }}
+                style={{ backgroundColor: secondaryColor, color: secondaryTextColor }}
                 onClick={onCreateInvoiceClick}
                 disabled={isLoading}
               >

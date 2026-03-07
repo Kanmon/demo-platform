@@ -115,7 +115,7 @@ export class BusinessIdParams {
 
 export interface PlatformDetails {
   id: string
-  programName?: string
+  programName: string
   enabledProducts?: ProductType[]
 }
 export class KanmonClient {
@@ -182,7 +182,7 @@ export class KanmonClient {
       const headers = this.getApiHeader()
 
       const response = await axios.get(
-        `${NEXT_PUBLIC_KANMON_API_HOST}/platform/v2/style-configurations`,
+        `${NEXT_PUBLIC_KANMON_API_HOST}/v1/testing/style-configurations`,
         {
           headers,
         },

@@ -17,6 +17,8 @@ export interface CustomizationState {
   programName: string
   demoLogoAddedText: string
   logoUrl: string | undefined
+  logoHeight: number | undefined
+  logoWidth: number | undefined
 }
 
 const initialState: CustomizationState = {
@@ -34,6 +36,8 @@ const initialState: CustomizationState = {
   programName: 'Flourish Capital',
   demoLogoAddedText: 'DEMO',
   logoUrl: undefined,
+  logoHeight: undefined,
+  logoWidth: undefined,
 }
 
 export const customizationSlice = createSlice({

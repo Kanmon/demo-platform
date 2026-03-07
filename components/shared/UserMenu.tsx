@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
 import { CopyTextWithToolTip } from '@/components/CopyTextWithToolTip'
-import UserAvatar from '@/public/images/user-avatar-32.png'
 import { getAuthState } from '@/store/authSlice'
 import {
   getCustomizationState,
@@ -11,7 +10,6 @@ import { getIssuedProductSlice } from '@/store/issuedProductSlice'
 import { resetStoreAction } from '@/store/store'
 import { faCopy } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import Image from 'next/image'
 import { useDispatch, useSelector } from 'react-redux'
 import Transition from './Transition'
 
@@ -90,13 +88,24 @@ export const UserMenu = ({ align }: { align: string }) => {
         onClick={() => setDropdownOpen(!dropdownOpen)}
         aria-expanded={dropdownOpen}
       >
-        <Image
+        <svg
           className="w-8 h-8 rounded-full"
-          src={UserAvatar}
-          width="32"
-          height="32"
-          alt="User"
-        />
+          viewBox="0 0 32 32"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect width="32" height="32" rx="16" fill="#CBD5E1" />
+          <path
+            d="M16 17C18.2091 17 20 15.2091 20 13C20 10.7909 18.2091 9 16 9C13.7909 9 12 10.7909 12 13C12 15.2091 13.7909 17 16 17Z"
+            fill="#94A3B8"
+          />
+          <path
+            d="M22 23C22 20.7909 19.3137 19 16 19C12.6863 19 10 20.7909 10 23"
+            stroke="#94A3B8"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+        </svg>
         <div className="flex items-center truncate">
           <span className="truncate ml-2 text-sm font-medium group-hover:text-slate-800">
             Tycho LLC

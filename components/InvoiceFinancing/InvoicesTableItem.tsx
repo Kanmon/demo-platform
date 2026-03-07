@@ -23,6 +23,17 @@ interface InvoiceTableItemProps {
   showFinanceColumn?: boolean
 }
 
+const statusStyles = (status: PlatformInvoiceStatus) => {
+  switch (status) {
+    case PlatformInvoiceStatus.PAID:
+      return { backgroundColor: 'rgba(16, 185, 129, 0.12)', color: 'rgba(16, 185, 129, 0.7)', border: '1px solid rgba(16, 185, 129, 0.3)' }
+    case PlatformInvoiceStatus.DUE:
+      return { backgroundColor: 'rgba(245, 158, 11, 0.12)', color: 'rgba(245, 158, 11, 0.7)', border: '1px solid rgba(245, 158, 11, 0.3)' }
+    case PlatformInvoiceStatus.OVERDUE:
+      return { backgroundColor: 'rgba(244, 63, 94, 0.12)', color: 'rgba(244, 63, 94, 0.7)', border: '1px solid rgba(244, 63, 94, 0.3)' }
+  }
+}
+
 function InvoiceTableItem({
   invoice,
   isChecked,
@@ -32,28 +43,6 @@ function InvoiceTableItem({
 }: InvoiceTableItemProps) {
   const dispatch = useDispatch()
   const { primaryColor } = useSelector(getCustomizationState)
-
-  const totalColor = (status: PlatformInvoiceStatus) => {
-    switch (status) {
-      case PlatformInvoiceStatus.PAID:
-        return 'text-emerald-500'
-      case PlatformInvoiceStatus.DUE:
-        return 'text-amber-500'
-      case PlatformInvoiceStatus.OVERDUE:
-        return 'text-rose-500'
-    }
-  }
-
-  const statusColor = (status: PlatformInvoiceStatus) => {
-    switch (status) {
-      case PlatformInvoiceStatus.PAID:
-        return 'bg-emerald-100 text-emerald-600'
-      case PlatformInvoiceStatus.DUE:
-        return 'bg-amber-100 text-amber-600'
-      case PlatformInvoiceStatus.OVERDUE:
-        return 'bg-rose-100 text-rose-500'
-    }
-  }
 
   return (
     <tr>
@@ -86,7 +75,7 @@ function InvoiceTableItem({
             const total = getInvoiceTotalCents(invoice, true)
             const hasSomeAmount = total > 0
             return (
-              <div className={`font-medium ${totalColor(invoice.status)}`}>
+              <div className="text-slate-600">
                 <span className="relative">
                   {hasSomeAmount ? (
                     <div className="flex">
@@ -120,15 +109,14 @@ function InvoiceTableItem({
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
         <div
-          className={`inline-flex font-medium rounded-full text-center px-2.5 py-0.5 ${statusColor(
-            invoice.status,
-          )}`}
+          className="inline-flex font-medium rounded-full text-center px-2.5 py-0.5"
+          style={statusStyles(invoice.status)}
         >
           {capitalizeEachWord(invoice.status, '_')}
         </div>
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-        <div className="font-medium text-slate-800">
+        <div className="text-slate-600">
           {invoice.payorType === PayorType.BUSINESS
             ? invoice.billFromBusinessName
             : `${invoice.customerFirstName} ${invoice.customerLastName}`}
