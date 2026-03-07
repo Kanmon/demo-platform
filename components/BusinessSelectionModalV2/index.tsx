@@ -142,8 +142,6 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
     }
   })
 
-  console.log('@@@@@@@@', platform)
-
   const {
     value: existingBusinesses = [],
     error: existingBusinessesError,
