@@ -1,6 +1,5 @@
 import { useSelector } from 'react-redux'
 import { getCustomizationState } from '@/store/customizationSlice'
-import { getPlatformStyleConfigState } from '@/store/platformStyleConfigSlice'
 
 export const DefaultLogoSVG = () => (
   <svg
@@ -48,16 +47,12 @@ export const DefaultLogo = () => {
 
 export const Logo: React.FC = () => {
   const { logoUrl, logoHeight, logoWidth } = useSelector(getCustomizationState)
-  const platformStyleConfig = useSelector(getPlatformStyleConfigState)
 
-  // Priority: customization URL > platform config URL > default logo
-  const resolvedLogoUrl = logoUrl || platformStyleConfig.config?.auth0Logo
-
-  if (resolvedLogoUrl) {
+  if (logoUrl) {
     return (
       /* eslint-disable-next-line @next/next/no-img-element */
       <img
-        src={resolvedLogoUrl}
+        src={logoUrl}
         alt="logo"
         style={{
           maxWidth: logoWidth ?? 160,

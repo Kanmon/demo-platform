@@ -9,7 +9,6 @@ import {
   updateOnWorkflowChange,
 } from '@/store/kanmonConnectSlice'
 import { importCustomizationState } from '@/store/customizationSlice'
-import { savePlatformStyleConfig } from '@/store/platformStyleConfigSlice'
 import { resetStoreAction, RootState } from '@/store/store'
 import { axiosWithApiKey } from '@/utils'
 import { KanmonClient } from '@/utils/kanmonClient'
@@ -84,9 +83,8 @@ export const TempAuthWrapper: React.FC<Props> = ({ children }) => {
 
         if (styleConfigResult.status === 'fulfilled') {
           const data = styleConfigResult.value.data
-          dispatch(savePlatformStyleConfig(data))
 
-          // Map DTO demo fields to customization state
+          // Map DTO fields to customization state
           // Nullable demo fields fall back to initialState defaults
           dispatch(
             importCustomizationState({
