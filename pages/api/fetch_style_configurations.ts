@@ -14,13 +14,8 @@ const fetchStyleConfigurations = async (
 
   const client = new KanmonClient(apiKey)
 
-  try {
-    const styleConfig = await client.TEST_ONLY_GetStyleConfigurations()
-    res.status(200).json(styleConfig)
-  } catch {
-    // Platform may not have style configurations — return 404 gracefully
-    res.status(404).send(null)
-  }
+  const styleConfig = await client.TEST_ONLY_GetStyleConfigurations()
+  res.status(200).json(styleConfig)
 }
 
 export default fetchStyleConfigurations

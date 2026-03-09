@@ -56,7 +56,7 @@ const DemoLayout = ({ children }: { children: React.ReactNode }) => {
               />
 
               <div
-                className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden newFont"
+                className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden"
                 style={{
                   backgroundColor: pSBC(
                     0.85,

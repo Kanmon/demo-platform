@@ -101,7 +101,9 @@ const CustomizationPage = () => {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-800">Customization</h1>
         <p className="text-sm text-slate-500 mt-1">
-          Override the platform theme colors and logo for this demo.
+          Override the platform theme colors and logo for this demo. Changes are
+          saved locally in your browser and will not persist to the platform
+          configuration.
         </p>
       </div>
 

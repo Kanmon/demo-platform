@@ -16,6 +16,9 @@ interface TopSectionProps {
   onPayInvoiceClick: () => void
   invoice: PlatformInvoice
   logo: string
+  logoWidth: number
+  logoHeight: number
+  primaryColor: string
   issuedProduct: IssuedProduct
 }
 
@@ -23,6 +26,9 @@ const TopSection = ({
   onFastPayClick,
   invoice,
   logo,
+  logoWidth,
+  logoHeight,
+  primaryColor,
   issuedProduct,
   onPayInvoiceClick,
 }: TopSectionProps) => {
@@ -30,7 +36,12 @@ const TopSection = ({
     <section className="bg-gray-100 py-8 px-12 grid grid-cols-12 gap-x-12">
       <div className="col-span-4">
         {logo ? (
-          <ResponsiveImage alt="logo" src={logo} width={250} height={60} />
+          <ResponsiveImage
+            alt="logo"
+            src={logo}
+            width={logoWidth}
+            height={logoHeight}
+          />
         ) : (
           <DefaultLogoSVG />
         )}
@@ -60,7 +71,8 @@ const TopSection = ({
         <div className="mb-4">
           {!invoice.kanmonInvoiceId && issuedProduct && (
             <button
-              className="btn bg-green-600 hover:bg-green-700 text-white"
+              className="btn text-white forty-percent-darker-on-hover"
+              style={{ backgroundColor: primaryColor }}
               onClick={onFastPayClick}
             >
               Finance {formatInvoiceFinancingProductName()}
@@ -68,7 +80,8 @@ const TopSection = ({
           )}
           {invoice.kanmonInvoiceId && (
             <button
-              className="btn bg-green-600 hover:bg-green-700 text-white"
+              className="btn text-white forty-percent-darker-on-hover"
+              style={{ backgroundColor: primaryColor }}
               onClick={onPayInvoiceClick}
             >
               Pay Now
@@ -230,12 +243,17 @@ const InvoiceSummary = ({
   issuedProduct,
   onPayInvoiceClick,
 }: InvoiceSummaryProps) => {
-  const { logoUrl } = useSelector(getCustomizationState)
+  const { logoUrl, logoWidth, logoHeight, primaryColor } = useSelector(
+    getCustomizationState,
+  )
 
   return (
     <>
       <TopSection
         logo={logoUrl || ''}
+        logoWidth={logoWidth ?? 250}
+        logoHeight={logoHeight ?? 60}
+        primaryColor={primaryColor}
         invoice={invoice}
         onFastPayClick={onFastPayClick}
         onPayInvoiceClick={onPayInvoiceClick}
