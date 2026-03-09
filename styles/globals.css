@@ -454,10 +454,6 @@ body {
 }
 
 * {
-  font-family: Avenir, sans-serif;
-}
-
-.newFont * {
   font-family:
     ui-sans-serif,
     system-ui,
@@ -475,7 +471,7 @@ body {
     'Noto Color Emoji';
 }
 
-.newFont .text-slate-800 {
+.text-slate-800 {
   color: var(--default-text-color, rgb(30 41 59));
 }
 
