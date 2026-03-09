@@ -97,7 +97,7 @@ export const WelcomeBanner = ({
 
       <div className="flex justify-between items-center">
         <div className="relative">
-          <h1 className="text-2xl md:text-3xl text-slate-800 font-semibold mb-1">
+          <h1 className="text-2xl md:text-3xl text-override-default font-semibold mb-1">
             {bannerText ?? 'Need funding, Tycho LLC? 👋'}
           </h1>
           <p className="text-slate-600">

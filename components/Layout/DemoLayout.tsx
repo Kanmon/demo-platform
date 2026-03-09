@@ -10,7 +10,7 @@ import { wrapper } from '@/store/store'
 import { pSBC } from '@/utils/pSBC'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { ToastContainer } from 'react-toastify'
 
@@ -23,14 +23,6 @@ const DemoLayout = ({ children }: { children: React.ReactNode }) => {
   const hideHeader = router.asPath === '/financing'
 
   const isStagingEnvironment = process.env.NEXT_PUBLIC_DEPLOY_ENV === 'staging'
-
-  // Apply default text color as CSS custom property so it overrides Tailwind classes
-  useEffect(() => {
-    document.documentElement.style.setProperty(
-      '--default-text-color',
-      customizationState.defaultTextColor,
-    )
-  }, [customizationState.defaultTextColor])
 
   return (
     <>

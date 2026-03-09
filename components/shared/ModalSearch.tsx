@@ -103,7 +103,7 @@ export const ModalSearch = ({
                 <li>
                   <Link href="#0">
                     <div
-                      className="flex items-center p-2 text-slate-800 hover:text-white hover:bg-indigo-500 rounded group"
+                      className="flex items-center p-2 text-override-default hover:text-white hover:bg-indigo-500 rounded group"
                       onClick={() => setModalOpen(!modalOpen)}
                     >
                       <svg
@@ -119,7 +119,7 @@ export const ModalSearch = ({
                 <li>
                   <Link href="#0">
                     <div
-                      className="flex items-center p-2 text-slate-800 hover:text-white hover:bg-indigo-500 rounded group"
+                      className="flex items-center p-2 text-override-default hover:text-white hover:bg-indigo-500 rounded group"
                       onClick={() => setModalOpen(!modalOpen)}
                     >
                       <svg
@@ -135,7 +135,7 @@ export const ModalSearch = ({
                 <li>
                   <Link href="#0">
                     <div
-                      className="flex items-center p-2 text-slate-800 hover:text-white hover:bg-indigo-500 rounded group"
+                      className="flex items-center p-2 text-override-default hover:text-white hover:bg-indigo-500 rounded group"
                       onClick={() => setModalOpen(!modalOpen)}
                     >
                       <svg
@@ -151,7 +151,7 @@ export const ModalSearch = ({
                 <li>
                   <Link href="#0">
                     <div
-                      className="flex items-center p-2 text-slate-800 hover:text-white hover:bg-indigo-500 rounded group"
+                      className="flex items-center p-2 text-override-default hover:text-white hover:bg-indigo-500 rounded group"
                       onClick={() => setModalOpen(!modalOpen)}
                     >
                       <svg
@@ -167,7 +167,7 @@ export const ModalSearch = ({
                 <li>
                   <Link href="#0">
                     <div
-                      className="flex items-center p-2 text-slate-800 hover:text-white hover:bg-indigo-500 rounded group"
+                      className="flex items-center p-2 text-override-default hover:text-white hover:bg-indigo-500 rounded group"
                       onClick={() => setModalOpen(!modalOpen)}
                     >
                       <svg
@@ -183,7 +183,7 @@ export const ModalSearch = ({
                 <li>
                   <Link href="#0">
                     <div
-                      className="flex items-center p-2 text-slate-800 hover:text-white hover:bg-indigo-500 rounded group"
+                      className="flex items-center p-2 text-override-default hover:text-white hover:bg-indigo-500 rounded group"
                       onClick={() => setModalOpen(!modalOpen)}
                     >
                       <svg
@@ -206,7 +206,7 @@ export const ModalSearch = ({
                 <li>
                   <Link href="#0">
                     <div
-                      className="flex items-center p-2 text-slate-800 hover:text-white hover:bg-indigo-500 rounded group"
+                      className="flex items-center p-2 text-override-default hover:text-white hover:bg-indigo-500 rounded group"
                       onClick={() => setModalOpen(!modalOpen)}
                     >
                       <svg
@@ -216,7 +216,7 @@ export const ModalSearch = ({
                         <path d="M14 0H2c-.6 0-1 .4-1 1v14c0 .6.4 1 1 1h8l5-5V1c0-.6-.4-1-1-1zM3 2h10v8H9v4H3V2z" />
                       </svg>
                       <span>
-                        <span className="font-medium text-slate-800 group-hover:text-white">
+                        <span className="font-medium text-override-default group-hover:text-white">
                           Messages
                         </span>{' '}
                         - Conversation / … / Mike Mills
@@ -227,7 +227,7 @@ export const ModalSearch = ({
                 <li>
                   <Link href="#0">
                     <div
-                      className="flex items-center p-2 text-slate-800 hover:text-white hover:bg-indigo-500 rounded group"
+                      className="flex items-center p-2 text-override-default hover:text-white hover:bg-indigo-500 rounded group"
                       onClick={() => setModalOpen(!modalOpen)}
                     >
                       <svg
@@ -237,7 +237,7 @@ export const ModalSearch = ({
                         <path d="M14 0H2c-.6 0-1 .4-1 1v14c0 .6.4 1 1 1h8l5-5V1c0-.6-.4-1-1-1zM3 2h10v8H9v4H3V2z" />
                       </svg>
                       <span>
-                        <span className="font-medium text-slate-800 group-hover:text-white">
+                        <span className="font-medium text-override-default group-hover:text-white">
                           Messages
                         </span>{' '}
                         - Conversation / … / Eva Patrick

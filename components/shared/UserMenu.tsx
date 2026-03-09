@@ -141,7 +141,7 @@ export const UserMenu = ({ align }: { align: string }) => {
             className="pt-0.5 pb-2 px-3 mb-1 border-b border-slate-200 select-none"
             onClick={hiddenEditModeClick}
           >
-            <div className="font-medium text-slate-800">Tycho LLC</div>
+            <div className="font-medium text-override-default">Tycho LLC</div>
             <div className="text-xs text-slate-500 italic">Administrator</div>
             {authState?.userId && (
               <IdentifierMenuItem

@@ -99,7 +99,9 @@ const CustomizationPage = () => {
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-2xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-800">Customization</h1>
+        <h1 className="text-2xl font-bold text-override-default">
+          Customization
+        </h1>
         <p className="text-sm text-slate-500 mt-1">
           Override the platform theme colors and logo for this demo. Changes are
           saved locally in your browser and will not persist to the platform
@@ -110,7 +112,9 @@ const CustomizationPage = () => {
       {/* Colors */}
       <div className="bg-white rounded-lg shadow-sm border border-slate-200 mb-6">
         <div className="px-5 py-4 border-b border-slate-200">
-          <h2 className="text-base font-semibold text-slate-800">Colors</h2>
+          <h2 className="text-base font-semibold text-override-default">
+            Colors
+          </h2>
         </div>
         <div className="px-5 py-2">
           {colorFields.map(({ label, field }) => (
@@ -129,7 +133,7 @@ const CustomizationPage = () => {
       {/* Program Name */}
       <div className="bg-white rounded-lg shadow-sm border border-slate-200 mb-6">
         <div className="px-5 py-4 border-b border-slate-200">
-          <h2 className="text-base font-semibold text-slate-800">
+          <h2 className="text-base font-semibold text-override-default">
             Program Name
           </h2>
         </div>
@@ -144,7 +148,7 @@ const CustomizationPage = () => {
                 value={programName}
                 onChange={(e) => setProgramName(e.target.value)}
                 placeholder="Flourish Capital"
-                className="flex-1 text-sm text-slate-800 bg-white border border-slate-200 rounded px-3 py-2 focus:border-indigo-300 focus:ring-0"
+                className="flex-1 text-sm text-override-default bg-white border border-slate-200 rounded px-3 py-2 focus:border-indigo-300 focus:ring-0"
               />
               <button
                 onClick={applyProgramName}
@@ -161,7 +165,7 @@ const CustomizationPage = () => {
       {/* Logo Added Text */}
       <div className="bg-white rounded-lg shadow-sm border border-slate-200 mb-6">
         <div className="px-5 py-4 border-b border-slate-200">
-          <h2 className="text-base font-semibold text-slate-800">
+          <h2 className="text-base font-semibold text-override-default">
             Logo Added Text
           </h2>
         </div>
@@ -176,7 +180,7 @@ const CustomizationPage = () => {
                 value={demoLogoAddedText}
                 onChange={(e) => setDemoLogoAddedText(e.target.value)}
                 placeholder="DEMO"
-                className="flex-1 text-sm text-slate-800 bg-white border border-slate-200 rounded px-3 py-2 focus:border-indigo-300 focus:ring-0"
+                className="flex-1 text-sm text-override-default bg-white border border-slate-200 rounded px-3 py-2 focus:border-indigo-300 focus:ring-0"
               />
               <button
                 onClick={applyDemoLogoAddedText}
@@ -193,7 +197,9 @@ const CustomizationPage = () => {
       {/* Logo */}
       <div className="bg-white rounded-lg shadow-sm border border-slate-200">
         <div className="px-5 py-4 border-b border-slate-200">
-          <h2 className="text-base font-semibold text-slate-800">Logo</h2>
+          <h2 className="text-base font-semibold text-override-default">
+            Logo
+          </h2>
         </div>
         <div className="px-5 py-4 space-y-4">
           <div>
@@ -205,7 +211,7 @@ const CustomizationPage = () => {
               value={logoUrl}
               onChange={(e) => setLogoUrl(e.target.value)}
               placeholder="https://example.com/logo.png"
-              className="w-full text-sm text-slate-800 bg-white border border-slate-200 rounded px-3 py-2 focus:border-indigo-300 focus:ring-0"
+              className="w-full text-sm text-override-default bg-white border border-slate-200 rounded px-3 py-2 focus:border-indigo-300 focus:ring-0"
             />
           </div>
 
@@ -224,7 +230,7 @@ const CustomizationPage = () => {
                 }
                 placeholder="160"
                 min={1}
-                className="w-full text-sm text-slate-800 bg-white border border-slate-200 rounded px-3 py-2 focus:border-indigo-300 focus:ring-0"
+                className="w-full text-sm text-override-default bg-white border border-slate-200 rounded px-3 py-2 focus:border-indigo-300 focus:ring-0"
               />
             </div>
             <div className="flex-1">
@@ -241,7 +247,7 @@ const CustomizationPage = () => {
                 }
                 placeholder="40"
                 min={1}
-                className="w-full text-sm text-slate-800 bg-white border border-slate-200 rounded px-3 py-2 focus:border-indigo-300 focus:ring-0"
+                className="w-full text-sm text-override-default bg-white border border-slate-200 rounded px-3 py-2 focus:border-indigo-300 focus:ring-0"
               />
             </div>
           </div>

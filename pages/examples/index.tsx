@@ -30,7 +30,7 @@ export const CtaExamplesPage = () => {
       <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto flex flex-col gap-8 rounded-xl">
         <div className="sm:flex sm:justify-between sm:items-center mb-12">
           <div className="mb-4 sm:mb-0">
-            <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">
+            <h1 className="text-2xl md:text-3xl text-override-default font-bold">
               CTA Examples
             </h1>
           </div>

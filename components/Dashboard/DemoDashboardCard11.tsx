@@ -4,7 +4,7 @@ export const DemoDashboardCard11 = () => {
   return (
     <div className="col-span-full xl:col-span-6 bg-white shadow-lg rounded-sm border border-slate-200">
       <header className="px-5 py-4 border-b border-slate-100">
-        <h2 className="font-semibold text-slate-800">Transactions</h2>
+        <h2 className="font-semibold text-override-default">Transactions</h2>
       </header>
       <div className="p-3">
         <div>
@@ -25,7 +25,7 @@ export const DemoDashboardCard11 = () => {
                 <div className="grow flex justify-between">
                   <div className="self-center">
                     <a
-                      className="font-medium text-slate-800 hover:text-slate-900"
+                      className="font-medium text-override-default hover:text-slate-900"
                       href="#0"
                     >
                       Paypal
@@ -33,7 +33,9 @@ export const DemoDashboardCard11 = () => {
                     Purchase
                   </div>
                   <div className="shrink-0 self-start ml-2">
-                    <span className="font-medium text-slate-800">-$79.88</span>
+                    <span className="font-medium text-override-default">
+                      -$79.88
+                    </span>
                   </div>
                 </div>
               </div>
@@ -51,7 +53,7 @@ export const DemoDashboardCard11 = () => {
                 <div className="grow flex justify-between">
                   <div className="self-center">
                     <a
-                      className="font-medium text-slate-800 hover:text-slate-900"
+                      className="font-medium text-override-default hover:text-slate-900"
                       href="#0"
                     >
                       Sale - Advanced Plan
@@ -78,7 +80,7 @@ export const DemoDashboardCard11 = () => {
                 <div className="grow flex justify-between">
                   <div className="self-center">
                     <a
-                      className="font-medium text-slate-800 hover:text-slate-900"
+                      className="font-medium text-override-default hover:text-slate-900"
                       href="#0"
                     >
                       Sale - Plus Plan
@@ -105,7 +107,7 @@ export const DemoDashboardCard11 = () => {
                 <div className="grow flex justify-between">
                   <div className="self-center">
                     <a
-                      className="font-medium text-slate-800 hover:text-slate-900"
+                      className="font-medium text-override-default hover:text-slate-900"
                       href="#0"
                     >
                       Sale - Professional Plan
@@ -132,7 +134,7 @@ export const DemoDashboardCard11 = () => {
                 <div className="grow flex justify-between">
                   <div className="self-center">
                     <a
-                      className="font-medium text-slate-800 hover:text-slate-900"
+                      className="font-medium text-override-default hover:text-slate-900"
                       href="#0"
                     >
                       Amazon.com
@@ -140,7 +142,7 @@ export const DemoDashboardCard11 = () => {
                     Purchase
                   </div>
                   <div className="shrink-0 self-start ml-2">
-                    <span className="font-medium text-slate-800 line-through">
+                    <span className="font-medium text-override-default line-through">
                       +$99.99
                     </span>
                   </div>
@@ -160,7 +162,7 @@ export const DemoDashboardCard11 = () => {
                 <div className="grow flex justify-between">
                   <div className="self-center">
                     <a
-                      className="font-medium text-slate-800 hover:text-slate-900"
+                      className="font-medium text-override-default hover:text-slate-900"
                       href="#0"
                     >
                       Amazon.com
@@ -168,7 +170,9 @@ export const DemoDashboardCard11 = () => {
                     Purchase
                   </div>
                   <div className="shrink-0 self-start ml-2">
-                    <span className="font-medium text-slate-800">-$49.88</span>
+                    <span className="font-medium text-override-default">
+                      -$49.88
+                    </span>
                   </div>
                 </div>
               </div>

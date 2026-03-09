@@ -29,7 +29,7 @@ function InvoicesTable({
   return (
     <div className="bg-white shadow-lg rounded-sm border border-slate-200 relative">
       <header className="px-5 py-4">
-        <h2 className="font-semibold text-slate-800">
+        <h2 className="font-semibold text-override-default">
           {formatInvoiceFinancingProductName(true)}
         </h2>
       </header>
