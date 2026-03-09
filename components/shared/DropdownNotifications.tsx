@@ -90,7 +90,7 @@ export const DropdownNotifications = ({ align }: { align: string }) => {
                   <div onClick={() => setDropdownOpen(!dropdownOpen)}>
                     <span className="block text-sm mb-2">
                       📣{' '}
-                      <span className="font-medium text-slate-800">
+                      <span className="font-medium text-override-default">
                         Edit your information in a swipe
                       </span>{' '}
                       Sint occaecat cupidatat non proident, sunt in culpa qui
@@ -109,7 +109,7 @@ export const DropdownNotifications = ({ align }: { align: string }) => {
                   <div onClick={() => setDropdownOpen(!dropdownOpen)}>
                     <span className="block text-sm mb-2">
                       📣{' '}
-                      <span className="font-medium text-slate-800">
+                      <span className="font-medium text-override-default">
                         Edit your information in a swipe
                       </span>{' '}
                       Sint occaecat cupidatat non proident, sunt in culpa qui
@@ -128,7 +128,7 @@ export const DropdownNotifications = ({ align }: { align: string }) => {
                   <div onClick={() => setDropdownOpen(!dropdownOpen)}>
                     <span className="block text-sm mb-2">
                       🚀
-                      <span className="font-medium text-slate-800">
+                      <span className="font-medium text-override-default">
                         Say goodbye to paper receipts!
                       </span>{' '}
                       Sint occaecat cupidatat non proident, sunt in culpa qui

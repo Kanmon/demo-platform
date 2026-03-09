@@ -41,7 +41,7 @@ export const DemoDashboardCard4 = () => {
   return (
     <div className="flex flex-col col-span-full sm:col-span-6 bg-white shadow-lg rounded-sm border border-slate-200">
       <header className="px-5 py-4 border-b border-slate-100">
-        <h2 className="font-semibold text-slate-800">Losses / Gains</h2>
+        <h2 className="font-semibold text-override-default">Losses / Gains</h2>
       </header>
       <div className="grow">
         <BarChart1 data={chartData} width={595} height={248} />

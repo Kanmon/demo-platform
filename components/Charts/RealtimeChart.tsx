@@ -133,7 +133,7 @@ export const RealtimeChart = ({
     <React.Fragment>
       <div className="px-5 py-3">
         <div className="flex items-start">
-          <div className="text-3xl font-bold text-slate-800 mr-2 tabular-nums">
+          <div className="text-3xl font-bold text-override-default mr-2 tabular-nums">
             $<span ref={chartValue}>57.81</span>
           </div>
           <div

@@ -8,7 +8,7 @@ export const DemoDashboardCard10 = () => {
   return (
     <div className="col-span-full xl:col-span-6 bg-white shadow-lg rounded-sm border border-slate-200">
       <header className="px-5 py-4 border-b border-slate-100">
-        <h2 className="font-semibold text-slate-800">Recent Activity</h2>
+        <h2 className="font-semibold text-override-default">Recent Activity</h2>
       </header>
       <div className="p-3">
         <div>
@@ -29,13 +29,13 @@ export const DemoDashboardCard10 = () => {
                 <div className="grow flex justify-between">
                   <div className="self-center">
                     <a
-                      className="font-medium text-slate-800 hover:text-slate-900"
+                      className="font-medium text-override-default hover:text-slate-900"
                       href="#0"
                     >
                       Bill Gates
                     </a>{' '}
                     mentioned{' '}
-                    <a className="font-medium text-slate-800" href="#0">
+                    <a className="font-medium text-override-default" href="#0">
                       Stan Lee
                     </a>{' '}
                     in a new post
@@ -65,12 +65,12 @@ export const DemoDashboardCard10 = () => {
                 <div className="grow flex justify-between">
                   <div className="self-center">
                     The post{' '}
-                    <a className="font-medium text-slate-800" href="#0">
+                    <a className="font-medium text-override-default" href="#0">
                       Amazing...
                     </a>{' '}
                     was removed by{' '}
                     <a
-                      className="font-medium text-slate-800 hover:text-slate-900"
+                      className="font-medium text-override-default hover:text-slate-900"
                       href="#0"
                     >
                       Bill Gates
@@ -101,13 +101,13 @@ export const DemoDashboardCard10 = () => {
                 <div className="grow flex justify-between">
                   <div className="self-center">
                     <a
-                      className="font-medium text-slate-800 hover:text-slate-900"
+                      className="font-medium text-override-default hover:text-slate-900"
                       href="#0"
                     >
                       Elon Musk
                     </a>{' '}
                     published a new{' '}
-                    <a className="font-medium text-slate-800" href="#0">
+                    <a className="font-medium text-override-default" href="#0">
                       post
                     </a>
                   </div>
@@ -143,13 +143,13 @@ export const DemoDashboardCard10 = () => {
                 <div className="grow flex justify-between">
                   <div className="self-center">
                     <a
-                      className="font-medium text-slate-800 hover:text-slate-900"
+                      className="font-medium text-override-default hover:text-slate-900"
                       href="#0"
                     >
                       240+
                     </a>{' '}
                     users have subscribed to{' '}
-                    <a className="font-medium text-slate-800" href="#0">
+                    <a className="font-medium text-override-default" href="#0">
                       Newsletter #1
                     </a>
                   </div>
@@ -178,12 +178,12 @@ export const DemoDashboardCard10 = () => {
                 <div className="grow flex justify-between">
                   <div className="self-center">
                     The post{' '}
-                    <a className="font-medium text-slate-800" href="#0">
+                    <a className="font-medium text-override-default" href="#0">
                       Taco Tu...
                     </a>{' '}
                     was removed by{' '}
                     <a
-                      className="font-medium text-slate-800 hover:text-slate-900"
+                      className="font-medium text-override-default hover:text-slate-900"
                       href="#0"
                     >
                       Elon Musk

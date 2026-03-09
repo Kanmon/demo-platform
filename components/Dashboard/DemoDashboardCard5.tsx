@@ -49,7 +49,7 @@ export const DemoDashboardCard5 = () => {
   return (
     <div className="flex flex-col col-span-full sm:col-span-6 bg-white shadow-lg rounded-sm border border-slate-200">
       <header className="px-5 py-4 border-b border-slate-100 flex items-center">
-        <h2 className="font-semibold text-slate-800">Stock Price</h2>
+        <h2 className="font-semibold text-override-default">Stock Price</h2>
       </header>
       <div className="grow">
         <RealtimeChart data={chartData} width={595} height={248} />
