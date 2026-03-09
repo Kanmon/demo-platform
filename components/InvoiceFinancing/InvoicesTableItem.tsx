@@ -144,9 +144,16 @@ function InvoiceTableItem({
         <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
           <div className="space-x-1">
             {invoice.kanmonInvoiceId ? (
-              <span className="inline-flex font-medium rounded-full text-center px-2.5 py-0.5 bg-emerald-100 text-emerald-600">
+              <div
+                className="inline-flex font-medium rounded-full text-center px-2.5 py-0.5"
+                style={{
+                  backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                  color: 'rgba(16, 185, 129, 0.7)',
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                }}
+              >
                 Financed
-              </span>
+              </div>
             ) : (
               <span>-</span>
             )}
