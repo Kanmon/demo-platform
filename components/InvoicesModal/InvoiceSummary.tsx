@@ -1,7 +1,5 @@
 import { IssuedProduct } from '@kanmon/sdk'
 import { useSelector } from 'react-redux'
-import { ResponsiveImage } from '../shared/ResponsiveImage'
-import { DefaultLogoSVG } from '../shared/Logo'
 import formatInvoiceFinancingProductName from '../../utils/formatInvoiceFinancingProductName'
 import {
   renderCentsValueAsDollarsWithCents,
@@ -15,9 +13,7 @@ interface TopSectionProps {
   onFastPayClick: () => void
   onPayInvoiceClick: () => void
   invoice: PlatformInvoice
-  logo: string
-  logoWidth: number
-  logoHeight: number
+  programName: string
   primaryColor: string
   issuedProduct: IssuedProduct
 }
@@ -25,9 +21,7 @@ interface TopSectionProps {
 const TopSection = ({
   onFastPayClick,
   invoice,
-  logo,
-  logoWidth,
-  logoHeight,
+  programName,
   primaryColor,
   issuedProduct,
   onPayInvoiceClick,
@@ -35,16 +29,7 @@ const TopSection = ({
   return (
     <section className="bg-gray-100 py-8 px-12 grid grid-cols-12 gap-x-12">
       <div className="col-span-4">
-        {logo ? (
-          <ResponsiveImage
-            alt="logo"
-            src={logo}
-            width={logoWidth}
-            height={logoHeight}
-          />
-        ) : (
-          <DefaultLogoSVG />
-        )}
+        <span className="text-2xl font-bold">{programName}</span>
       </div>
       <div className="col-span-4">
         <div className="mb-6">
@@ -243,16 +228,12 @@ const InvoiceSummary = ({
   issuedProduct,
   onPayInvoiceClick,
 }: InvoiceSummaryProps) => {
-  const { logoUrl, logoWidth, logoHeight, primaryColor } = useSelector(
-    getCustomizationState,
-  )
+  const { programName, primaryColor } = useSelector(getCustomizationState)
 
   return (
     <>
       <TopSection
-        logo={logoUrl || ''}
-        logoWidth={logoWidth ?? 250}
-        logoHeight={logoHeight ?? 60}
+        programName={programName}
         primaryColor={primaryColor}
         invoice={invoice}
         onFastPayClick={onFastPayClick}
