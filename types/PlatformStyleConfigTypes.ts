@@ -10,6 +10,7 @@ export interface PlatformStyleConfigurationsDTO {
   demoSidenavSelectedTextColor: string | null
   demoDefaultTextColor: string | null
   demoBannerBgColor: string | null
+  demoDefaultBgColor: string | null
   demoLogoUrl: string | null
   demoLogoAdditionalText: string | null
   demoLogoHeight: number | null
