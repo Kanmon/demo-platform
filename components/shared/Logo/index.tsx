@@ -55,8 +55,8 @@ export const Logo: React.FC = () => {
         src={logoUrl}
         alt="logo"
         style={{
-          maxWidth: logoWidth ?? 160,
-          maxHeight: logoHeight ?? 40,
+          width: logoWidth ?? 160,
+          height: logoHeight ?? 40,
           objectFit: 'contain',
         }}
       />
