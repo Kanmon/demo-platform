@@ -7,7 +7,6 @@ import {
 } from '@/components/wrappers'
 import { getCustomizationState } from '@/store/customizationSlice'
 import { wrapper } from '@/store/store'
-import { pSBC } from '@/utils/pSBC'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
@@ -50,10 +49,7 @@ const DemoLayout = ({ children }: { children: React.ReactNode }) => {
               <div
                 className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden"
                 style={{
-                  backgroundColor: pSBC(
-                    0.85,
-                    customizationState.bannerBgColor,
-                  ) as string,
+                  backgroundColor: customizationState.defaultBgColor,
                   color: customizationState.defaultTextColor,
                 }}
               >

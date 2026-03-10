@@ -13,6 +13,7 @@ export interface CustomizationState {
   sidenavTextColor: string
   sidenavSelectedColor: string
   defaultTextColor: string
+  defaultBgColor: string
   bannerBgColor: string
   programName: string
   demoLogoAddedText: string
@@ -32,6 +33,7 @@ const initialState: CustomizationState = {
   sidenavTextColor: '#94a3b8',
   sidenavSelectedColor: '#6366f1',
   defaultTextColor: '#1E293B',
+  defaultBgColor: '#f1f5f9',
   bannerBgColor: '#C7D2FE',
   programName: 'Flourish Capital',
   demoLogoAddedText: 'DEMO',

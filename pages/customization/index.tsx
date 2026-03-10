@@ -46,6 +46,7 @@ const colorFields: { label: string; field: keyof CustomizationState }[] = [
   { label: 'Sidenav Text Color', field: 'sidenavTextColor' },
   { label: 'Sidenav Selected Color', field: 'sidenavSelectedColor' },
   { label: 'Default Text Color', field: 'defaultTextColor' },
+  { label: 'Default Background', field: 'defaultBgColor' },
   { label: 'Banner Background', field: 'bannerBgColor' },
 ]
 

@@ -98,6 +98,7 @@ export const TempAuthWrapper: React.FC<Props> = ({ children }) => {
               sidenavSelectedColor:
                 data.demoSidenavSelectedTextColor ?? '#6366f1',
               defaultTextColor: data.demoDefaultTextColor ?? '#1E293B',
+              defaultBgColor: data.demoDefaultBgColor ?? '#f1f5f9',
               bannerBgColor: data.demoBannerBgColor ?? '#C7D2FE',
               programName: platformProgramName ?? 'Flourish Capital',
               demoLogoAddedText: data.demoLogoAdditionalText ?? 'DEMO',
