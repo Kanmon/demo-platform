@@ -16,7 +16,11 @@ interface InvoiceStatusFiltersProps {
 const baseButtonStyles =
   'inline-flex items-center justify-center text-sm font-medium leading-5 rounded-full px-3 py-1 border border-slate-200 hover:border-slate-300 shadow-sm duration-150 ease-in-out'
 
-const selectedStyle = { backgroundColor: '#374151', color: '#ffffff' }
+const selectedStyle = {
+  backgroundColor: '#374151',
+  color: '#ffffff',
+  borderColor: '#4b5563',
+}
 const unselectedStyle = {
   backgroundColor: '',
   color: undefined,
