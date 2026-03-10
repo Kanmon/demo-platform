@@ -268,8 +268,8 @@ const CustomizationPage = () => {
                 src={logoUrl || customization.logoUrl}
                 alt="Logo preview"
                 style={{
-                  maxWidth: logoWidth ?? customization.logoWidth ?? 160,
-                  maxHeight: logoHeight ?? customization.logoHeight ?? 40,
+                  width: logoWidth ?? customization.logoWidth ?? 160,
+                  height: logoHeight ?? customization.logoHeight ?? 40,
                   objectFit: 'contain',
                 }}
               />
