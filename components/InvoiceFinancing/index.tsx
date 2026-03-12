@@ -131,8 +131,15 @@ function ApiInvoices() {
     [filteredInvoices],
   )
 
+  const selectableInvoices = invoices.filter(
+    (invoice) =>
+      !invoice.dueDateIsoDate ||
+      DateTime.fromISO(invoice.dueDateIsoDate) >= DateTime.now().startOf('day'),
+  )
+
   const allChecked =
-    !isEmpty(invoices) && invoices.length === selectedInvoiceIds.size
+    !isEmpty(selectableInvoices) &&
+    selectableInvoices.length === selectedInvoiceIds.size
 
   const onInvoiceSelect = (invoiceId: string) => {
     const nextSet = new Set(selectedInvoiceIds)
@@ -160,7 +167,9 @@ function ApiInvoices() {
 
   const onSelectAllInvoices = () => {
     !allChecked
-      ? setSelectedInvoiceIds(new Set(invoices.map((invoice) => invoice.id)))
+      ? setSelectedInvoiceIds(
+          new Set(selectableInvoices.map((invoice) => invoice.id)),
+        )
       : setSelectedInvoiceIds(new Set())
   }
 

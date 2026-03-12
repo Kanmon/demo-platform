@@ -8,6 +8,7 @@ import EditableDateField from '../EditableDateField'
 import { capitalizeEachWord } from '../../utils/capitalizeEachWord'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { DateTime } from 'luxon'
 import { PayorType } from '../../types/MoreTypes'
 import {
   PlatformInvoice,
@@ -56,8 +57,12 @@ function InvoiceTableItem({
   const dispatch = useDispatch()
   const { primaryColor } = useSelector(getCustomizationState)
 
+  const isPastDue = invoice.dueDateIsoDate
+    ? DateTime.fromISO(invoice.dueDateIsoDate) < DateTime.now().startOf('day')
+    : false
+
   return (
-    <tr>
+    <tr className={isPastDue ? 'opacity-50' : ''}>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
         <div className="flex items-center">
           <label className="inline-flex">
@@ -68,6 +73,7 @@ function InvoiceTableItem({
               type="checkbox"
               onChange={onInvoiceCheckboxSelect}
               checked={isChecked}
+              disabled={isPastDue}
             />
           </label>
         </div>
