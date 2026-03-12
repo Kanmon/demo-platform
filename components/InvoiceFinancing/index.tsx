@@ -125,33 +125,51 @@ function ApiInvoices() {
     invoices: allPersistedInvoices,
   } = useSelector(getInvoicesSelector)
 
+  const productType = issuedProduct?.servicingData.productType
+
+  const getFinancingCutoffDate = (today: DateTime) => {
+    if (productType === ProductType.ACCOUNTS_PAYABLE_FINANCING) {
+      return today.minus({ days: 5 })
+    }
+    if (productType === ProductType.INVOICE_FINANCING) {
+      return today.plus({ days: 7 })
+    }
+    return today
+  }
+
+  // Use SWR to force re-fetch when page is focused
+  // Mainly to avoid case if browser is opened for a long time, and the date becomes late
   const { data: invoicesData } = useSWR(
-    ['invoices', filter, orderedInvoices],
+    ['invoices', filter, orderedInvoices, productType],
     () => {
-      const today = DateTime.now().startOf('day')
+      const financingCutoffDate = getFinancingCutoffDate(
+        DateTime.now().startOf('day'),
+      )
+
+      const isAvailableForFinancing = (invoice: PlatformInvoice) =>
+        !invoice.dueDateIsoDate ||
+        DateTime.fromISO(invoice.dueDateIsoDate) >= financingCutoffDate
+
       const filteredInvoices = (() => {
         switch (filter) {
           case 'ALL':
             return orderedInvoices
           case 'AVAILABLE_FOR_FINANCING':
+            return orderedInvoices.filter(isAvailableForFinancing)
+          case 'NOT_ELIGIBLE':
             return orderedInvoices.filter(
-              (invoice) =>
-                !invoice.dueDateIsoDate ||
-                DateTime.fromISO(invoice.dueDateIsoDate) >= today,
-            )
-          case 'PAST_DUE':
-            return orderedInvoices.filter(
-              (invoice) =>
-                invoice.dueDateIsoDate &&
-                DateTime.fromISO(invoice.dueDateIsoDate) < today,
+              (invoice) => !isAvailableForFinancing(invoice),
             )
         }
       })()
-      return { filteredInvoices, today }
+      return { filteredInvoices, financingCutoffDate }
     },
     { revalidateOnFocus: true },
   )
 
+  const financingCutoffDate =
+    invoicesData?.financingCutoffDate ??
+    getFinancingCutoffDate(DateTime.now().startOf('day'))
   const filteredInvoices = invoicesData?.filteredInvoices ?? orderedInvoices
 
   useEffect(
@@ -161,19 +179,19 @@ function ApiInvoices() {
     [filteredInvoices],
   )
 
-  const onUnselectInvoice = (invoiceId: string) => {
+  const onUnselectInvoice = useCallback((invoiceId: string) => {
     setSelectedInvoiceIds((prev) => {
       if (!prev.has(invoiceId)) return prev
       const nextSet = new Set(prev)
       nextSet.delete(invoiceId)
       return nextSet
     })
-  }
+  }, [])
 
   const selectableInvoices = invoices.filter(
     (invoice) =>
       !invoice.dueDateIsoDate ||
-      DateTime.fromISO(invoice.dueDateIsoDate) >= DateTime.now().startOf('day'),
+      DateTime.fromISO(invoice.dueDateIsoDate) >= financingCutoffDate,
   )
 
   const allChecked =
@@ -526,6 +544,7 @@ function ApiInvoices() {
             onInvoiceStatusFilterSelect={onInvoiceStatusFilterSelect}
             currentFilter={filter}
             allInvoices={allPersistedInvoices}
+            financingCutoffDate={financingCutoffDate}
           />
 
           <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
@@ -690,6 +709,7 @@ function ApiInvoices() {
             setFocusedInvoiceId(invoiceId)
           }}
           issuedProduct={issuedProduct}
+          financingCutoffDate={financingCutoffDate}
         />
 
         {selectedInvoiceIds && (

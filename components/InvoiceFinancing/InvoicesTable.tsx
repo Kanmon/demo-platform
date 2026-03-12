@@ -1,4 +1,5 @@
 import { IssuedProduct } from '@kanmon/sdk'
+import { DateTime } from 'luxon'
 import formatInvoiceFinancingProductName from '../../utils/formatInvoiceFinancingProductName'
 import InvoiceTableItem from './InvoicesTableItem'
 import { PlatformInvoice } from '../../types/DemoInvoicesTypes'
@@ -13,6 +14,7 @@ interface InvoicesTableProps {
   onSingleInvoiceDelete: (invoiceId: string) => void
   onGetPaidNowClick: (invoiceId: string) => void
   issuedProduct?: IssuedProduct | null
+  financingCutoffDate: DateTime
 }
 
 function InvoicesTable({
@@ -25,6 +27,7 @@ function InvoicesTable({
   onSingleInvoiceDelete,
   onGetPaidNowClick,
   issuedProduct,
+  financingCutoffDate,
 }: InvoicesTableProps) {
   const showFinanceColumn = !!issuedProduct
 
@@ -93,6 +96,7 @@ function InvoicesTable({
                     onInvoiceDelete={() => onSingleInvoiceDelete(invoice.id)}
                     onGetPaidNowClick={() => onGetPaidNowClick(invoice.id)}
                     showFinanceColumn={showFinanceColumn}
+                    financingCutoffDate={financingCutoffDate}
                   />
                 )
               })}

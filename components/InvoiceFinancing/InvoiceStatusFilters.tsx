@@ -11,6 +11,7 @@ interface InvoiceStatusFiltersProps {
   ) => void
   currentFilter: PlatformInvoiceStatusFilter
   allInvoices: PlatformInvoice[]
+  financingCutoffDate: DateTime
 }
 
 const baseButtonStyles =
@@ -30,23 +31,22 @@ const InvoiceStatusFilters = ({
   onInvoiceStatusFilterSelect,
   currentFilter,
   allInvoices,
+  financingCutoffDate,
 }: InvoiceStatusFiltersProps) => {
-  const today = DateTime.now().startOf('day')
-
   const counts = allInvoices.reduce(
     (acc, invoice) => {
       if (
         !invoice.dueDateIsoDate ||
-        DateTime.fromISO(invoice.dueDateIsoDate) >= today
+        DateTime.fromISO(invoice.dueDateIsoDate) >= financingCutoffDate
       ) {
         acc.availableForFinancing++
       } else {
-        acc.pastDue++
+        acc.notEligible++
       }
 
       return acc
     },
-    { availableForFinancing: 0, pastDue: 0 },
+    { availableForFinancing: 0, notEligible: 0 },
   )
 
   const filters: {
@@ -59,7 +59,7 @@ const InvoiceStatusFilters = ({
       label: 'Available for Financing',
       count: counts.availableForFinancing,
     },
-    { filter: 'PAST_DUE', label: 'Past Due', count: counts.pastDue },
+    { filter: 'NOT_ELIGIBLE', label: 'Not Eligible', count: counts.notEligible },
     { filter: 'ALL', label: 'All', count: allInvoices.length },
   ]
 

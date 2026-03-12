@@ -29,7 +29,7 @@ export interface PlatformInvoice {
 export type PlatformInvoiceStatusFilter =
   | 'ALL'
   | 'AVAILABLE_FOR_FINANCING'
-  | 'PAST_DUE'
+  | 'NOT_ELIGIBLE'
 
 export interface ApiInvoicesState {
   availableLimitCents: number | null

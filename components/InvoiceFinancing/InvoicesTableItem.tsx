@@ -24,6 +24,7 @@ interface InvoiceTableItemProps {
   onInvoiceDelete: () => void
   onGetPaidNowClick: () => void
   showFinanceColumn?: boolean
+  financingCutoffDate: DateTime
 }
 
 const statusStyles = (status: PlatformInvoiceStatus) => {
@@ -56,25 +57,26 @@ function InvoiceTableItem({
   onUnselectInvoice,
   onGetPaidNowClick,
   showFinanceColumn,
+  financingCutoffDate,
 }: InvoiceTableItemProps) {
   const dispatch = useDispatch()
   const { primaryColor } = useSelector(getCustomizationState)
 
-  const isPastDue = invoice.dueDateIsoDate
-    ? DateTime.fromISO(invoice.dueDateIsoDate) < DateTime.now().startOf('day')
+  const isUnavailableForFinancing = invoice.dueDateIsoDate
+    ? DateTime.fromISO(invoice.dueDateIsoDate) < financingCutoffDate
     : false
 
   useEffect(() => {
-    if (isPastDue && isChecked) {
+    if (isUnavailableForFinancing && isChecked) {
       onUnselectInvoice()
     }
-  }, [isPastDue, isChecked, onUnselectInvoice])
+  }, [isUnavailableForFinancing, isChecked, onUnselectInvoice])
 
   return (
-    <tr className={isPastDue ? 'opacity-50' : ''}>
+    <tr className={isUnavailableForFinancing ? 'opacity-50' : ''}>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
         <div className="flex items-center">
-          {!isPastDue && (
+          {!isUnavailableForFinancing && (
             <label className="inline-flex">
               <span className="sr-only">Select</span>
               <input
