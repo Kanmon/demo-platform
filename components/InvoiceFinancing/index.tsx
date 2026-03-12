@@ -131,6 +131,29 @@ function ApiInvoices() {
     [filteredInvoices],
   )
 
+  useEffect(
+    function unselectPastDueInvoices() {
+      setSelectedInvoiceIds((prev) => {
+        if (prev.size === 0) return prev
+        const nextSet = new Set<string>()
+        for (const id of prev) {
+          const invoice = allPersistedInvoices.find((inv) => inv.id === id)
+          if (
+            invoice &&
+            (!invoice.dueDateIsoDate ||
+              DateTime.fromISO(invoice.dueDateIsoDate) >=
+                DateTime.now().startOf('day'))
+          ) {
+            nextSet.add(id)
+          }
+        }
+        if (nextSet.size === prev.size) return prev
+        return nextSet
+      })
+    },
+    [allPersistedInvoices],
+  )
+
   const selectableInvoices = invoices.filter(
     (invoice) =>
       !invoice.dueDateIsoDate ||
