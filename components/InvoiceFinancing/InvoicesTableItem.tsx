@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { updateInvoice } from '../../store/apiInvoicesSlice'
 import { getCustomizationState } from '../../store/customizationSlice'
@@ -8,6 +9,7 @@ import EditableDateField from '../EditableDateField'
 import { capitalizeEachWord } from '../../utils/capitalizeEachWord'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { DateTime } from 'luxon'
 import { PayorType } from '../../types/MoreTypes'
 import {
   PlatformInvoice,
@@ -17,10 +19,12 @@ import {
 interface InvoiceTableItemProps {
   invoice: PlatformInvoice
   onInvoiceCheckboxSelect: () => void
+  onUnselectInvoice: () => void
   isChecked: boolean
   onInvoiceDelete: () => void
   onGetPaidNowClick: () => void
   showFinanceColumn?: boolean
+  financingCutoffDate: DateTime
 }
 
 const statusStyles = (status: PlatformInvoiceStatus) => {
@@ -50,26 +54,40 @@ function InvoiceTableItem({
   invoice,
   isChecked,
   onInvoiceCheckboxSelect,
+  onUnselectInvoice,
   onGetPaidNowClick,
   showFinanceColumn,
+  financingCutoffDate,
 }: InvoiceTableItemProps) {
   const dispatch = useDispatch()
   const { primaryColor } = useSelector(getCustomizationState)
 
+  const isUnavailableForFinancing = invoice.dueDateIsoDate
+    ? DateTime.fromISO(invoice.dueDateIsoDate) < financingCutoffDate
+    : false
+
+  useEffect(() => {
+    if (isUnavailableForFinancing && isChecked) {
+      onUnselectInvoice()
+    }
+  }, [isUnavailableForFinancing, isChecked, onUnselectInvoice])
+
   return (
-    <tr>
+    <tr className={isUnavailableForFinancing ? 'opacity-50' : ''}>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
         <div className="flex items-center">
-          <label className="inline-flex">
-            <span className="sr-only">Select</span>
-            <input
-              id={invoice.id}
-              className="form-checkbox"
-              type="checkbox"
-              onChange={onInvoiceCheckboxSelect}
-              checked={isChecked}
-            />
-          </label>
+          {!isUnavailableForFinancing && (
+            <label className="inline-flex">
+              <span className="sr-only">Select</span>
+              <input
+                id={invoice.id}
+                className="form-checkbox"
+                type="checkbox"
+                onChange={onInvoiceCheckboxSelect}
+                checked={isChecked}
+              />
+            </label>
+          )}
         </div>
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap cursor-pointer">

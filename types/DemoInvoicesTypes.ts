@@ -26,7 +26,10 @@ export interface PlatformInvoice {
   items: { itemName: string; itemCostCents: number; itemQuantity: number }[]
 }
 
-export type PlatformInvoiceStatusFilter = 'ALL' | PlatformInvoiceStatus
+export type PlatformInvoiceStatusFilter =
+  | 'ALL'
+  | 'AVAILABLE_FOR_FINANCING'
+  | 'NOT_ELIGIBLE'
 
 export interface ApiInvoicesState {
   availableLimitCents: number | null

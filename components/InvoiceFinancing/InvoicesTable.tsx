@@ -1,4 +1,5 @@
 import { IssuedProduct } from '@kanmon/sdk'
+import { DateTime } from 'luxon'
 import formatInvoiceFinancingProductName from '../../utils/formatInvoiceFinancingProductName'
 import InvoiceTableItem from './InvoicesTableItem'
 import { PlatformInvoice } from '../../types/DemoInvoicesTypes'
@@ -7,22 +8,26 @@ interface InvoicesTableProps {
   invoices: PlatformInvoice[]
   selectedInvoiceIds: Set<string>
   onInvoiceSelect: (invoiceId: string) => void
+  onUnselectInvoice: (invoiceId: string) => void
   onSelectAllInvoices: () => void
   allChecked: boolean
   onSingleInvoiceDelete: (invoiceId: string) => void
   onGetPaidNowClick: (invoiceId: string) => void
   issuedProduct?: IssuedProduct | null
+  financingCutoffDate: DateTime
 }
 
 function InvoicesTable({
   invoices,
   selectedInvoiceIds,
   onInvoiceSelect,
+  onUnselectInvoice,
   onSelectAllInvoices,
   allChecked,
   onSingleInvoiceDelete,
   onGetPaidNowClick,
   issuedProduct,
+  financingCutoffDate,
 }: InvoicesTableProps) {
   const showFinanceColumn = !!issuedProduct
 
@@ -87,9 +92,11 @@ function InvoicesTable({
                     invoice={invoice}
                     isChecked={selectedInvoiceIds.has(invoice.id)}
                     onInvoiceCheckboxSelect={() => onInvoiceSelect(invoice.id)}
+                    onUnselectInvoice={() => onUnselectInvoice(invoice.id)}
                     onInvoiceDelete={() => onSingleInvoiceDelete(invoice.id)}
                     onGetPaidNowClick={() => onGetPaidNowClick(invoice.id)}
                     showFinanceColumn={showFinanceColumn}
+                    financingCutoffDate={financingCutoffDate}
                   />
                 )
               })}

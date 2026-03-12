@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker'
 import { useCallback, useEffect, useState } from 'react'
 import { useAsyncFn } from 'react-use'
+import useSWR from 'swr'
 import { CircularProgress } from '@mui/material'
 import _, { isEmpty } from 'lodash'
 import { DateTime } from 'luxon'
@@ -119,10 +120,57 @@ function ApiInvoices() {
                                             ctaText
 
   const {
-    filteredInvoices,
+    orderedInvoices,
     filter,
     invoices: allPersistedInvoices,
   } = useSelector(getInvoicesSelector)
+
+  const productType = issuedProduct?.servicingData.productType
+
+  const getFinancingCutoffDate = (today: DateTime) => {
+    if (productType === ProductType.ACCOUNTS_PAYABLE_FINANCING) {
+      return today.minus({ days: 5 })
+    }
+    if (productType === ProductType.INVOICE_FINANCING) {
+      return today.plus({ days: 7 })
+    }
+    return today
+  }
+
+  // Use SWR to force re-fetch when page is focused
+  // Mainly to avoid case if browser is opened for a long time, and the date becomes late
+  const { data: invoicesData } = useSWR(
+    ['invoices', filter, orderedInvoices, productType],
+    () => {
+      const financingCutoffDate = getFinancingCutoffDate(
+        DateTime.now().startOf('day'),
+      )
+
+      const isAvailableForFinancing = (invoice: PlatformInvoice) =>
+        !invoice.dueDateIsoDate ||
+        DateTime.fromISO(invoice.dueDateIsoDate) >= financingCutoffDate
+
+      const filteredInvoices = (() => {
+        switch (filter) {
+          case 'ALL':
+            return orderedInvoices
+          case 'AVAILABLE_FOR_FINANCING':
+            return orderedInvoices.filter(isAvailableForFinancing)
+          case 'NOT_ELIGIBLE':
+            return orderedInvoices.filter(
+              (invoice) => !isAvailableForFinancing(invoice),
+            )
+        }
+      })()
+      return { filteredInvoices, financingCutoffDate }
+    },
+    { revalidateOnFocus: true },
+  )
+
+  const financingCutoffDate =
+    invoicesData?.financingCutoffDate ??
+    getFinancingCutoffDate(DateTime.now().startOf('day'))
+  const filteredInvoices = invoicesData?.filteredInvoices ?? orderedInvoices
 
   useEffect(
     function setPersistedInvoicesInState() {
@@ -131,8 +179,24 @@ function ApiInvoices() {
     [filteredInvoices],
   )
 
+  const onUnselectInvoice = useCallback((invoiceId: string) => {
+    setSelectedInvoiceIds((prev) => {
+      if (!prev.has(invoiceId)) return prev
+      const nextSet = new Set(prev)
+      nextSet.delete(invoiceId)
+      return nextSet
+    })
+  }, [])
+
+  const selectableInvoices = invoices.filter(
+    (invoice) =>
+      !invoice.dueDateIsoDate ||
+      DateTime.fromISO(invoice.dueDateIsoDate) >= financingCutoffDate,
+  )
+
   const allChecked =
-    !isEmpty(invoices) && invoices.length === selectedInvoiceIds.size
+    !isEmpty(selectableInvoices) &&
+    selectableInvoices.length === selectedInvoiceIds.size
 
   const onInvoiceSelect = (invoiceId: string) => {
     const nextSet = new Set(selectedInvoiceIds)
@@ -160,7 +224,9 @@ function ApiInvoices() {
 
   const onSelectAllInvoices = () => {
     !allChecked
-      ? setSelectedInvoiceIds(new Set(invoices.map((invoice) => invoice.id)))
+      ? setSelectedInvoiceIds(
+          new Set(selectableInvoices.map((invoice) => invoice.id)),
+        )
       : setSelectedInvoiceIds(new Set())
   }
 
@@ -478,6 +544,7 @@ function ApiInvoices() {
             onInvoiceStatusFilterSelect={onInvoiceStatusFilterSelect}
             currentFilter={filter}
             allInvoices={allPersistedInvoices}
+            financingCutoffDate={financingCutoffDate}
           />
 
           <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
@@ -634,6 +701,7 @@ function ApiInvoices() {
           invoices={filteredInvoices}
           selectedInvoiceIds={selectedInvoiceIds}
           onInvoiceSelect={onInvoiceSelect}
+          onUnselectInvoice={onUnselectInvoice}
           onSelectAllInvoices={onSelectAllInvoices}
           allChecked={allChecked}
           onSingleInvoiceDelete={onSingleInvoiceDelete}
@@ -641,6 +709,7 @@ function ApiInvoices() {
             setFocusedInvoiceId(invoiceId)
           }}
           issuedProduct={issuedProduct}
+          financingCutoffDate={financingCutoffDate}
         />
 
         {selectedInvoiceIds && (

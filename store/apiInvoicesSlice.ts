@@ -235,7 +235,7 @@ const makeInitialState = (): ApiInvoicesState => {
   return {
     availableLimitCents: null,
     invoices: buildInitialInvoices(),
-    invoiceStatusFilter: 'ALL',
+    invoiceStatusFilter: 'AVAILABLE_FOR_FINANCING',
     kanmonInvoices: [],
   }
 }
@@ -347,14 +347,7 @@ export const getInvoicesSelector = createSelector(
       'desc',
     )
 
-    return {
-      invoices,
-      filteredInvoices:
-        filter === 'ALL'
-          ? orderedInvoices
-          : orderedInvoices.filter((invoice) => invoice.status === filter),
-      filter,
-    }
+    return { invoices, orderedInvoices, filter }
   },
 )
 
