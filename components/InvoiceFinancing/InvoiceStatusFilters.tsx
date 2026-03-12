@@ -1,7 +1,7 @@
 import classNames from 'classnames'
+import { DateTime } from 'luxon'
 import {
   PlatformInvoice,
-  PlatformInvoiceStatus,
   PlatformInvoiceStatusFilter,
 } from '../../types/DemoInvoicesTypes'
 
@@ -31,14 +31,22 @@ const InvoiceStatusFilters = ({
   currentFilter,
   allInvoices,
 }: InvoiceStatusFiltersProps) => {
+  const today = DateTime.now().startOf('day')
+
   const counts = allInvoices.reduce(
     (acc, invoice) => {
-      if (invoice.status === PlatformInvoiceStatus.PAID) acc.paid++
-      else if (invoice.status === PlatformInvoiceStatus.DUE) acc.due++
-      else if (invoice.status === PlatformInvoiceStatus.OVERDUE) acc.overdue++
+      if (
+        !invoice.dueDateIsoDate ||
+        DateTime.fromISO(invoice.dueDateIsoDate) >= today
+      ) {
+        acc.availableForFinancing++
+      } else {
+        acc.pastDue++
+      }
+
       return acc
     },
-    { paid: 0, due: 0, overdue: 0 },
+    { availableForFinancing: 0, pastDue: 0 },
   )
 
   const filters: {
@@ -46,14 +54,13 @@ const InvoiceStatusFilters = ({
     label: string
     count: number
   }[] = [
-    { filter: 'ALL', label: 'All', count: allInvoices.length },
-    { filter: PlatformInvoiceStatus.PAID, label: 'Paid', count: counts.paid },
-    { filter: PlatformInvoiceStatus.DUE, label: 'Due', count: counts.due },
     {
-      filter: PlatformInvoiceStatus.OVERDUE,
-      label: 'Overdue',
-      count: counts.overdue,
+      filter: 'AVAILABLE_FOR_FINANCING',
+      label: 'Available for Financing',
+      count: counts.availableForFinancing,
     },
+    { filter: 'PAST_DUE', label: 'Past Due', count: counts.pastDue },
+    { filter: 'ALL', label: 'All', count: allInvoices.length },
   ]
 
   return (

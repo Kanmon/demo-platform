@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { updateInvoice } from '../../store/apiInvoicesSlice'
 import { getCustomizationState } from '../../store/customizationSlice'
@@ -18,6 +19,7 @@ import {
 interface InvoiceTableItemProps {
   invoice: PlatformInvoice
   onInvoiceCheckboxSelect: () => void
+  onUnselectInvoice: () => void
   isChecked: boolean
   onInvoiceDelete: () => void
   onGetPaidNowClick: () => void
@@ -51,6 +53,7 @@ function InvoiceTableItem({
   invoice,
   isChecked,
   onInvoiceCheckboxSelect,
+  onUnselectInvoice,
   onGetPaidNowClick,
   showFinanceColumn,
 }: InvoiceTableItemProps) {
@@ -61,21 +64,28 @@ function InvoiceTableItem({
     ? DateTime.fromISO(invoice.dueDateIsoDate) < DateTime.now().startOf('day')
     : false
 
+  useEffect(() => {
+    if (isPastDue && isChecked) {
+      onUnselectInvoice()
+    }
+  }, [isPastDue, isChecked, onUnselectInvoice])
+
   return (
     <tr className={isPastDue ? 'opacity-50' : ''}>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
         <div className="flex items-center">
-          <label className="inline-flex">
-            <span className="sr-only">Select</span>
-            <input
-              id={invoice.id}
-              className="form-checkbox"
-              type="checkbox"
-              onChange={onInvoiceCheckboxSelect}
-              checked={isChecked}
-              disabled={isPastDue}
-            />
-          </label>
+          {!isPastDue && (
+            <label className="inline-flex">
+              <span className="sr-only">Select</span>
+              <input
+                id={invoice.id}
+                className="form-checkbox"
+                type="checkbox"
+                onChange={onInvoiceCheckboxSelect}
+                checked={isChecked}
+              />
+            </label>
+          )}
         </div>
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap cursor-pointer">

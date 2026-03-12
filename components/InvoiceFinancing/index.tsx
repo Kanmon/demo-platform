@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker'
 import { useCallback, useEffect, useState } from 'react'
 import { useAsyncFn } from 'react-use'
+import useSWR from 'swr'
 import { CircularProgress } from '@mui/material'
 import _, { isEmpty } from 'lodash'
 import { DateTime } from 'luxon'
@@ -119,10 +120,39 @@ function ApiInvoices() {
                                             ctaText
 
   const {
-    filteredInvoices,
+    orderedInvoices,
     filter,
     invoices: allPersistedInvoices,
   } = useSelector(getInvoicesSelector)
+
+  const { data: invoicesData } = useSWR(
+    ['invoices', filter, orderedInvoices],
+    () => {
+      const today = DateTime.now().startOf('day')
+      const filteredInvoices = (() => {
+        switch (filter) {
+          case 'ALL':
+            return orderedInvoices
+          case 'AVAILABLE_FOR_FINANCING':
+            return orderedInvoices.filter(
+              (invoice) =>
+                !invoice.dueDateIsoDate ||
+                DateTime.fromISO(invoice.dueDateIsoDate) >= today,
+            )
+          case 'PAST_DUE':
+            return orderedInvoices.filter(
+              (invoice) =>
+                invoice.dueDateIsoDate &&
+                DateTime.fromISO(invoice.dueDateIsoDate) < today,
+            )
+        }
+      })()
+      return { filteredInvoices, today }
+    },
+    { revalidateOnFocus: true },
+  )
+
+  const filteredInvoices = invoicesData?.filteredInvoices ?? orderedInvoices
 
   useEffect(
     function setPersistedInvoicesInState() {
@@ -131,28 +161,14 @@ function ApiInvoices() {
     [filteredInvoices],
   )
 
-  useEffect(
-    function unselectPastDueInvoices() {
-      setSelectedInvoiceIds((prev) => {
-        if (prev.size === 0) return prev
-        const nextSet = new Set<string>()
-        for (const id of prev) {
-          const invoice = allPersistedInvoices.find((inv) => inv.id === id)
-          if (
-            invoice &&
-            (!invoice.dueDateIsoDate ||
-              DateTime.fromISO(invoice.dueDateIsoDate) >=
-                DateTime.now().startOf('day'))
-          ) {
-            nextSet.add(id)
-          }
-        }
-        if (nextSet.size === prev.size) return prev
-        return nextSet
-      })
-    },
-    [allPersistedInvoices],
-  )
+  const onUnselectInvoice = (invoiceId: string) => {
+    setSelectedInvoiceIds((prev) => {
+      if (!prev.has(invoiceId)) return prev
+      const nextSet = new Set(prev)
+      nextSet.delete(invoiceId)
+      return nextSet
+    })
+  }
 
   const selectableInvoices = invoices.filter(
     (invoice) =>
@@ -666,6 +682,7 @@ function ApiInvoices() {
           invoices={filteredInvoices}
           selectedInvoiceIds={selectedInvoiceIds}
           onInvoiceSelect={onInvoiceSelect}
+          onUnselectInvoice={onUnselectInvoice}
           onSelectAllInvoices={onSelectAllInvoices}
           allChecked={allChecked}
           onSingleInvoiceDelete={onSingleInvoiceDelete}
