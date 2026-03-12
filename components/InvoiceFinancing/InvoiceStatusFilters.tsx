@@ -59,7 +59,11 @@ const InvoiceStatusFilters = ({
       label: 'Available for Financing',
       count: counts.availableForFinancing,
     },
-    { filter: 'NOT_ELIGIBLE', label: 'Not Eligible', count: counts.notEligible },
+    {
+      filter: 'NOT_ELIGIBLE',
+      label: 'Not Eligible',
+      count: counts.notEligible,
+    },
     { filter: 'ALL', label: 'All', count: allInvoices.length },
   ]
 
