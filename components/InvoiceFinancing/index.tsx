@@ -66,7 +66,9 @@ function ApiInvoices() {
   const { apiKey } = useSelector(getApiKeyState)
   const { userId } = useSelector(getAuthState)
 
-  const [focusedInvoiceId, setFocusedInvoiceId] = useState<string | null>(null)
+  const [focusedInvoice, setFocusedInvoice] = useState<PlatformInvoice | null>(
+    null,
+  )
   const [invoices, setInvoices] = useState<PlatformInvoice[]>([])
   const [selectedInvoiceIds, setSelectedInvoiceIds] = useState(
     new Set<string>(),
@@ -380,20 +382,16 @@ function ApiInvoices() {
     )
 
   const onFinanceInvoiceClick = async () => {
-    const invoice = allPersistedInvoices.find(
-      (persistedInvoice) => persistedInvoice.id === focusedInvoiceId,
-    ) as PlatformInvoice
-    await financeInvoices([invoice], false)
-    setFocusedInvoiceId(null)
+    if (!focusedInvoice) return
+    await financeInvoices([focusedInvoice], false)
+    setFocusedInvoice(null)
   }
 
   const onPayInvoiceClick = async () => {
-    const invoice = allPersistedInvoices.find(
-      (persistedInvoice) => persistedInvoice.id === focusedInvoiceId,
-    ) as PlatformInvoice
+    if (!focusedInvoice) return
     await showKanmonConnect({
       component: KanmonConnectComponent.PAY_NOW,
-      platformInvoiceId: invoice.id,
+      platformInvoiceId: focusedInvoice.id,
     })
   }
 
@@ -703,37 +701,27 @@ function ApiInvoices() {
           onSelectAllInvoices={onSelectAllInvoices}
           allChecked={allChecked}
           onSingleInvoiceDelete={onSingleInvoiceDelete}
-          onGetPaidNowClick={(invoiceId: string) => {
-            setFocusedInvoiceId(invoiceId)
+          onGetPaidNowClick={(invoice: PlatformInvoice) => {
+            setFocusedInvoice(invoice)
           }}
           issuedProduct={issuedProduct}
           financingCutoffDate={financingCutoffDate}
         />
 
-        {selectedInvoiceIds &&
-          (() => {
-            const focusedInvoice = invoices.find(
-              (invoice) => invoice.id === focusedInvoiceId,
-            )
-            const isAvailableForFinancing = focusedInvoice
-              ? isInvoiceAvailableForFinancing(
-                  focusedInvoice,
-                  financingCutoffDate,
-                )
-              : false
-
-            return (
-              <InvoicesModal
-                open={!!focusedInvoiceId}
-                onClose={() => setFocusedInvoiceId(null)}
-                selectedInvoice={focusedInvoice as PlatformInvoice}
-                issuedProduct={issuedProduct as IssuedProduct}
-                onFinanceInvoice={onFinanceInvoiceClick}
-                onPayInvoice={onPayInvoiceClick}
-                isAvailableForFinancing={isAvailableForFinancing}
-              />
-            )
-          })()}
+        {focusedInvoice && (
+          <InvoicesModal
+            open
+            onClose={() => setFocusedInvoice(null)}
+            selectedInvoice={focusedInvoice}
+            issuedProduct={issuedProduct as IssuedProduct}
+            onFinanceInvoice={onFinanceInvoiceClick}
+            onPayInvoice={onPayInvoiceClick}
+            isAvailableForFinancing={isInvoiceAvailableForFinancing(
+              focusedInvoice,
+              financingCutoffDate,
+            )}
+          />
+        )}
       </div>
     </>
   )

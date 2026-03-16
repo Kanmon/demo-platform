@@ -12,7 +12,7 @@ interface InvoicesTableProps {
   onSelectAllInvoices: () => void
   allChecked: boolean
   onSingleInvoiceDelete: (invoiceId: string) => void
-  onGetPaidNowClick: (invoiceId: string) => void
+  onGetPaidNowClick: (invoice: PlatformInvoice) => void
   issuedProduct?: IssuedProduct | null
   financingCutoffDate: DateTime
 }
@@ -94,7 +94,7 @@ function InvoicesTable({
                     onInvoiceCheckboxSelect={() => onInvoiceSelect(invoice.id)}
                     onUnselectInvoice={() => onUnselectInvoice(invoice.id)}
                     onInvoiceDelete={() => onSingleInvoiceDelete(invoice.id)}
-                    onGetPaidNowClick={() => onGetPaidNowClick(invoice.id)}
+                    onGetPaidNowClick={() => onGetPaidNowClick(invoice)}
                     showFinanceColumn={showFinanceColumn}
                     financingCutoffDate={financingCutoffDate}
                   />
