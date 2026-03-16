@@ -16,6 +16,7 @@ interface TopSectionProps {
   programName: string
   primaryColor: string
   issuedProduct: IssuedProduct
+  isAvailableForFinancing: boolean
 }
 
 const TopSection = ({
@@ -25,6 +26,7 @@ const TopSection = ({
   primaryColor,
   issuedProduct,
   onPayInvoiceClick,
+  isAvailableForFinancing,
 }: TopSectionProps) => {
   return (
     <section className="bg-gray-100 py-8 px-12 grid grid-cols-12 gap-x-12">
@@ -54,15 +56,17 @@ const TopSection = ({
       </div>
       <div className="col-span-4 text-right mr-3">
         <div className="mb-4">
-          {!invoice.kanmonInvoiceId && issuedProduct && (
-            <button
-              className="btn text-white forty-percent-darker-on-hover"
-              style={{ backgroundColor: primaryColor }}
-              onClick={onFastPayClick}
-            >
-              Finance {formatInvoiceFinancingProductName()}
-            </button>
-          )}
+          {!invoice.kanmonInvoiceId &&
+            issuedProduct &&
+            isAvailableForFinancing && (
+              <button
+                className="btn text-white forty-percent-darker-on-hover"
+                style={{ backgroundColor: primaryColor }}
+                onClick={onFastPayClick}
+              >
+                Finance {formatInvoiceFinancingProductName()}
+              </button>
+            )}
           {invoice.kanmonInvoiceId && (
             <button
               className="btn text-white forty-percent-darker-on-hover"
@@ -220,6 +224,7 @@ interface InvoiceSummaryProps {
   onPayInvoiceClick: () => void
   invoice: PlatformInvoice
   issuedProduct: IssuedProduct
+  isAvailableForFinancing: boolean
 }
 
 const InvoiceSummary = ({
@@ -227,6 +232,7 @@ const InvoiceSummary = ({
   invoice,
   issuedProduct,
   onPayInvoiceClick,
+  isAvailableForFinancing,
 }: InvoiceSummaryProps) => {
   const { programName, primaryColor } = useSelector(getCustomizationState)
 
@@ -239,6 +245,7 @@ const InvoiceSummary = ({
         onFastPayClick={onFastPayClick}
         onPayInvoiceClick={onPayInvoiceClick}
         issuedProduct={issuedProduct}
+        isAvailableForFinancing={isAvailableForFinancing}
       />
       <div className="flex-grow">
         <BillToFromSection invoice={invoice} />

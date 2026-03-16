@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { DateTime } from 'luxon'
 import { PayorType } from '../../types/MoreTypes'
+import isInvoiceAvailableForFinancing from '../../utils/isInvoiceAvailableForFinancing'
 import {
   PlatformInvoice,
   PlatformInvoiceStatus,
@@ -62,9 +63,10 @@ function InvoiceTableItem({
   const dispatch = useDispatch()
   const { primaryColor } = useSelector(getCustomizationState)
 
-  const isUnavailableForFinancing = invoice.dueDateIsoDate
-    ? DateTime.fromISO(invoice.dueDateIsoDate) < financingCutoffDate
-    : false
+  const isUnavailableForFinancing = !isInvoiceAvailableForFinancing(
+    invoice,
+    financingCutoffDate,
+  )
 
   useEffect(() => {
     if (isUnavailableForFinancing && isChecked) {

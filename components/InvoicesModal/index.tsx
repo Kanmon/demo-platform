@@ -12,6 +12,7 @@ interface InvoicesModalProps {
   onFinanceInvoice: () => void
   onPayInvoice: () => void
   issuedProduct?: IssuedProduct
+  isAvailableForFinancing: boolean
 }
 
 const INVOICE_MODAL_CONTAINER_ID = 'invoice-modal'
@@ -23,6 +24,7 @@ const InvoicesModal = ({
   onFinanceInvoice,
   onPayInvoice,
   issuedProduct,
+  isAvailableForFinancing,
 }: InvoicesModalProps) => {
   const onClose = () => {
     onCloseProps()
@@ -50,6 +52,7 @@ const InvoicesModal = ({
           onFastPayClick={onFinanceInvoice}
           invoice={selectedInvoice}
           issuedProduct={issuedProduct as IssuedProduct}
+          isAvailableForFinancing={isAvailableForFinancing}
         />
       </div>
     </Modal>
