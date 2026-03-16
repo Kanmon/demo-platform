@@ -54,6 +54,7 @@ import {
   FinanceInvoicePayload,
   FinanceInvoiceResponse,
 } from '../../pages/api/finance_invoice'
+import isInvoiceAvailableForFinancing from '../../utils/isInvoiceAvailableForFinancing'
 
 function ApiInvoices() {
   const { showKanmonConnect } = useKanmonConnectContext()
@@ -146,19 +147,18 @@ function ApiInvoices() {
         DateTime.now().startOf('day'),
       )
 
-      const isAvailableForFinancing = (invoice: PlatformInvoice) =>
-        !invoice.dueDateIsoDate ||
-        DateTime.fromISO(invoice.dueDateIsoDate) >= financingCutoffDate
-
       const filteredInvoices = (() => {
         switch (filter) {
           case 'ALL':
             return orderedInvoices
           case 'AVAILABLE_FOR_FINANCING':
-            return orderedInvoices.filter(isAvailableForFinancing)
+            return orderedInvoices.filter((invoice) =>
+              isInvoiceAvailableForFinancing(invoice, financingCutoffDate),
+            )
           case 'NOT_ELIGIBLE':
             return orderedInvoices.filter(
-              (invoice) => !isAvailableForFinancing(invoice),
+              (invoice) =>
+                !isInvoiceAvailableForFinancing(invoice, financingCutoffDate),
             )
         }
       })()
@@ -188,10 +188,8 @@ function ApiInvoices() {
     })
   }, [])
 
-  const selectableInvoices = invoices.filter(
-    (invoice) =>
-      !invoice.dueDateIsoDate ||
-      DateTime.fromISO(invoice.dueDateIsoDate) >= financingCutoffDate,
+  const selectableInvoices = invoices.filter((invoice) =>
+    isInvoiceAvailableForFinancing(invoice, financingCutoffDate),
   )
 
   const allChecked =
@@ -712,20 +710,26 @@ function ApiInvoices() {
           financingCutoffDate={financingCutoffDate}
         />
 
-        {selectedInvoiceIds && (
-          <InvoicesModal
-            open={!!focusedInvoiceId}
-            onClose={() => setFocusedInvoiceId(null)}
-            selectedInvoice={
-              invoices.find(
-                (invoice) => invoice.id === focusedInvoiceId,
-              ) as PlatformInvoice
-            }
-            issuedProduct={issuedProduct as IssuedProduct}
-            onFinanceInvoice={onFinanceInvoiceClick}
-            onPayInvoice={onPayInvoiceClick}
-          />
-        )}
+        {selectedInvoiceIds && (() => {
+          const focusedInvoice = invoices.find(
+            (invoice) => invoice.id === focusedInvoiceId,
+          )
+          const isAvailableForFinancing = focusedInvoice
+            ? isInvoiceAvailableForFinancing(focusedInvoice, financingCutoffDate)
+            : false
+
+          return (
+            <InvoicesModal
+              open={!!focusedInvoiceId}
+              onClose={() => setFocusedInvoiceId(null)}
+              selectedInvoice={focusedInvoice as PlatformInvoice}
+              issuedProduct={issuedProduct as IssuedProduct}
+              onFinanceInvoice={onFinanceInvoiceClick}
+              onPayInvoice={onPayInvoiceClick}
+              isAvailableForFinancing={isAvailableForFinancing}
+            />
+          )
+        })()}
       </div>
     </>
   )

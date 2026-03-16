@@ -4,6 +4,7 @@ import {
   PlatformInvoice,
   PlatformInvoiceStatusFilter,
 } from '../../types/DemoInvoicesTypes'
+import isInvoiceAvailableForFinancing from '../../utils/isInvoiceAvailableForFinancing'
 
 interface InvoiceStatusFiltersProps {
   onInvoiceStatusFilterSelect: (
@@ -35,10 +36,7 @@ const InvoiceStatusFilters = ({
 }: InvoiceStatusFiltersProps) => {
   const counts = allInvoices.reduce(
     (acc, invoice) => {
-      if (
-        !invoice.dueDateIsoDate ||
-        DateTime.fromISO(invoice.dueDateIsoDate) >= financingCutoffDate
-      ) {
+      if (isInvoiceAvailableForFinancing(invoice, financingCutoffDate)) {
         acc.availableForFinancing++
       } else {
         acc.notEligible++
