@@ -710,26 +710,30 @@ function ApiInvoices() {
           financingCutoffDate={financingCutoffDate}
         />
 
-        {selectedInvoiceIds && (() => {
-          const focusedInvoice = invoices.find(
-            (invoice) => invoice.id === focusedInvoiceId,
-          )
-          const isAvailableForFinancing = focusedInvoice
-            ? isInvoiceAvailableForFinancing(focusedInvoice, financingCutoffDate)
-            : false
+        {selectedInvoiceIds &&
+          (() => {
+            const focusedInvoice = invoices.find(
+              (invoice) => invoice.id === focusedInvoiceId,
+            )
+            const isAvailableForFinancing = focusedInvoice
+              ? isInvoiceAvailableForFinancing(
+                  focusedInvoice,
+                  financingCutoffDate,
+                )
+              : false
 
-          return (
-            <InvoicesModal
-              open={!!focusedInvoiceId}
-              onClose={() => setFocusedInvoiceId(null)}
-              selectedInvoice={focusedInvoice as PlatformInvoice}
-              issuedProduct={issuedProduct as IssuedProduct}
-              onFinanceInvoice={onFinanceInvoiceClick}
-              onPayInvoice={onPayInvoiceClick}
-              isAvailableForFinancing={isAvailableForFinancing}
-            />
-          )
-        })()}
+            return (
+              <InvoicesModal
+                open={!!focusedInvoiceId}
+                onClose={() => setFocusedInvoiceId(null)}
+                selectedInvoice={focusedInvoice as PlatformInvoice}
+                issuedProduct={issuedProduct as IssuedProduct}
+                onFinanceInvoice={onFinanceInvoiceClick}
+                onPayInvoice={onPayInvoiceClick}
+                isAvailableForFinancing={isAvailableForFinancing}
+              />
+            )
+          })()}
       </div>
     </>
   )

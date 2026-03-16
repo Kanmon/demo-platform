@@ -56,15 +56,17 @@ const TopSection = ({
       </div>
       <div className="col-span-4 text-right mr-3">
         <div className="mb-4">
-          {!invoice.kanmonInvoiceId && issuedProduct && isAvailableForFinancing && (
-            <button
-              className="btn text-white forty-percent-darker-on-hover"
-              style={{ backgroundColor: primaryColor }}
-              onClick={onFastPayClick}
-            >
-              Finance {formatInvoiceFinancingProductName()}
-            </button>
-          )}
+          {!invoice.kanmonInvoiceId &&
+            issuedProduct &&
+            isAvailableForFinancing && (
+              <button
+                className="btn text-white forty-percent-darker-on-hover"
+                style={{ backgroundColor: primaryColor }}
+                onClick={onFastPayClick}
+              >
+                Finance {formatInvoiceFinancingProductName()}
+              </button>
+            )}
           {invoice.kanmonInvoiceId && (
             <button
               className="btn text-white forty-percent-darker-on-hover"
