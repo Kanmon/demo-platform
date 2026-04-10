@@ -153,6 +153,7 @@ export const KanmonConnectWrapper = ({
       console.error('Kanmon Connect error', error)
     },
     onEvent: (event) => {
+      console.log('UserEvent:', event)
       switch (event.eventType) {
         case OnEventCallbackEventType.USER_CONFIRMED_INVOICE:
           dispatch(
