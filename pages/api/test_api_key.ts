@@ -20,6 +20,7 @@ const fetchIssuedProducts = async (
     await client.getUsers({ limit: 1 })
     res.status(200).send('ok')
   } catch (ex: any) {
+    console.log('ex', ex)
     const response = await ex?.response?.json()
 
     const errorResponse: ResponseWithErrorCode = {
