@@ -2,6 +2,7 @@
   "name": "demo-platform",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@11.0.4",
   "scripts": {
     "dev": "next dev -p 4202",
     "build": "next build",
@@ -49,6 +50,7 @@
     "redux-persist": "6",
     "reflect-metadata": "^0.2.2",
     "swr": "^2.4.1",
+    "type-fest": "^2.19.0",
     "uuid": "^10.0.0",
     "yup": "^1.4.0"
   },
