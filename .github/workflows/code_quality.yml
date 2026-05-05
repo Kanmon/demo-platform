@@ -10,24 +10,15 @@ jobs:
     steps:
       - name: Checkout this repo
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
+      - uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d # 4.0.0
       - uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # 4.3.0
         with:
           node-version: 24.11.1
-          # Node 24.11.1 comes with npm 11.6.2
-          # we need 11.5.1 or higher for OIDC trusted publishing support
-      - name: Cache Node Modules
-        id: node-cache
-        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # 4.2.2
-        with:
-          path: |
-            node_modules
-            .cache
-          key: node-modulesc-${{ hashFiles('yarn.lock') }}
+          cache: 'pnpm'
       - name: Install dependencies
-        if: steps.node-cache.outputs.cache-hit != 'true'
-        run: yarn install
+        run: pnpm install --frozen-lockfile
       - name: Run Type Check
-        run: yarn typecheck
+        run: pnpm typecheck
 
   lint:
     name: Lint
@@ -35,23 +26,15 @@ jobs:
     steps:
       - name: Checkout this repo
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
+      - uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d # 4.0.0
       - uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # 4.3.0
         with:
           node-version: 24.11.1
-          cache: 'yarn'
-      - name: Cache Node Modules
-        id: node-cache
-        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # 4.2.2
-        with:
-          path: |
-            node_modules
-            .cache
-          key: node-modulesc-${{ hashFiles('yarn.lock') }}
+          cache: 'pnpm'
       - name: Install dependencies
-        if: steps.node-cache.outputs.cache-hit != 'true'
-        run: yarn install
+        run: pnpm install --frozen-lockfile
       - name: Run Linter
-        run: yarn lint
+        run: pnpm lint
 
   prettier:
     name: Prettier
@@ -59,10 +42,12 @@ jobs:
     steps:
       - name: Checkout this repo
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
+      - uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d # 4.0.0
       - uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # 4.3.0
         with:
           node-version: 24.11.1
-          # Node 24.11.1 comes with npm 11.6.2
-          # we need 11.5.1 or higher for OIDC trusted publishing support
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
       - name: Run Prettier
-        run: yarn prettier-check
+        run: pnpm prettier-check

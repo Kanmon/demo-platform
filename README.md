@@ -49,7 +49,7 @@ To run the demo, you'll need a Kanmon API Key. You can obtain this key from your
 Install the necessary dependencies:
 
 ```bash
-yarn install
+pnpm install
 ```
 
 1. **Run the Application**
@@ -57,7 +57,7 @@ yarn install
 Start the development server:
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
 The application will be available at `http://localhost:3000`.
