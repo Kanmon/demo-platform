@@ -2,8 +2,14 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['cdn.kanmon.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.kanmon.com',
+      },
+    ],
   },
 }
+
 
 export default nextConfig
