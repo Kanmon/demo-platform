@@ -27,8 +27,8 @@ importers:
         specifier: ^0.2.2
         version: 0.2.6(@fortawesome/fontawesome-svg-core@6.7.2)(react@18.3.1)
       '@kanmon/sdk':
-        specifier: 3.1.1-next-86757092b7b5f3c0d454629201f75aa7e318afc3.0
-        version: 3.1.1-next-86757092b7b5f3c0d454629201f75aa7e318afc3.0
+        specifier: 3.2.1
+        version: 3.2.1
       '@kanmon/web-sdk':
         specifier: 2.2.13
         version: 2.2.13
@@ -518,8 +518,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@kanmon/sdk@3.1.1-next-86757092b7b5f3c0d454629201f75aa7e318afc3.0':
-    resolution: {integrity: sha512-9TY6ElXp2Jy7m72XPPb8JGL50Wi2jFjqWc26vJ0dg6m3pFst6IAg0kmwbIkCGuruNyaNprMVm24j9xpeREGcYQ==}
+  '@kanmon/sdk@3.2.1':
+    resolution: {integrity: sha512-sGKDpTtAaG2ypxbKtwp6Pt1zZVLcSKI3IfG8S+MUq+9leZm1x4wU0wEmOzndMAiGh5IQblJLDypZe+AUROTGQQ==}
     engines: {node: '>=24'}
 
   '@kanmon/web-sdk@2.2.13':
@@ -2972,7 +2972,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@kanmon/sdk@3.1.1-next-86757092b7b5f3c0d454629201f75aa7e318afc3.0':
+  '@kanmon/sdk@3.2.1':
     dependencies:
       '@types/node': 22.19.17
       '@types/node-fetch': 2.6.13
