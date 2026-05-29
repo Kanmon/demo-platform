@@ -92,6 +92,7 @@ const create_business_v2 = async (
         phoneNumber: '14152223333',
         ein: '123456789',
         website: 'https://www.my-business.com',
+        isSoleProprietorship: false,
       })
 
       business = createBusinessResponse

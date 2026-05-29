@@ -37,6 +37,7 @@ export class PlatformApiBusinessCreateRequestPayload {
   ein?: string
   phoneNumber?: string
   website?: string
+  isSoleProprietorship?: boolean
 }
 
 export class PlatformApiBusinessResponsePayload extends PlatformApiBusinessCreateRequestPayload {
