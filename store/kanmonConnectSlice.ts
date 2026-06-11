@@ -8,6 +8,7 @@ export interface KanmonConnectState {
   currentWorkflowState: UserState | null
   isOpen: boolean
   useCdnSdk?: boolean
+  darkMode?: boolean
 }
 
 const initialState: KanmonConnectState = {
@@ -15,6 +16,7 @@ const initialState: KanmonConnectState = {
   currentWorkflowState: null,
   isOpen: false,
   useCdnSdk: false, // This can be set based on your application logic
+  darkMode: false,
 }
 
 export const kanmonConnectSlice = createSlice({
@@ -34,6 +36,9 @@ export const kanmonConnectSlice = createSlice({
     updateUseCdnSdk(state, action: { payload: { useCdnSdk: boolean } }) {
       state.useCdnSdk = action.payload.useCdnSdk
     },
+    updateDarkMode(state, action: { payload: { darkMode: boolean } }) {
+      state.darkMode = action.payload.darkMode
+    },
   },
 
   extraReducers: {
@@ -46,8 +51,12 @@ export const kanmonConnectSlice = createSlice({
   },
 })
 
-export const { updateOnWorkflowChange, updateOnHide, updateUseCdnSdk } =
-  kanmonConnectSlice.actions
+export const {
+  updateOnWorkflowChange,
+  updateOnHide,
+  updateUseCdnSdk,
+  updateDarkMode,
+} = kanmonConnectSlice.actions
 
 export const getKanmonConnectSlice = (state: AppState) => state.kanmonConnect
 

@@ -2,6 +2,7 @@ import { Form, Formik } from 'formik'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   getKanmonConnectSlice,
+  updateDarkMode,
   updateUseCdnSdk,
 } from '../../store/kanmonConnectSlice'
 import Button from '@/components/shared/Button'
@@ -9,6 +10,7 @@ import { useRouter } from 'next/router'
 
 interface FormValues {
   useCdnSdk: boolean
+  darkMode: boolean
 }
 
 const ConfigPage = () => {
@@ -17,11 +19,13 @@ const ConfigPage = () => {
   const router = useRouter()
   const initialValues: FormValues = {
     useCdnSdk: data.useCdnSdk ?? false,
+    darkMode: data.darkMode ?? false,
   }
 
   const saveConfigFn = (values: FormValues) => {
-    const { useCdnSdk } = values
+    const { useCdnSdk, darkMode } = values
     dispatch(updateUseCdnSdk({ useCdnSdk }))
+    dispatch(updateDarkMode({ darkMode }))
     router.push('/')
   }
 
@@ -75,6 +79,42 @@ const ConfigPage = () => {
                             }`}
                         >
                           Kanmon CDN
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 mb-8">
+                    <span className="w-44 text-sm font-medium text-gray-700">
+                      Dark Mode
+                    </span>
+
+                    <div className="w-[360px] rounded-md border border-gray-200 bg-gray-50 overflow-hidden">
+                      <div className="grid grid-cols-2 divide-x divide-gray-200">
+                        <button
+                          type="button"
+                          onClick={() => setFieldValue('darkMode', false)}
+                          className={`py-2 px-3 text-sm font-medium transition-colors duration-150
+                            ${
+                              !values.darkMode
+                                ? 'bg-white text-blue-600'
+                                : 'text-gray-600'
+                            }`}
+                        >
+                          Dark Mode Off
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setFieldValue('darkMode', true)}
+                          className={`py-2 px-3 text-sm font-medium transition-colors duration-150
+                            ${
+                              values.darkMode
+                                ? 'bg-white text-blue-600'
+                                : 'text-gray-600'
+                            }`}
+                        >
+                          Dark Mode On
                         </button>
                       </div>
                     </div>
