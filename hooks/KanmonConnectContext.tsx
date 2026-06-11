@@ -55,7 +55,7 @@ const KanmonConnectContextProvider = ({
   const dispatch = useDispatch()
 
   const { apiKey } = useSelector(getApiKeyState)
-  const { useCdnSdk } = useSelector(getKanmonConnectSlice)
+  const { useCdnSdk, darkMode } = useSelector(getKanmonConnectSlice)
   const [scriptLoading] = useScript({
     src: NEXT_PUBLIC_KANMON_CDN_HOST,
   })
@@ -86,7 +86,7 @@ const KanmonConnectContextProvider = ({
       const productSubsetDuringOnboarding =
         query?.productSubsetDuringOnboarding as string
 
-      const config: KanmonConnectParams = {
+      const config: KanmonConnectParams & { darkMode?: boolean } = {
         connectToken,
         environment: process.env
           .NEXT_PUBLIC_DEPLOY_ENV as KanmonConnectEnviroment,
@@ -97,6 +97,7 @@ const KanmonConnectContextProvider = ({
         productSubsetDuringOnboarding: productSubsetDuringOnboarding?.split(
           ',',
         ) as ExternalProductType[] | undefined,
+        ...(darkMode ? { darkMode: true } : {}),
       }
 
       // Check if CDN SDK is available
@@ -112,7 +113,7 @@ const KanmonConnectContextProvider = ({
         setReady(true)
       }
     },
-    [scriptLoading, useCdnSdk, apiKey],
+    [scriptLoading, useCdnSdk, darkMode, apiKey],
   )
 
   const showKanmonConnect = (showArgs?: ShowKanmonConnectMessage) => {
