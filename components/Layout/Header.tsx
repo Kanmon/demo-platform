@@ -78,7 +78,9 @@ export const Header = ({
               />
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-slate-500">Dark Mode</span>
+              <span className="text-xs font-medium text-slate-500">
+                Dark Mode
+              </span>
               <button
                 type="button"
                 role="switch"

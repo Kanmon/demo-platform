@@ -4,7 +4,6 @@ import {
   KANMON_CONNECT,
   KanmonConnectEnviroment,
   KanmonConnectParams,
-  KanmonConnectRuntimeConfig,
   ShowKanmonConnectMessage,
 } from '@kanmon/web-sdk'
 import axios from 'axios'
@@ -22,7 +21,7 @@ declare global {
       start(params: KanmonConnectParams): void
       stop: () => void
       show(showArgs?: ShowKanmonConnectMessage): void
-      setConfig: (config: KanmonConnectRuntimeConfig) => void
+      setConfig: (config: any) => void
     }
   }
 }
