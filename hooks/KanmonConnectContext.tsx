@@ -15,19 +15,34 @@ import useScript from 'react-script-hook'
 import { getApiKeyState } from '../store/apiKeySlice'
 import { getKanmonConnectSlice } from '@/store/kanmonConnectSlice'
 
+interface KanmonConnectRuntimeConfig {
+  darkMode?: boolean
+}
+
 declare global {
   interface Window {
     KANMON_CONNECT: {
       start(params: any): void
       stop: () => void
       show(showArgs?: ShowKanmonConnectMessage): void
+      // Optional because older CDN script versions don't have it
+      setConfig?: (config: KanmonConnectRuntimeConfig) => void
     }
   }
 }
+
+// setConfig was added after @kanmon/web-sdk 2.3.1, so feature-detect it
+// until the package is upgraded.
+type KanmonConnectSdkWithSetConfig = typeof KANMON_CONNECT & {
+  setConfig?: (config: KanmonConnectRuntimeConfig) => void
+}
+
 interface KanmonConnectContext {
   ready: boolean
   error: Error | undefined
   showKanmonConnect: (showArgs?: ShowKanmonConnectMessage) => void
+  isDarkMode: boolean
+  setKanmonDarkMode: (darkMode: boolean) => void
 }
 
 export const KanmonConnectContext = createContext<KanmonConnectContext>(
@@ -60,6 +75,16 @@ const KanmonConnectContextProvider = ({
     src: NEXT_PUBLIC_KANMON_CDN_HOST,
   })
   const [ready, setReady] = useState(false)
+
+  // Tracks runtime toggles via setConfig, which deliberately do not touch
+  // the redux config flag — changing that flag restarts the widget, while
+  // this demonstrates updating the theme after the widget has loaded.
+  const [isDarkMode, setIsDarkMode] = useState(darkMode ?? false)
+
+  // Re-sync when the config page changes the start setting (widget restarts)
+  useEffect(() => {
+    setIsDarkMode(darkMode ?? false)
+  }, [darkMode])
 
   const { query } = useRouter()
 
@@ -124,6 +149,22 @@ const KanmonConnectContextProvider = ({
     }
   }
 
+  const setKanmonDarkMode = (nextDarkMode: boolean) => {
+    const sdk = useCdnSdk
+      ? window.KANMON_CONNECT
+      : (KANMON_CONNECT as KanmonConnectSdkWithSetConfig)
+
+    if (!sdk.setConfig) {
+      console.warn(
+        'setConfig is not available in this SDK version. Upgrade @kanmon/web-sdk or the CDN script.',
+      )
+      return
+    }
+
+    sdk.setConfig({ darkMode: nextDarkMode })
+    setIsDarkMode(nextDarkMode)
+  }
+
   useEffect(() => {
     // If we fail to login, lets logout and try again
     if (error) {
@@ -133,7 +174,9 @@ const KanmonConnectContextProvider = ({
   }, [error, dispatch])
 
   return (
-    <KanmonConnectContext.Provider value={{ ready, error, showKanmonConnect }}>
+    <KanmonConnectContext.Provider
+      value={{ ready, error, showKanmonConnect, isDarkMode, setKanmonDarkMode }}
+    >
       {children}
     </KanmonConnectContext.Provider>
   )
