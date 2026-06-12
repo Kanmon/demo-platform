@@ -13,7 +13,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useAsync } from 'react-use'
 import useScript from 'react-script-hook'
 import { getApiKeyState } from '../store/apiKeySlice'
-import { getKanmonConnectSlice } from '@/store/kanmonConnectSlice'
+import {
+  getKanmonConnectSlice,
+  updateDarkMode,
+} from '@/store/kanmonConnectSlice'
 
 declare global {
   interface Window {
@@ -64,16 +67,7 @@ const KanmonConnectContextProvider = ({
     src: NEXT_PUBLIC_KANMON_CDN_HOST,
   })
   const [ready, setReady] = useState(false)
-
-  // Tracks runtime toggles via setConfig, which deliberately do not touch
-  // the redux config flag — changing that flag restarts the widget, while
-  // this demonstrates updating the theme after the widget has loaded.
-  const [isDarkMode, setIsDarkMode] = useState(darkMode ?? false)
-
-  // Re-sync when the config page changes the start setting (widget restarts)
-  useEffect(() => {
-    setIsDarkMode(darkMode ?? false)
-  }, [darkMode])
+  const isDarkMode = darkMode ?? false
 
   const { query } = useRouter()
 
@@ -127,7 +121,7 @@ const KanmonConnectContextProvider = ({
         setReady(true)
       }
     },
-    [scriptLoading, useCdnSdk, darkMode, apiKey],
+    [scriptLoading, useCdnSdk, apiKey],
   )
 
   const showKanmonConnect = (showArgs?: ShowKanmonConnectMessage) => {
@@ -139,13 +133,13 @@ const KanmonConnectContextProvider = ({
   }
 
   const setKanmonDarkMode = (nextDarkMode: boolean) => {
+    dispatch(updateDarkMode({ darkMode: nextDarkMode }))
+
     if (useCdnSdk) {
       window.KANMON_CONNECT.setConfig({ darkMode: nextDarkMode })
     } else {
       KANMON_CONNECT.setConfig({ darkMode: nextDarkMode })
     }
-
-    setIsDarkMode(nextDarkMode)
   }
 
   useEffect(() => {
