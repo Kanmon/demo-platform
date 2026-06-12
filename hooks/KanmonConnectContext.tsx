@@ -4,6 +4,7 @@ import {
   KANMON_CONNECT,
   KanmonConnectEnviroment,
   KanmonConnectParams,
+  KanmonConnectRuntimeConfig,
   ShowKanmonConnectMessage,
 } from '@kanmon/web-sdk'
 import axios from 'axios'
@@ -15,26 +16,15 @@ import useScript from 'react-script-hook'
 import { getApiKeyState } from '../store/apiKeySlice'
 import { getKanmonConnectSlice } from '@/store/kanmonConnectSlice'
 
-interface KanmonConnectRuntimeConfig {
-  darkMode?: boolean
-}
-
 declare global {
   interface Window {
     KANMON_CONNECT: {
-      start(params: any): void
+      start(params: KanmonConnectParams): void
       stop: () => void
       show(showArgs?: ShowKanmonConnectMessage): void
-      // Optional because older CDN script versions don't have it
-      setConfig?: (config: KanmonConnectRuntimeConfig) => void
+      setConfig: (config: KanmonConnectRuntimeConfig) => void
     }
   }
-}
-
-// setConfig was added after @kanmon/web-sdk 2.3.1, so feature-detect it
-// until the package is upgraded.
-type KanmonConnectSdkWithSetConfig = typeof KANMON_CONNECT & {
-  setConfig?: (config: KanmonConnectRuntimeConfig) => void
 }
 
 interface KanmonConnectContext {
@@ -111,7 +101,7 @@ const KanmonConnectContextProvider = ({
       const productSubsetDuringOnboarding =
         query?.productSubsetDuringOnboarding as string
 
-      const config: KanmonConnectParams & { darkMode?: boolean } = {
+      const config: KanmonConnectParams = {
         connectToken,
         environment: process.env
           .NEXT_PUBLIC_DEPLOY_ENV as KanmonConnectEnviroment,
@@ -150,18 +140,12 @@ const KanmonConnectContextProvider = ({
   }
 
   const setKanmonDarkMode = (nextDarkMode: boolean) => {
-    const sdk = useCdnSdk
-      ? window.KANMON_CONNECT
-      : (KANMON_CONNECT as KanmonConnectSdkWithSetConfig)
-
-    if (!sdk.setConfig) {
-      console.warn(
-        'setConfig is not available in this SDK version. Upgrade @kanmon/web-sdk or the CDN script.',
-      )
-      return
+    if (useCdnSdk) {
+      window.KANMON_CONNECT.setConfig({ darkMode: nextDarkMode })
+    } else {
+      KANMON_CONNECT.setConfig({ darkMode: nextDarkMode })
     }
 
-    sdk.setConfig({ darkMode: nextDarkMode })
     setIsDarkMode(nextDarkMode)
   }
 
