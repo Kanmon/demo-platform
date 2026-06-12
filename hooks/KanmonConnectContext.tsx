@@ -18,16 +18,20 @@ import { getKanmonConnectSlice } from '@/store/kanmonConnectSlice'
 declare global {
   interface Window {
     KANMON_CONNECT: {
-      start(params: any): void
+      start(params: KanmonConnectParams): void
       stop: () => void
       show(showArgs?: ShowKanmonConnectMessage): void
+      setConfig: (config: any) => void
     }
   }
 }
+
 interface KanmonConnectContext {
   ready: boolean
   error: Error | undefined
   showKanmonConnect: (showArgs?: ShowKanmonConnectMessage) => void
+  isDarkMode: boolean
+  setKanmonDarkMode: (darkMode: boolean) => void
 }
 
 export const KanmonConnectContext = createContext<KanmonConnectContext>(
@@ -61,6 +65,16 @@ const KanmonConnectContextProvider = ({
   })
   const [ready, setReady] = useState(false)
 
+  // Tracks runtime toggles via setConfig, which deliberately do not touch
+  // the redux config flag — changing that flag restarts the widget, while
+  // this demonstrates updating the theme after the widget has loaded.
+  const [isDarkMode, setIsDarkMode] = useState(darkMode ?? false)
+
+  // Re-sync when the config page changes the start setting (widget restarts)
+  useEffect(() => {
+    setIsDarkMode(darkMode ?? false)
+  }, [darkMode])
+
   const { query } = useRouter()
 
   const { error } = useAsync(
@@ -86,7 +100,7 @@ const KanmonConnectContextProvider = ({
       const productSubsetDuringOnboarding =
         query?.productSubsetDuringOnboarding as string
 
-      const config: KanmonConnectParams & { darkMode?: boolean } = {
+      const config: KanmonConnectParams = {
         connectToken,
         environment: process.env
           .NEXT_PUBLIC_DEPLOY_ENV as KanmonConnectEnviroment,
@@ -124,6 +138,16 @@ const KanmonConnectContextProvider = ({
     }
   }
 
+  const setKanmonDarkMode = (nextDarkMode: boolean) => {
+    if (useCdnSdk) {
+      window.KANMON_CONNECT.setConfig({ darkMode: nextDarkMode })
+    } else {
+      KANMON_CONNECT.setConfig({ darkMode: nextDarkMode })
+    }
+
+    setIsDarkMode(nextDarkMode)
+  }
+
   useEffect(() => {
     // If we fail to login, lets logout and try again
     if (error) {
@@ -133,7 +157,9 @@ const KanmonConnectContextProvider = ({
   }, [error, dispatch])
 
   return (
-    <KanmonConnectContext.Provider value={{ ready, error, showKanmonConnect }}>
+    <KanmonConnectContext.Provider
+      value={{ ready, error, showKanmonConnect, isDarkMode, setKanmonDarkMode }}
+    >
       {children}
     </KanmonConnectContext.Provider>
   )
