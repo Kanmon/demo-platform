@@ -12,7 +12,8 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import _ from 'lodash'
 import path from 'path'
 import { PlatformInvoice } from '../../types/DemoInvoicesTypes'
-import { extractApiKeyFromHeader, KanmonClient } from '../../utils'
+import { extractApiKeyFromHeader } from '../../utils/extractApiKeyFromHeader'
+import { KanmonClient } from '../../utils/kanmonClient'
 import getInvoiceTotalCents from '../../utils/getInvoiceTotal'
 
 export interface CreateEmbeddedSessionPayload {

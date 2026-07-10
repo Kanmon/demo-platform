@@ -11,7 +11,7 @@ import {
   ResponseWithErrorCode,
   TestingPrequalType,
 } from '../../types/MoreTypes'
-import { extractApiKeyFromHeader } from '../../utils'
+import { extractApiKeyFromHeader } from '../../utils/extractApiKeyFromHeader'
 import { KanmonClient } from '../../utils/kanmonClient'
 
 const create_business_v2 = async (

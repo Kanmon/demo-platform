@@ -1,6 +1,6 @@
 import { KanmonClient } from '@/utils/kanmonClient'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { extractApiKeyFromHeader } from '../../utils'
+import { extractApiKeyFromHeader } from '../../utils/extractApiKeyFromHeader'
 import { ResponseWithErrorCode } from '@/types/MoreTypes'
 
 const fetchIssuedProducts = async (
