@@ -5,7 +5,7 @@ import {
   ProductType,
 } from '@kanmon/sdk'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { extractApiKeyFromHeader } from '../../utils'
+import { extractApiKeyFromHeader } from '../../utils/extractApiKeyFromHeader'
 import { PlatformInvoice } from '../../types/DemoInvoicesTypes'
 import getInvoiceTotalCents from '../../utils/getInvoiceTotal'
 

@@ -1,6 +1,6 @@
 import { KanmonPlatformApi } from '@kanmon/sdk'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { extractApiKeyFromHeader } from '../../utils'
+import { extractApiKeyFromHeader } from '../../utils/extractApiKeyFromHeader'
 
 const fetchPrequalification = async (
   req: NextApiRequest,
