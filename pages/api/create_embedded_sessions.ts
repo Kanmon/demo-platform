@@ -18,7 +18,7 @@ import getInvoiceTotalCents from '../../utils/getInvoiceTotal'
 export interface CreateEmbeddedSessionPayload {
   productType: ProductType
   invoices: PlatformInvoice[]
-  platformBusinessId: string
+  businessId: string
   includeInvoiceFile: boolean
 }
 
@@ -33,11 +33,11 @@ export class PlatformApiCreateEmbeddedSessionResponse {
 }
 
 const getSessionInvoiceConnectSessionTokenData = ({
-  platformBusinessId,
+  businessId,
   invoices,
 }: CreateEmbeddedSessionPayload): ConnectSessionTokenData => {
   return {
-    platformBusinessId,
+    businessId,
     data: {
       component: KanmonConnectComponent.SESSION_INVOICE_FLOW,
       invoices: invoices.map((invoice) => {
@@ -63,7 +63,7 @@ const getSessionInvoiceConnectSessionTokenData = ({
 }
 
 const getSessionInvoiceWithFileConnectSessionTokenData = async (
-  { platformBusinessId, invoices }: CreateEmbeddedSessionPayload,
+  { businessId, invoices }: CreateEmbeddedSessionPayload,
   sdkClient: KanmonPlatformApi,
 ): Promise<ConnectSessionTokenData> => {
   const blobInvoices: Blob[] = []
@@ -83,12 +83,12 @@ const getSessionInvoiceWithFileConnectSessionTokenData = async (
   }
 
   const documentResponse = await sdkClient.documents.createBusinessDocument({
-    platformBusinessId,
+    businessId,
     invoices: blobInvoices,
   })
 
   return {
-    platformBusinessId,
+    businessId,
     data: {
       component: KanmonConnectComponent.SESSION_INVOICE_FLOW_WITH_INVOICE_FILE,
       invoices: invoices.map((invoice, i) => {
@@ -118,11 +118,11 @@ const getSessionInvoiceWithFileConnectSessionTokenData = async (
 }
 
 const getSessionInvoiceRelaxedConnectSessionTokenData = ({
-  platformBusinessId,
+  businessId,
   invoices,
 }: CreateEmbeddedSessionPayload): ConnectSessionTokenData => {
   return {
-    platformBusinessId,
+    businessId,
     data: {
       component: 'SESSION_INVOICE_FLOW_RELAXED',
       invoices: invoices.map((invoice) => {
@@ -148,11 +148,11 @@ const getSessionInvoiceRelaxedConnectSessionTokenData = ({
 }
 
 const getAccountsPayableInvoiceFlowConnectSessionTokenData = ({
-  platformBusinessId,
+  businessId,
   invoices,
 }: CreateEmbeddedSessionPayload): ConnectSessionTokenData => {
   return {
-    platformBusinessId,
+    businessId,
     data: {
       component: 'SESSION_ACCOUNTS_PAYABLE_INVOICE_FLOW',
       invoices: invoices.map((invoice) => {
@@ -179,7 +179,7 @@ const getAccountsPayableInvoiceFlowConnectSessionTokenData = ({
 
 const getAccountsPayableInvoiceFlowWithInvoiceFileConnectSessionTokenData =
   async (
-    { platformBusinessId, invoices }: CreateEmbeddedSessionPayload,
+    { businessId, invoices }: CreateEmbeddedSessionPayload,
     sdkClient: KanmonPlatformApi,
   ): Promise<ConnectSessionTokenData> => {
     const blobInvoices: Blob[] = []
@@ -199,12 +199,12 @@ const getAccountsPayableInvoiceFlowWithInvoiceFileConnectSessionTokenData =
     }
 
     const documentResponse = await sdkClient.documents.createBusinessDocument({
-      platformBusinessId,
+      businessId,
       invoices: blobInvoices,
     })
 
     return {
-      platformBusinessId,
+      businessId,
       data: {
         component: 'SESSION_ACCOUNTS_PAYABLE_INVOICE_FLOW_WITH_INVOICE_FILE',
         invoices: invoices.map((invoice, i) => {
@@ -287,6 +287,14 @@ const createEmbeddedSessions = async (
 
   const requestBody: CreateEmbeddedSessionPayload = req.body
 
+  if (!requestBody.businessId) {
+    res.status(400).send({
+      message: 'businessId is required',
+      errorCode: 'BadRequestException',
+    })
+    return
+  }
+
   const apiKey = extractApiKeyFromHeader(req.headers.authorization)
   if (!apiKey) {
     res.status(403).send(null)
@@ -320,8 +328,6 @@ const createEmbeddedSessions = async (
   const session = await sdkClient.embeddedSessions.createEmbeddedSession({
     createSessionTokenRequestBody: {
       businessId: createEmbeddedSessionForInvoiceFlowBody.businessId,
-      platformBusinessId:
-        createEmbeddedSessionForInvoiceFlowBody.platformBusinessId,
       data: createEmbeddedSessionForInvoiceFlowBody.data,
     },
   })

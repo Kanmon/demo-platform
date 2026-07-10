@@ -319,7 +319,7 @@ function ApiInvoices() {
 
     const data: CreateEmbeddedSessionPayload = {
       invoices,
-      platformBusinessId: issuedProduct.platformBusinessId as string,
+      businessId: issuedProduct.businessId,
       includeInvoiceFile,
       productType: issuedProduct.servicingData.productType,
     }
