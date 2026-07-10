@@ -218,11 +218,15 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
   const onExistingBusinessSelect = async () => {
     if (!selectedUser) return
 
-    const prequalificationResponse = await axiosWithApiKey(apiKey).get<
-      BusinessPrequalification[]
-    >(
-      `/api/fetch_prequalification?platformBusinessId=${selectedUser.platformBusinessId}`,
-    )
+    let hasPrequalification = false
+    if (selectedUser.platformBusinessId) {
+      const prequalificationResponse = await axiosWithApiKey(apiKey).get<
+        BusinessPrequalification[]
+      >(
+        `/api/fetch_prequalification?platformBusinessId=${selectedUser.platformBusinessId}`,
+      )
+      hasPrequalification = prequalificationResponse.data.length > 0
+    }
 
     dispatch(
       saveCredentials({
@@ -231,7 +235,7 @@ const BusinessSelectionModalV2 = ({ open }: BusinessSelectionModalProps) => {
         businessId: selectedUser.businessId,
         businessName: selectedUser.businessName,
         platformBusinessId: selectedUser.platformBusinessId,
-        prequalification: prequalificationResponse.data.length > 0,
+        prequalification: hasPrequalification,
       }),
     )
   }
