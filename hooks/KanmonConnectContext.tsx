@@ -64,7 +64,7 @@ const KanmonConnectContextProvider = ({
   const { apiKey } = useSelector(getApiKeyState)
   const { useCdnSdk, darkMode } = useSelector(getKanmonConnectSlice)
   const [scriptLoading] = useScript({
-    src: NEXT_PUBLIC_KANMON_CDN_HOST,
+    src: useCdnSdk ? NEXT_PUBLIC_KANMON_CDN_HOST : null,
   })
   const [ready, setReady] = useState(false)
   const isDarkMode = darkMode ?? false
