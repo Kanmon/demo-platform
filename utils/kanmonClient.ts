@@ -119,6 +119,12 @@ export interface PlatformDetails {
   programName: string
   enabledProducts?: ProductType[]
 }
+
+export interface DemoPayor {
+  id: string
+  legalName: string
+}
+
 export class KanmonClient {
   apiKey: string
   // Use the Kanmon Platform API sdk where possible
@@ -219,6 +225,15 @@ export class KanmonClient {
         headers,
       },
     )
+    return response.data
+  }
+
+  TEST_ONLY_GetPayors = async (): Promise<DemoPayor[]> => {
+    const response = await axios.get<DemoPayor[]>(
+      `${NEXT_PUBLIC_KANMON_API_HOST}/v1/testing/payors`,
+      { headers: this.getApiHeader() },
+    )
+
     return response.data
   }
 

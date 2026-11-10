@@ -42,6 +42,7 @@ const fetchIssuedProduct = async (
     issuedProductsResponse.issuedProducts.filter(
       (ip) =>
         ip.servicingData.productType === 'INVOICE_FINANCING' ||
+        ip.servicingData.productType === 'FACTORING' ||
         ip.servicingData.productType === 'ACCOUNTS_PAYABLE_FINANCING',
     )
 

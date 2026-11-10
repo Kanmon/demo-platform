@@ -12,7 +12,10 @@ import FormikSelectInput from '../shared/FormikSelectField'
 import FormikCheckboxInput from '../shared/FormikCheckBoxField'
 
 export const notInvoiceFinancingProduct = (productType: ProductType) => {
-  return productType !== ProductType.ACCOUNTS_PAYABLE_FINANCING
+  return (
+    productType !== ProductType.ACCOUNTS_PAYABLE_FINANCING &&
+    productType !== ProductType.FACTORING
+  )
 }
 interface Props {
   setShowAdditionalConfiguration: (show: boolean) => void
