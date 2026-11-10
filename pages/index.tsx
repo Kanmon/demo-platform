@@ -29,6 +29,7 @@ import { axiosWithApiKey } from '../utils'
 import { getAuthState } from '../store/authSlice'
 import { getApiKeyState } from '../store/apiKeySlice'
 import { KanmonConnectComponent } from '@kanmon/web-sdk'
+import FactoringServicingActions from '../components/InvoiceFinancing/FactoringServicingActions'
 
 export const V2Home: React.FC = () => {
   const { ctaText, currentWorkflowState } = useSelector(getKanmonConnectSlice)
@@ -168,6 +169,9 @@ export const V2Home: React.FC = () => {
             <DropdownFilter align="right" />
             <Datepicker align="right" />
 
+            {issuedProduct?.servicingData.productType === 'FACTORING' && (
+              <FactoringServicingActions />
+            )}
             {issuedProduct?.servicingData.productType === 'LINE_OF_CREDIT' && (
               <SplitButton
                 buttonColor={primaryColor}

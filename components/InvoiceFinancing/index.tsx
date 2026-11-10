@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker'
 import { useCallback, useEffect, useState } from 'react'
 import { useAsyncFn } from 'react-use'
 import useSWR from 'swr'
-import { CircularProgress } from '@mui/material'
+import { Autocomplete, CircularProgress, TextField } from '@mui/material'
 import _, { isEmpty } from 'lodash'
 import { DateTime } from 'luxon'
 import { useDispatch, useSelector } from 'react-redux'
@@ -55,6 +55,13 @@ import {
   FinanceInvoiceResponse,
 } from '../../pages/api/finance_invoice'
 import isInvoiceAvailableForFinancing from '../../utils/isInvoiceAvailableForFinancing'
+import FactoringServicingActions from './FactoringServicingActions'
+import { DemoPayor, KanmonClient } from '../../utils/kanmonClient'
+
+const RANDOM_PAYOR: DemoPayor = {
+  id: 'random',
+  legalName: 'Random payor',
+}
 
 function ApiInvoices() {
   const { showKanmonConnect } = useKanmonConnectContext()
@@ -70,6 +77,7 @@ function ApiInvoices() {
     null,
   )
   const [invoices, setInvoices] = useState<PlatformInvoice[]>([])
+  const [selectedPayor, setSelectedPayor] = useState<DemoPayor | null>(null)
   const [selectedInvoiceIds, setSelectedInvoiceIds] = useState(
     new Set<string>(),
   )
@@ -129,6 +137,21 @@ function ApiInvoices() {
   } = useSelector(getInvoicesSelector)
 
   const productType = issuedProduct?.servicingData.productType
+  const isFactoring = productType === ProductType.FACTORING
+
+  const {
+    data: payors = [],
+    isLoading: payorsLoading,
+    error: payorsError,
+  } = useSWR(
+    isFactoring && apiKey ? ['factoring-payors', apiKey] : null,
+    ([, platformApiKey]) =>
+      new KanmonClient(platformApiKey).TEST_ONLY_GetPayors(),
+  )
+
+  useEffect(() => {
+    setSelectedPayor(null)
+  }, [userId, issuedProduct?.id, apiKey])
 
   const getFinancingCutoffDate = (today: DateTime) => {
     if (productType === ProductType.ACCOUNTS_PAYABLE_FINANCING) {
@@ -383,7 +406,11 @@ function ApiInvoices() {
 
   const onFinanceInvoiceClick = async () => {
     if (!focusedInvoice) return
-    await financeInvoices([focusedInvoice], false)
+    if (isFactoring) {
+      await financeInvoiceAutoSubmit([focusedInvoice])
+    } else {
+      await financeInvoices([focusedInvoice], false)
+    }
     setFocusedInvoice(null)
   }
 
@@ -396,122 +423,147 @@ function ApiInvoices() {
   }
 
   const [{ loading: financeAutoSubmitLoading }, financeInvoiceAutoSubmit] =
-    useAsyncFn(async () => {
-      try {
-        if (!issuedProduct) {
-          toast.error('No issued product found')
-          return
-        }
-
-        if (selectedInvoiceIds.size === 0) {
-          toast.error('Please select at least one invoice')
-          return
-        }
-
-        const invoicesToFinance: PlatformInvoice[] = _.compact(
-          [...selectedInvoiceIds].map((invoiceId) =>
-            allPersistedInvoices.find(
-              (persistedInvoice) => persistedInvoice.id === invoiceId,
-            ),
-          ),
-        )
-
-        if (invoicesToFinance.length === 0) {
-          toast.error('Selected invoices not found')
-          return
-        }
-
-        // Validate required fields
-        const invalidInvoices = invoicesToFinance.filter((invoice) => {
-          return (
-            _.isNil(invoice.payorType) ||
-            _.isNil(invoice.dueDateIsoDate) ||
-            _.isEmpty(invoice.items)
-          )
-        })
-
-        if (invalidInvoices.length > 0) {
-          toast.error(
-            'Cannot submit these invoices because some fields are missing.',
-          )
-          return
-        }
-
-        const payload: FinanceInvoicePayload = {
-          invoices: invoicesToFinance,
-          issuedProductId: issuedProduct.id,
-          platformBusinessId: issuedProduct.platformBusinessId as string,
-        }
-
-        const resp = await axiosWithApiKey(apiKey).post<FinanceInvoiceResponse>(
-          '/api/finance_invoice',
-          payload,
-        )
-
-        // Track successful and failed invoices by invoice number
-        const successfulInvoiceNumbers: string[] = []
-        const failedInvoiceNumbers: string[] = []
-
-        // Process successfully financed invoices
-        resp.data.invoices.forEach((financedInvoice) => {
-          const platformInvoice = invoicesToFinance.find(
-            (inv) => inv.id === financedInvoice.platformInvoiceId,
-          )
-          if (platformInvoice) {
-            dispatch(
-              updateInvoice({
-                invoice: {
-                  ...platformInvoice,
-                  kanmonInvoiceId: financedInvoice.id,
-                },
-              }),
-            )
-            successfulInvoiceNumbers.push(platformInvoice.invoiceNumber)
+    useAsyncFn(
+      async (invoiceSelection?: PlatformInvoice[]) => {
+        try {
+          if (!issuedProduct) {
+            toast.error('No issued product found')
+            return
           }
-        })
 
-        // Process failed invoices from response
-        if (resp.data.failedInvoices.length > 0) {
-          resp.data.failedInvoices.map((failedInvoice) => {
-            failedInvoiceNumbers.push(failedInvoice.platformInvoiceNumber)
+          if (!invoiceSelection && selectedInvoiceIds.size === 0) {
+            toast.error('Please select at least one invoice')
+            return
+          }
+
+          if (isFactoring && !selectedPayor) {
+            toast.error('Select a payor before financing an invoice.')
+            return
+          }
+
+          if (isFactoring && payors.length === 0) {
+            toast.error('No onboarded payors are available.')
+            return
+          }
+
+          const invoicesToFinance: PlatformInvoice[] =
+            invoiceSelection ??
+            _.compact(
+              [...selectedInvoiceIds].map((invoiceId) =>
+                allPersistedInvoices.find(
+                  (persistedInvoice) => persistedInvoice.id === invoiceId,
+                ),
+              ),
+            )
+
+          if (invoicesToFinance.length === 0) {
+            toast.error('Selected invoices not found')
+            return
+          }
+
+          // Validate required fields
+          const invalidInvoices = invoicesToFinance.filter((invoice) => {
+            return (
+              _.isNil(invoice.payorType) ||
+              _.isNil(invoice.dueDateIsoDate) ||
+              _.isEmpty(invoice.items)
+            )
           })
+
+          if (invalidInvoices.length > 0) {
+            toast.error(
+              'Cannot submit these invoices because some fields are missing.',
+            )
+            return
+          }
+
+          const payload: FinanceInvoicePayload = {
+            invoices: isFactoring
+              ? invoicesToFinance.map((invoice) => ({
+                  ...invoice,
+                  payorId:
+                    selectedPayor?.id === RANDOM_PAYOR.id
+                      ? payors[_.random(payors.length - 1)].id
+                      : selectedPayor?.id,
+                }))
+              : invoicesToFinance,
+            issuedProductId: issuedProduct.id,
+            platformBusinessId: issuedProduct.platformBusinessId as string,
+          }
+
+          const resp = await axiosWithApiKey(
+            apiKey,
+          ).post<FinanceInvoiceResponse>('/api/finance_invoice', payload)
+
+          // Track successful and failed invoices by invoice number
+          const successfulInvoiceNumbers: string[] = []
+          const failedInvoiceNumbers: string[] = []
+
+          // Process successfully financed invoices
+          resp.data.invoices.forEach((financedInvoice) => {
+            const platformInvoice = invoicesToFinance.find(
+              (inv) => inv.id === financedInvoice.platformInvoiceId,
+            )
+            if (platformInvoice) {
+              dispatch(
+                updateInvoice({
+                  invoice: {
+                    ...platformInvoice,
+                    kanmonInvoiceId: financedInvoice.id,
+                  },
+                }),
+              )
+              successfulInvoiceNumbers.push(platformInvoice.invoiceNumber)
+            }
+          })
+
+          // Process failed invoices from response
+          if (resp.data.failedInvoices.length > 0) {
+            resp.data.failedInvoices.map((failedInvoice) => {
+              failedInvoiceNumbers.push(failedInvoice.platformInvoiceNumber)
+            })
+          }
+
+          // Refresh issued product details to update available limit
+          await fetchIssuedProductDetails()
+
+          // Clear selected invoices
+          setSelectedInvoiceIds(new Set())
+
+          // Show success notification with details
+          if (successfulInvoiceNumbers.length > 0) {
+            toast.success(
+              `Successfully financed ${successfulInvoiceNumbers.length} invoice${
+                successfulInvoiceNumbers.length > 1 ? 's' : ''
+              }: ${successfulInvoiceNumbers.join(', ')}`,
+            )
+          }
+
+          if (failedInvoiceNumbers.length > 0) {
+            toast.error(
+              `Failed to finance ${failedInvoiceNumbers.length} invoice${
+                failedInvoiceNumbers.length > 1 ? 's' : ''
+              }: ${failedInvoiceNumbers.join(', ')}`,
+            )
+          }
+        } catch (ex: any) {
+          console.error('Failed to finance invoice', ex)
+          const errorMessage = ex.response?.data?.message || genericErrorMessage
+          toast.error(errorMessage)
         }
-
-        // Refresh issued product details to update available limit
-        await fetchIssuedProductDetails()
-
-        // Clear selected invoices
-        setSelectedInvoiceIds(new Set())
-
-        // Show success notification with details
-        if (successfulInvoiceNumbers.length > 0) {
-          toast.success(
-            `Successfully financed ${successfulInvoiceNumbers.length} invoice${
-              successfulInvoiceNumbers.length > 1 ? 's' : ''
-            }: ${successfulInvoiceNumbers.join(', ')}`,
-          )
-        }
-
-        if (failedInvoiceNumbers.length > 0) {
-          toast.error(
-            `Failed to finance ${failedInvoiceNumbers.length} invoice${
-              failedInvoiceNumbers.length > 1 ? 's' : ''
-            }: ${failedInvoiceNumbers.join(', ')}`,
-          )
-        }
-      } catch (ex: any) {
-        console.error('Failed to finance invoice', ex)
-        const errorMessage = ex.response?.data?.message || genericErrorMessage
-        toast.error(errorMessage)
-      }
-    }, [
-      issuedProduct,
-      selectedInvoiceIds,
-      allPersistedInvoices,
-      apiKey,
-      dispatch,
-      fetchIssuedProductDetails,
-    ])
+      },
+      [
+        issuedProduct,
+        selectedInvoiceIds,
+        allPersistedInvoices,
+        apiKey,
+        dispatch,
+        fetchIssuedProductDetails,
+        isFactoring,
+        selectedPayor,
+        payors,
+      ],
+    )
 
   const showLaunchKanmonConnectCTA = !(
     currentWorkflowState === 'NO_OFFERS_EXTENDED'
@@ -527,13 +579,40 @@ function ApiInvoices() {
             <h1 className="text-2xl md:text-3xl text-override-default font-bold">
               {formatInvoiceFinancingProductName(true)} ✨
             </h1>
-            {!_.isNil(availableLimit) && (
+            {!isFactoring && !_.isNil(availableLimit) && (
               <h2 className="text-xl font-semibold mt-4">
                 Available Limit: {formatDollarsWithCents(availableLimit / 100)}
               </h2>
             )}
           </div>
         </div>
+
+        {isFactoring && (
+          <Autocomplete
+            value={selectedPayor}
+            onChange={(_event, value) => setSelectedPayor(value)}
+            options={payors.length > 0 ? [RANDOM_PAYOR, ...payors] : []}
+            getOptionKey={(payor) => payor.id}
+            getOptionLabel={(payor) => payor.legalName}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            loading={payorsLoading}
+            noOptionsText="No onboarded payors available"
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Payor"
+                error={!!payorsError}
+                helperText={
+                  payorsError
+                    ? 'Unable to load payors.'
+                    : 'Choose a payor, or pick one at random for each invoice.'
+                }
+              />
+            )}
+            size="small"
+            sx={{ mb: 3, minWidth: 360 }}
+          />
+        )}
 
         <div className="sm:flex sm:justify-between sm:items-center mb-5">
           <InvoiceStatusFilters
@@ -553,29 +632,33 @@ function ApiInvoices() {
                 buttonColor={primaryColor}
                 loading={isLoading}
                 options={[
-                  {
-                    label: (
-                      <span>
-                        Finance ({selectedInvoiceIds.size}){' '}
-                        {formatInvoiceFinancingProductName(
-                          selectedInvoiceIds.size > 1,
-                        )}
-                      </span>
-                    ),
-                    onClick: () => onFinanceSelectedInvoicesClick(false),
-                  },
-                  {
-                    label: (
-                      <span>
-                        Finance ({selectedInvoiceIds.size}){' '}
-                        {formatInvoiceFinancingProductName(
-                          selectedInvoiceIds.size > 1,
-                        )}{' '}
-                        (pdf)
-                      </span>
-                    ),
-                    onClick: () => onFinanceSelectedInvoicesClick(true),
-                  },
+                  ...(!isFactoring
+                    ? [
+                        {
+                          label: (
+                            <span>
+                              Finance ({selectedInvoiceIds.size}){' '}
+                              {formatInvoiceFinancingProductName(
+                                selectedInvoiceIds.size > 1,
+                              )}
+                            </span>
+                          ),
+                          onClick: () => onFinanceSelectedInvoicesClick(false),
+                        },
+                        {
+                          label: (
+                            <span>
+                              Finance ({selectedInvoiceIds.size}){' '}
+                              {formatInvoiceFinancingProductName(
+                                selectedInvoiceIds.size > 1,
+                              )}{' '}
+                              (pdf)
+                            </span>
+                          ),
+                          onClick: () => onFinanceSelectedInvoicesClick(true),
+                        },
+                      ]
+                    : []),
                   {
                     label: (
                       <span>
@@ -586,7 +669,7 @@ function ApiInvoices() {
                         (auto-submit)
                       </span>
                     ),
-                    onClick: financeInvoiceAutoSubmit,
+                    onClick: () => financeInvoiceAutoSubmit(),
                   },
                 ]}
               />
@@ -638,6 +721,7 @@ function ApiInvoices() {
               </button>
             )}
 
+            {isFactoring && <FactoringServicingActions />}
             {issuedProduct?.servicingData.productType ===
               'INVOICE_FINANCING' && (
               <SplitButton

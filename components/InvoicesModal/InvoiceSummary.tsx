@@ -1,4 +1,4 @@
-import { IssuedProduct } from '@kanmon/sdk'
+import { IssuedProduct, ProductType } from '@kanmon/sdk'
 import { useSelector } from 'react-redux'
 import formatInvoiceFinancingProductName from '../../utils/formatInvoiceFinancingProductName'
 import {
@@ -67,15 +67,17 @@ const TopSection = ({
                 Finance {formatInvoiceFinancingProductName()}
               </button>
             )}
-          {invoice.kanmonInvoiceId && (
-            <button
-              className="btn text-white forty-percent-darker-on-hover"
-              style={{ backgroundColor: primaryColor }}
-              onClick={onPayInvoiceClick}
-            >
-              Pay Now
-            </button>
-          )}
+          {invoice.kanmonInvoiceId &&
+            issuedProduct?.servicingData.productType !==
+              ProductType.FACTORING && (
+              <button
+                className="btn text-white forty-percent-darker-on-hover"
+                style={{ backgroundColor: primaryColor }}
+                onClick={onPayInvoiceClick}
+              >
+                Pay Now
+              </button>
+            )}
         </div>
         <br />
       </div>
