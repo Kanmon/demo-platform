@@ -4,10 +4,7 @@ import {
   updateAvailableLimit,
 } from '@/store/apiInvoicesSlice'
 import { getAuthState } from '@/store/authSlice'
-import {
-  updateOnHide,
-  updateOnWorkflowChange,
-} from '@/store/kanmonConnectSlice'
+import { updateOnWorkflowChange } from '@/store/kanmonConnectSlice'
 import { importCustomizationState } from '@/store/customizationSlice'
 import { resetStoreAction, RootState } from '@/store/store'
 import { axiosWithApiKey } from '@/utils'
@@ -175,12 +172,6 @@ export const KanmonConnectWrapper = ({
             updateOnWorkflowChange({
               ctaText: event.data.actionMessage,
               currentWorkflowState: event.data.userState,
-            }),
-          )
-        case OnEventCallbackEventType.HIDE:
-          return dispatch(
-            updateOnHide({
-              isOpen: false,
             }),
           )
       }

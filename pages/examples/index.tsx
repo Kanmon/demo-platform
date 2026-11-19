@@ -1,5 +1,16 @@
-import { Box, Modal } from '@mui/material'
-import { useState } from 'react'
+import {
+  Box,
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Modal,
+  Portal,
+  Select,
+} from '@mui/material'
+import { useEffect, useRef, useState } from 'react'
+import Button from '../../components/shared/Button'
 import { useSelector } from 'react-redux'
 import { getKanmonConnectSlice } from '../../store/kanmonConnectSlice'
 import { getCustomizationState } from '../../store/customizationSlice'
@@ -19,11 +30,57 @@ const style = {
   p: 4,
 }
 
+const containerPresets = {
+  desktop: { label: 'Desktop', size: { width: 896, height: 720 } },
+  minimum: { label: 'Minimum', size: { width: 768, height: 720 } },
+  mobile: { label: 'Mobile', size: { width: 360, height: 640 } },
+}
+
+type ConnectView = keyof typeof containerPresets | 'fullscreen'
+
 export const CtaExamplesPage = () => {
-  const { ctaText } = useSelector(getKanmonConnectSlice)
+  const { ctaText, isOpen, useCdnSdk } = useSelector(getKanmonConnectSlice)
   const { primaryColor, primaryTextColor } = useSelector(getCustomizationState)
   const [open, setOpen] = useState(false)
-  const { showKanmonConnect } = useKanmonConnectContext()
+  const [view, setView] = useState<ConnectView>('desktop')
+  const isInline = view !== 'fullscreen'
+  const [hideCloseButton, setHideCloseButton] = useState(false)
+  const previewFrame = useRef<HTMLIFrameElement>(null)
+  const [preview, setPreview] = useState<Window['KANMON_DEMO_PREVIEW']>()
+  const [openRequested, setOpenRequested] = useState(true)
+  const { ready, showKanmonConnect, stopKanmonConnect } =
+    useKanmonConnectContext()
+
+  useEffect(() => {
+    const onPreviewReady = (event: MessageEvent) => {
+      const previewWindow = previewFrame.current?.contentWindow
+      if (
+        event.origin === window.location.origin &&
+        event.source === previewWindow &&
+        event.data === 'kanmon-demo-preview-ready'
+      ) {
+        setPreview(previewWindow?.KANMON_DEMO_PREVIEW)
+      }
+    }
+    window.addEventListener('message', onPreviewReady)
+    return () => window.removeEventListener('message', onPreviewReady)
+  }, [])
+
+  useEffect(() => {
+    if (!openRequested || !ready || (isInline && !preview)) return
+    setOpenRequested(false)
+    showKanmonConnect(undefined, {
+      ...(isInline ? preview : undefined),
+      hideCloseButton,
+    })
+  }, [
+    openRequested,
+    ready,
+    isInline,
+    preview,
+    hideCloseButton,
+    showKanmonConnect,
+  ])
 
   return (
     <>
@@ -35,6 +92,76 @@ export const CtaExamplesPage = () => {
             </h1>
           </div>
         </div>
+        <section>
+          <h2 className="text-4xl mb-4 font-medium">Connect embedding</h2>
+          <div className="flex flex-wrap items-center gap-4 mb-4">
+            <FormControl size="small" sx={{ minWidth: 260 }}>
+              <InputLabel id="connect-view-label">View</InputLabel>
+              <Select
+                labelId="connect-view-label"
+                label="View"
+                value={view}
+                onChange={(event) => {
+                  stopKanmonConnect()
+                  if (event.target.value === 'fullscreen') setPreview(undefined)
+                  setView(event.target.value as ConnectView)
+                  setOpenRequested(true)
+                }}
+              >
+                {Object.entries(containerPresets).map(([value, preset]) => (
+                  <MenuItem key={value} value={value}>
+                    {preset.label}
+                  </MenuItem>
+                ))}
+                <MenuItem value="fullscreen">Fullscreen</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControlLabel
+              label="Hide X button"
+              control={
+                <Checkbox
+                  checked={hideCloseButton}
+                  onChange={(_, checked) => {
+                    stopKanmonConnect()
+                    setHideCloseButton(checked)
+                    setOpenRequested(true)
+                  }}
+                />
+              }
+            />
+            {!isInline && isOpen && (
+              <Portal>
+                <Button
+                  variant="contained"
+                  sx={{
+                    position: 'fixed',
+                    bottom: 16,
+                    left: 16,
+                    zIndex: 2147483647,
+                  }}
+                  onClick={() => {
+                    stopKanmonConnect()
+                    setView('desktop')
+                    setOpenRequested(true)
+                  }}
+                >
+                  Back to preview
+                </Button>
+              </Portal>
+            )}
+          </div>
+          {isInline && (
+            <div className="max-w-full overflow-x-auto">
+              <iframe
+                ref={previewFrame}
+                title="Connect preview"
+                src={`/examples/preview?sdk=${useCdnSdk ? 'cdn' : 'npm'}`}
+                style={containerPresets[view].size}
+                className="block border-0 rounded-lg bg-white ring-1 ring-inset ring-slate-300"
+              />
+            </div>
+          )}
+        </section>
         <div>
           <div className="text-4xl mb-4 font-medium">Banner</div>
           <WelcomeBanner ctaText={ctaText} />
