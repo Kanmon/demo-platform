@@ -90,7 +90,7 @@ const KanmonConnectContextProvider = ({
   const pendingRequest = useRef<AbortController>()
   const activeSdk = useRef<typeof KANMON_CONNECT>()
   const isDarkMode = darkMode ?? false
-  const { query, events: routerEvents } = useRouter()
+  const { query, asPath, events: routerEvents } = useRouter()
 
   const stopKanmonConnect = useCallback(() => {
     pendingRequest.current?.abort()
@@ -176,9 +176,12 @@ const KanmonConnectContextProvider = ({
   }, [startKanmonConnect, stopKanmonConnect])
 
   useEffect(() => {
-    routerEvents.on('routeChangeStart', stopKanmonConnect)
-    return () => routerEvents.off('routeChangeStart', stopKanmonConnect)
-  }, [routerEvents, stopKanmonConnect])
+    const onRouteChangeStart = (url: string) => {
+      if (url !== asPath) stopKanmonConnect()
+    }
+    routerEvents.on('routeChangeStart', onRouteChangeStart)
+    return () => routerEvents.off('routeChangeStart', onRouteChangeStart)
+  }, [asPath, routerEvents, stopKanmonConnect])
 
   const showKanmonConnect: KanmonConnectContext['showKanmonConnect'] = (
     showArgs = {},
