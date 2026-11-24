@@ -4,18 +4,26 @@ import {
   KANMON_CONNECT,
   KanmonConnectEnviroment,
   KanmonConnectParams,
+  OnEventCallbackEventType,
   ShowKanmonConnectMessage,
 } from '@kanmon/web-sdk'
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import { createContext, useContext, useEffect, useState } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useAsync } from 'react-use'
+import { useAsyncFn, useLatest } from 'react-use'
 import useScript from 'react-script-hook'
 import { getApiKeyState } from '../store/apiKeySlice'
 import {
   getKanmonConnectSlice,
   updateDarkMode,
+  updateOnHide,
 } from '@/store/kanmonConnectSlice'
 
 declare global {
@@ -29,10 +37,21 @@ declare global {
   }
 }
 
+type ConnectOptions = Pick<
+  KanmonConnectParams,
+  'container' | 'hideCloseButton'
+> & {
+  sdk?: typeof KANMON_CONNECT
+}
+
 interface KanmonConnectContext {
   ready: boolean
   error: Error | undefined
-  showKanmonConnect: (showArgs?: ShowKanmonConnectMessage) => void
+  showKanmonConnect: (
+    showArgs?: ShowKanmonConnectMessage,
+    options?: ConnectOptions,
+  ) => void
+  stopKanmonConnect: () => void
   isDarkMode: boolean
   setKanmonDarkMode: (darkMode: boolean) => void
 }
@@ -66,80 +85,114 @@ const KanmonConnectContextProvider = ({
   const [scriptLoading] = useScript({
     src: NEXT_PUBLIC_KANMON_CDN_HOST,
   })
-  const [ready, setReady] = useState(false)
+  const sdk = useCdnSdk ? globalThis.window?.KANMON_CONNECT : KANMON_CONNECT
+  const canStart = Boolean(sdk && (!useCdnSdk || !scriptLoading))
+  const pendingRequest = useRef<AbortController>()
+  const activeSdk = useRef<typeof KANMON_CONNECT>()
   const isDarkMode = darkMode ?? false
+  const { query, asPath, events: routerEvents } = useRouter()
 
-  const { query } = useRouter()
+  const stopKanmonConnect = useCallback(() => {
+    pendingRequest.current?.abort()
+    pendingRequest.current = undefined
+    activeSdk.current?.stop()
+    activeSdk.current = undefined
+    dispatch(updateOnHide({ isOpen: false }))
+  }, [dispatch])
 
-  const { error } = useAsync(
-    async function startKanmon() {
-      // Wait for CDN script to load with timeout
-      if (scriptLoading && useCdnSdk) {
-        return
+  // Keep new starts current without restarting an open widget on theme/events.
+  const connectParams = useLatest<Omit<KanmonConnectParams, 'connectToken'>>({
+    environment: process.env.NEXT_PUBLIC_DEPLOY_ENV as KanmonConnectEnviroment,
+    ...connectParamOverrides,
+    customInitializationName: query?.customInitializationName as
+      | string
+      | undefined,
+    productSubsetDuringOnboarding: (
+      query?.productSubsetDuringOnboarding as string | undefined
+    )?.split(',') as ExternalProductType[] | undefined,
+    darkMode: isDarkMode,
+    onEvent: (event) => {
+      if (event.eventType === OnEventCallbackEventType.HIDE) {
+        stopKanmonConnect()
       }
-      // Note - typically platforms will not be sending their emails
-      // to the connect endpoint. This is an implementation detail
-      // specific to the demo platform.
-      const params = new URLSearchParams()
-      params.append('userId', userId)
-      const connectUrl = `${connectUrlPath}?${params.toString()}`
+      connectParamOverrides.onEvent?.(event)
+    },
+  })
 
-      const connectTokenResponse = await axios.get(connectUrl, {
-        headers: {
-          Authorization: `ApiKey ${apiKey}`,
-        },
-      })
+  const [{ loading, error }, startKanmonConnect] = useAsyncFn(
+    async (showArgs?: ShowKanmonConnectMessage, options?: ConnectOptions) => {
+      const { sdk: targetSdk = sdk, ...viewOptions } = options ?? {}
+      if (!canStart || !targetSdk) return
+      stopKanmonConnect()
+      const controller = new AbortController()
+      pendingRequest.current = controller
 
-      const { connectToken } = connectTokenResponse.data
-      const productSubsetDuringOnboarding =
-        query?.productSubsetDuringOnboarding as string
+      try {
+        // Connect tokens are single-use; every new iframe needs a fresh one.
+        const params = new URLSearchParams({ userId })
+        const { data } = await axios.get<{ connectToken: string }>(
+          `${connectUrlPath}?${params.toString()}`,
+          {
+            headers: { Authorization: `ApiKey ${apiKey}` },
+            signal: controller.signal,
+          },
+        )
+        if (controller.signal.aborted) return
 
-      const config: KanmonConnectParams = {
-        connectToken,
-        environment: process.env
-          .NEXT_PUBLIC_DEPLOY_ENV as KanmonConnectEnviroment,
-        ...(connectParamOverrides ? connectParamOverrides : {}),
-        customInitializationName: query?.customInitializationName as
-          | string
-          | undefined,
-        productSubsetDuringOnboarding: productSubsetDuringOnboarding?.split(
-          ',',
-        ) as ExternalProductType[] | undefined,
-        ...(darkMode ? { darkMode: true } : {}),
-      }
-
-      // Check if CDN SDK is available
-      if (useCdnSdk) {
-        window.KANMON_CONNECT.start({
-          ...config,
+        activeSdk.current = targetSdk
+        targetSdk.start({
+          ...connectParams.current,
+          ...viewOptions,
+          connectToken: data.connectToken,
         })
-        setReady(true)
-      } else {
-        // Initialize kanmon connect. There is no need to call `show`, since
-        // the widget will render on start.
-        KANMON_CONNECT.start(config)
-        setReady(true)
+        if (showArgs !== undefined) {
+          targetSdk.show(showArgs)
+          dispatch(updateOnHide({ isOpen: true }))
+        }
+      } catch (error) {
+        if (!controller.signal.aborted) throw error
+      } finally {
+        if (pendingRequest.current === controller) {
+          pendingRequest.current = undefined
+        }
       }
     },
-    [scriptLoading, useCdnSdk, apiKey],
+    [
+      canStart,
+      sdk,
+      stopKanmonConnect,
+      userId,
+      connectUrlPath,
+      apiKey,
+      connectParams,
+      dispatch,
+    ],
   )
 
-  const showKanmonConnect = (showArgs?: ShowKanmonConnectMessage) => {
-    if (useCdnSdk) {
-      window.KANMON_CONNECT.show(showArgs)
-    } else {
-      KANMON_CONNECT.show(showArgs)
+  useEffect(() => {
+    // Preload workflow state unless an explicit preview start is in progress.
+    if (!pendingRequest.current) void startKanmonConnect()
+    return stopKanmonConnect
+  }, [startKanmonConnect, stopKanmonConnect])
+
+  useEffect(() => {
+    const onRouteChangeStart = (url: string) => {
+      if (url !== asPath) stopKanmonConnect()
     }
+    routerEvents.on('routeChangeStart', onRouteChangeStart)
+    return () => routerEvents.off('routeChangeStart', onRouteChangeStart)
+  }, [asPath, routerEvents, stopKanmonConnect])
+
+  const showKanmonConnect: KanmonConnectContext['showKanmonConnect'] = (
+    showArgs = {},
+    options,
+  ) => {
+    void startKanmonConnect(showArgs, options)
   }
 
   const setKanmonDarkMode = (nextDarkMode: boolean) => {
     dispatch(updateDarkMode({ darkMode: nextDarkMode }))
-
-    if (useCdnSdk) {
-      window.KANMON_CONNECT.setConfig({ darkMode: nextDarkMode })
-    } else {
-      KANMON_CONNECT.setConfig({ darkMode: nextDarkMode })
-    }
+    activeSdk.current?.setConfig({ darkMode: nextDarkMode })
   }
 
   useEffect(() => {
@@ -152,7 +205,14 @@ const KanmonConnectContextProvider = ({
 
   return (
     <KanmonConnectContext.Provider
-      value={{ ready, error, showKanmonConnect, isDarkMode, setKanmonDarkMode }}
+      value={{
+        ready: canStart && !loading,
+        error,
+        showKanmonConnect,
+        stopKanmonConnect,
+        isDarkMode,
+        setKanmonDarkMode,
+      }}
     >
       {children}
     </KanmonConnectContext.Provider>

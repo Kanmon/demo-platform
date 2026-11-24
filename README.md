@@ -66,6 +66,8 @@ The application will be available at `http://localhost:3000`.
 
 Once the application is running, you can interact with it just like the embedded version in KanmonOS. Use the demo to understand how our APIs work and how you can integrate them into your own projects.
 
+The **CTA Examples** page loads a desktop preview automatically. Change View or Hide X to update it, including mobile and fullscreen views. Sized previews use their own iframe so the layout matches the selected viewport. Use `/config` to switch between the npm and CDN SDKs.
+
 ## Api Docs / SDKs
 
 - [API Docs](https://kanmon.dev)
